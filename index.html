@@ -2,52 +2,117 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="description" content="Growth Daily — a personal daily English practice tool: listening, sentence patterns, grammar repair, speaking, and interview prep for the Singapore tech/product track.">
 <title>Growth Daily — English for Product & AI</title>
+<!-- "Obsidian Journal" design system — quiet, editorial, dark. Source Serif 4
+     is reserved for the daily headline only; Geist carries all body/UI text
+     (chosen because it stays legible for a non-native reader); JetBrains
+     Mono is used for meta labels/counters, same role --font-mono already
+     played, just swapped in. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,500;8..60,600&family=Geist:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
 <meta name="theme-color" content="#0f1115">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%2314b8a6'/%3E%3Cstop offset='1' stop-color='%230b5c53'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='8' fill='url(%23g)'/%3E%3C/svg%3E">
+<!-- Favicon — static version of the "Ascending Arc" logo mark (matches
+     .brand .mark below exactly, just with literal hex since a favicon
+     data URI can't reference CSS custom properties). Replaces the old
+     gradient square, which was a leftover from the pre-redesign palette. -->
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 22 22'%3E%3Crect width='22' height='22' rx='4' fill='%23121212'/%3E%3Cpath d='M5 15 Q11 15 16 6.5' fill='none' stroke='%236f80a0' stroke-width='1.6' stroke-linecap='round'/%3E%3Ccircle cx='16' cy='6.5' r='1.8' fill='%236f80a0'/%3E%3C/svg%3E">
 <style>
   :root {
     color-scheme: dark;
-    /* surfaces */
-    --bg: #0f1115;
-    --card: #1a1d24;
-    --surface-2: #1c2029;
-    --line: rgba(255,255,255,0.08);
-    --line-strong: rgba(255,255,255,0.16);
+    /* ============================================================
+       "Obsidian Journal" — replaces the violet/gamified system below
+       as of the Stitch-driven redesign. Source: two Stitch-generated
+       screens (Today, Listening Lab) plus a design-system reference
+       sheet, all producing the same token set, so this isn't guessed —
+       it's transcribed from what was actually generated and approved.
+       Philosophy per Stitch's own DESIGN.md: "Quiet Growth" — moves
+       away from gamified/high-energy language-app tropes toward
+       something intentional, editorial, a little philosophical (the
+       explicit reference was Co-Star). Flat, no shadows, no gradients,
+       hairline dividers instead of card fills+shadows, one restrained
+       accent used for both brand AND completion state (a deliberate
+       call — see below) rather than color-coding everything. ============================================================ */
+    /* surfaces — near-black base; #121212/#1c1b1b only for things that
+       truly need to sit on a distinct fill (inputs, an active/expanded
+       card) — most "cards" use no fill at all, just hairline borders */
+    --bg: #0a0a0a;
+    /* Bumped from #121212/#1c1b1b (2026-08-31): those were only ~1.1:1
+       against --bg — mathematically almost the same color, so "cards"
+       and the current-task highlight were nearly invisible against the
+       page. Tonal layering only works if the tones are actually
+       distinguishable; these are the smallest steps that read clearly
+       as "a surface sitting above the page" while staying dark/quiet. */
+    --card: #1a1a1a;
+    --surface-2: #242424;
+    --line: rgba(255,255,255,0.09);
+    --line-strong: rgba(255,255,255,0.18);
     /* text */
-    --text: #f2f3f6;
-    --text2: #8b909c;
-    --text3: #565a64;
-    /* brand — single restrained accent (cool blue), used as a light/dark tonal
-       pair so gradients stay monochromatic instead of the common blue→purple
-       "AI" fingerprint */
-    --accent: #6c93f0;
-    --accent2: #6c93f0;
-    --accent2-weak: rgba(108,147,240,0.12);
-    --accent2-strong: #4a6fd1;
-    --accent2-line: rgba(108,147,240,0.32);
-    /* semantic (distinct from brand on purpose — success/warning read as
-       system feedback, not a second brand color) */
-    --warn: #e0a952;
-    --warn-weak: rgba(224,169,82,0.12);
-    --good: #4fbf8b;
-    --good-weak: rgba(79,191,139,0.12);
-    /* spacing scale */
+    --text: #e5e2e1;
+    --text2: #9a9a9a;
+    --text3: #5c5c5c;
+    /* warm cream — the "Inverted" swatch from the reference. Per its own
+       DESIGN.md: "Primary buttons use a Warm White fill with dark text
+       for maximum impact" — so this, not the slate accent, is what the
+       main CTA (e.g. the "Continue" button) is actually built from. */
+    --secondary: #f4f1ea;
+    --on-secondary: #1c1c18;
+    /* brand — a desaturated slate blue, used both for interactive/brand
+       touchpoints AND for "done"/completion state. That merge is a
+       deliberate decision (confirmed 2026-08-30, replacing the old
+       "brand never doubles as a correctness signal" rule) — it follows
+       the Stitch reference exactly: the Progress heatmap and the
+       current/done task dots all read off ONE accent, with icons
+       (checkmark vs. dot vs. outline) doing the state-differentiation
+       work instead of color. Content-level feedback (AI correction
+       tables, drill validation) keeps its own --good/--warn/--error
+       below — that distinction is still functionally load-bearing
+       (reading a grammar correction), unlike the done/active split. */
+    /* Lightened from #5e6c84 (2026-08-31): that value was ~3.7:1 against
+       --bg, right at the WCAG floor for large UI elements — against a
+       true near-black page it read as flat grey rather than "blue."
+       #6f80a0 keeps the same desaturated slate hue (not brighter/more
+       saturated, just lifted) and lands closer to 4.7:1, so it still
+       reads as quiet/restrained but is unmistakably blue against black. */
+    --accent: #6f80a0;
+    --accent2: #6f80a0;
+    --accent2-weak: rgba(111,128,160,0.18);
+    --accent2-strong: #56637d;
+    --accent2-fg: #c3d0ea;
+    --accent2-line: rgba(111,128,160,0.42);
+    --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    /* semantic feedback colors — kept distinct from --accent2 on purpose,
+       for content correctness only (AI correction tables, drill
+       right/wrong), desaturated to match the quieter palette rather
+       than the old bright green/amber/red */
+    --warn: #cba572;
+    --warn-weak: rgba(127,104,67,0.16);
+    --good: #8fae94;
+    --good-weak: rgba(143,174,148,0.14);
+    --error: #cf9a92;
+    --error-weak: rgba(207,154,146,0.16);
+    /* spacing scale — unchanged, this part of the system wasn't touched */
     --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px;
     --space-5: 20px; --space-6: 24px; --space-8: 32px; --space-10: 40px;
-    /* radius scale */
-    --radius-xs: 6px; --radius-sm: 10px; --radius-md: 14px; --radius-lg: 20px; --radius-xl: 22px; --radius-full: 999px;
-    /* elevation scale — soft, highly diffused, tinted toward the brand hue
-       instead of a tight dark drop-shadow */
-    --shadow-sm: 0 2px 8px rgba(0,0,0,0.20);
-    --shadow-md: 0 16px 36px -12px rgba(0,0,0,0.45), 0 2px 8px rgba(0,0,0,0.25);
-    --shadow-lg: 0 28px 64px -16px rgba(0,0,0,0.55), 0 4px 12px rgba(0,0,0,0.30);
+    /* radius scale — Stitch's shape language is explicit: "Rectangular
+       with minimal rounding... circular reserved strictly for progress
+       rings or profile avatars." Much smaller than the old scale, and
+       --radius-full now genuinely means "circle/bar cap", not "pill
+       button" — pill-shaped buttons/badges are gone, replaced by
+       small-radius rectangles everywhere except true circles/bars. */
+    --radius-xs: 2px; --radius-sm: 4px; --radius-md: 6px; --radius-lg: 8px; --radius-xl: 10px; --radius-full: 999px;
+    /* elevation — the system is "purposefully flat... rejects shadows
+       in favor of tonal layering" (hairlines + surface fills instead).
+       Kept as tokens (not deleted) so nothing referencing them breaks,
+       but they now resolve to nothing/near-nothing. */
+    --shadow-sm: none;
+    --shadow-md: none;
+    --shadow-lg: 0 8px 24px -8px rgba(0,0,0,0.5);
     /* icon container scale */
     --icon-sm: 24px; --icon-md: 32px; --icon-lg: 40px; --icon-xl: 48px;
-    /* type — one 8-step scale, every font-size in this file resolves to one
-       of these. Replaces what used to be 18 near-duplicate ad-hoc values
-       (11px/11.5px, 12px/12.5px, 13px/13.5px/13.8px, etc.) */
+    /* type scale — unchanged sizes, only the families change below */
     --text-2xs: 10px;   /* uppercase eyebrows, micro badges */
     --text-xs: 11px;    /* meta text, small labels */
     --text-sm: 12.5px;  /* secondary text, buttons, pills */
@@ -56,8 +121,14 @@
     --text-lg: 16px;    /* card/section headings */
     --text-xl: 18px;    /* larger inline headings */
     --text-2xl: 25px;   /* page/hero heading */
-    --font-body: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
-    --font-display: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
+    /* Geist carries body/UI text — clean, technical, stays legible for a
+       non-native reader (the one explicit constraint from the brief:
+       "no complex fonts, must stay readable"). Source Serif 4 is used
+       ONLY for the daily headline (--font-display below) — reserved for
+       "large headlines and thought-of-the-day moments" per the brief,
+       never for anything that has to be read at length or speed. */
+    --font-body: "Geist", -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
+    --font-display: "Source Serif 4", Georgia, "Times New Roman", serif;
     /* z-index scale */
     --z-sticky: 15; --z-header: 20; --z-toast: 40; --z-popup: 50;
     --spring: cubic-bezier(0.16, 1, 0.3, 1);
@@ -70,80 +141,123 @@
     font: 400 15px/1.5 var(--font-body);
     letter-spacing: 0;
     position: relative;
-    background:
-      radial-gradient(1100px 560px at 50% -12%, rgba(108,147,240,0.09), transparent 60%),
-      var(--bg);
+    /* flat, not glowing — the old radial highlight was a soft-UI touch
+       the reference explicitly avoids ("purposefully flat") */
+    background: var(--bg);
     background-attachment: fixed;
   }
-  /* faint grain so flat surfaces don't feel sterile — fixed, non-interactive */
+  /* faint grain — a restrained nod to halftone/dither texture, kept subtle
+     and never placed behind actual reading content so it can't hurt
+     legibility; fixed, non-interactive */
   body::before {
-    content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 1; opacity: 0.03; mix-blend-mode: overlay;
+    content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 1; opacity: 0.045; mix-blend-mode: overlay;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   }
-  .wrap { max-width: 720px; margin: 0 auto; padding: 0 20px 60px; position: relative; z-index: 2; }
+  /* padding-top 26px so every view starts with the same breathing room
+     below the header's border line — previously 0, which only "worked" on
+     Today because .hero happened to carry its own 26px margin-top; Library
+     and Progress have no such first-child margin, so their content sat
+     flush against the border. Fixed at the shared wrapper instead of
+     patching each view, and .hero's own margin-top below is removed so
+     Today doesn't end up with double the gap. */
+  /* bottom padding extended to clear the fixed .bottomNav bar (~68px
+     tall including its own padding) so the last card is never hidden
+     behind it. */
+  .wrap { max-width: 720px; margin: 0 auto; padding: 26px 20px 100px; position: relative; z-index: 2; }
 
   /* ---- header — full-width pill nav, scrolls with the page ---- */
+  /* ---- top bar — brand + utility icons + plain-text stats only; the
+     Today/Library/Progress switcher moved to .bottomNav below (see
+     markup near </main>), matching every one of the four reference
+     screens, which all show a fixed bottom tab bar instead of a top
+     segmented control. Kept as a flat line, not a card. ---- */
   .topbar {
     background: transparent;
   }
   .topbar-inner {
-    max-width: 1080px; margin: 0 auto; padding: 22px 32px 18px;
+    max-width: 1080px; margin: 0 auto; padding: 20px 32px 16px;
     display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); flex-wrap: wrap;
     border-bottom: 1px solid var(--line);
   }
   .brand { display: flex; align-items: center; gap: var(--space-3); }
-  .brand .mark {
-    width: 26px; height: 26px; border-radius: var(--radius-xs);
-    background: linear-gradient(160deg, var(--accent), var(--accent2-strong));
-  }
-  .brand h1 { font-size: var(--text-md); font-weight: 650; margin: 0; letter-spacing: -0.01em; }
+  /* Logo mark — "Ascending Arc" (chosen 2026-08-31 from 4 concepts): a
+     quiet trend line + a dot, not a bar chart or a filled accent square.
+     Sits on --card (not a solid accent fill) so it reads as a mark on a
+     surface, same visual language as everything else in the app. */
+  .brand .mark { width: 34px; height: 34px; flex-shrink: 0; display: block; }
+  .brand h1 { font-family: var(--font-body); font-size: var(--text-lg); font-weight: 600; margin: 0; letter-spacing: -0.01em; }
   .brand .tag { font-size: var(--text-xs); color: var(--text2); }
 
-  .nav { display: flex; background: var(--surface-2); border: 1px solid var(--line); border-radius: var(--radius-full); padding: 4px; gap: 2px; }
-  .nav button {
-    border: none; background: transparent; padding: 7px 15px; border-radius: var(--radius-full); font-size: var(--text-base);
-    font-weight: 600; color: var(--text2); cursor: pointer; transition: background .18s var(--spring), color .18s;
-  }
-  .nav button.active { background: var(--accent); color: #fff; box-shadow: none; }
-
-  .topbarRight { display: flex; align-items: center; gap: var(--space-3); }
-  .utilCluster { display: flex; gap: var(--space-2); padding-right: var(--space-3); border-right: 1px solid var(--line); }
-  .stats { display: flex; gap: var(--space-2); }
+  .topbarRight { display: flex; align-items: center; gap: var(--space-4); }
+  .utilCluster { display: flex; gap: var(--space-2); padding-right: var(--space-4); border-right: 1px solid var(--line); }
+  /* Stats are plain mono numbers now, not pill/card badges — no
+     background, no border, matching the Progress reference screen's
+     top-right "0 STREAK · 3563" treatment. */
+  .stats { display: flex; gap: var(--space-4); }
   .stat {
-    background: var(--surface-2); border: 1px solid var(--line); border-radius: var(--radius-md);
-    padding: 6px 13px; text-align: center; min-width: 54px; box-shadow: none;
+    background: none; border: none; padding: 0; text-align: left; min-width: 0; box-shadow: none;
     display: flex; align-items: center; gap: 6px;
   }
-  .stat .ic { font-size: var(--text-base); line-height: 1; }
+  .stat .ic { display: inline-flex; color: var(--text3); }
   .stat .col { display: flex; flex-direction: column; align-items: flex-start; }
-  .stat .n { font-size: var(--text-md); font-weight: 700; color: var(--text); line-height: 1.15; font-variant-numeric: tabular-nums; }
-  .stat .l { font-size: var(--text-2xs); color: var(--text3); text-transform: uppercase; letter-spacing: .04em; }
+  .stat .n { font-family: var(--font-mono); font-size: var(--text-sm); font-weight: 700; color: var(--text); line-height: 1.15; font-variant-numeric: tabular-nums; }
+  .stat .l { font-family: var(--font-mono); font-size: var(--text-2xs); color: var(--text3); text-transform: uppercase; letter-spacing: .04em; }
 
-  /* ---- hero (page header) — quiet, no card/gradient box; matches the
-     approved mockup's plain header treatment ---- */
+  /* ---- hero (page header) — the "thought of the day" moment. Serif
+     headline is the one deliberate flourish in an otherwise plain
+     system; day/streak is bare mono text now, no pill background. ---- */
   .hero {
-    margin: 26px 0 22px; padding: 0; position: relative;
+    margin: 0 0 22px; padding: 0; position: relative;
   }
   .hero-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; position: relative; }
-  .hero .week { font-size: var(--text-xs); font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 9px; }
+  .hero .week {
+    font-family: var(--font-mono); font-size: var(--text-xs); font-weight: 600; color: var(--text3);
+    text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 12px;
+  }
   .hero h2 {
-    font-size: var(--text-2xl); line-height: 1.2; letter-spacing: -0.015em;
-    margin: 0 0 6px; font-weight: 650; text-wrap: balance;
+    font-family: var(--font-display); font-size: var(--text-2xl); line-height: 1.22; letter-spacing: -0.01em;
+    margin: 0 0 6px; font-weight: 600; text-wrap: balance;
   }
   .hero p { color: var(--text2); font-size: var(--text-md); line-height: 1.55; margin: 0 0 20px; max-width: 52ch; position: relative; text-wrap: pretty; }
   .dayPill {
-    flex-shrink: 0; background: var(--surface-2); border: 1px solid var(--line); border-radius: var(--radius-full);
-    padding: 6px 14px; font-size: var(--text-xs); font-weight: 700; color: var(--text2); white-space: nowrap;
+    flex-shrink: 0; background: none; border: none; padding: 0;
+    font-family: var(--font-mono); font-size: var(--text-xs); font-weight: 600; color: var(--text3); white-space: nowrap;
+    text-transform: uppercase; letter-spacing: 0.06em;
   }
-  .dayPill b { color: var(--text); font-size: var(--text-base); font-variant-numeric: tabular-nums; }
+  .dayPill b { color: var(--text2); font-weight: 600; font-variant-numeric: tabular-nums; }
 
-  /* ---- cards ---- */
-  .card {
-    background: var(--card); border: 1px solid var(--line); border-radius: var(--radius-lg);
-    padding: var(--space-5) var(--space-6); margin-bottom: var(--space-3); box-shadow: var(--shadow-sm);
-    transition: transform .22s var(--spring), box-shadow .22s var(--spring), border-color .22s;
+  /* ---- bottom nav — fixed tab bar, replaces the old top segmented
+     control. Flat, hairline top border, no active pill background:
+     the active tab is read off icon fill + label color only, matching
+     the reference's restrained "no chunky highlight" treatment. */
+  .bottomNav {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: var(--z-header);
+    display: flex; justify-content: center; gap: 0;
+    background: rgba(10,10,10,0.92); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+    border-top: 1px solid var(--line);
+    padding: 6px max(env(safe-area-inset-bottom), 6px) calc(6px + env(safe-area-inset-bottom));
   }
-  .card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); border-color: var(--line-strong); }
+  .bottomNav-inner { display: flex; width: 100%; max-width: 480px; }
+  .bottomNav button {
+    flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px;
+    border: none; background: transparent; padding: 6px 4px; cursor: pointer;
+    font-family: var(--font-mono); font-size: 10px; font-weight: 600; letter-spacing: 0.03em; text-transform: uppercase;
+    color: var(--text3); transition: color .18s;
+  }
+  .bottomNav button svg { color: var(--text3); transition: color .18s; }
+  .bottomNav button.active { color: var(--accent2-fg); }
+  .bottomNav button.active svg { color: var(--accent2-fg); }
+
+  /* ---- cards ----
+     Flat per the reference ("purposefully flat... rejects shadows"):
+     a filled block with no border reads as "distinct" here, rather than
+     a bordered box with a shadow lift on hover. */
+  .card {
+    background: var(--card); border: none; border-radius: var(--radius-lg);
+    padding: var(--space-5) var(--space-6); margin-bottom: var(--space-3);
+    transition: background-color .2s;
+  }
+  .card:hover { background: var(--surface-2); }
   .card-head { display: flex; align-items: center; gap: var(--space-3); margin-bottom: var(--space-4); }
   .card-head .icon {
     width: var(--icon-lg); height: var(--icon-lg); border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center;
@@ -155,11 +269,11 @@
   .script { background: var(--surface-2); border-radius: var(--radius-md); padding: 14px 16px; font-size: var(--text-base); line-height: 1.75; color: var(--text); margin: 10px 0; max-width: 62ch; }
   .chunks { display: flex; flex-direction: column; gap: 7px; margin: 10px 0; }
   .chunk-pill {
-    background: var(--accent2-weak); color: var(--accent2-strong); font-size: var(--text-base); padding: 9px 13px;
+    background: var(--accent2-weak); color: var(--accent2-fg); font-size: var(--text-base); padding: 9px 13px;
     border-radius: var(--radius-md); font-weight: 500; border: 1px solid transparent; transition: border-color .15s, background .15s;
   }
   .chunk-pill:hover { border-color: var(--accent2-line); background: var(--accent2-line); }
-  .subhead { font-size: var(--text-xs); font-weight: 700; color: var(--text2); text-transform: uppercase; letter-spacing: .05em; margin: 18px 0 8px; padding-top: 10px; border-top: 1px solid var(--line); }
+  .subhead { font-family: var(--font-mono); font-size: var(--text-xs); font-weight: 700; color: var(--text2); text-transform: uppercase; letter-spacing: .05em; margin: 18px 0 8px; padding-top: 10px; border-top: 1px solid var(--line); }
   .subhead:first-child { margin-top: 0; padding-top: 0; border-top: none; }
   .qlist { list-style: none; padding: 0; margin: 0; font-size: var(--text-base); color: var(--text2); }
   .qlist li { padding: 4px 0 4px 16px; position: relative; }
@@ -169,11 +283,6 @@
      an error state. The old amber/#9a3412 pairing was a leftover from the
      light-theme original and was never migrated to dark tokens. */
   .taskline { background: var(--accent2-weak); border: 1px solid var(--accent2-line); border-radius: var(--radius-md); padding: 10px 12px; font-size: var(--text-base); color: var(--text); margin-top: 10px; }
-  .revealBtn { background: var(--surface-2); border: 1px solid var(--line); border-radius: var(--radius-sm); padding: 8px 13px; font-size: var(--text-sm); font-weight: 600; cursor: pointer; color: var(--text); transition: background .15s, border-color .15s; }
-  .revealBtn:hover { background: var(--line); border-color: var(--line-strong); }
-  .revealBtn:active { transform: scale(0.96); }
-  .hidden-block { display: none; }
-  .hidden-block.open { display: block; }
 
   .oldbetter { display: flex; gap: 10px; flex-wrap: wrap; margin: 10px 0; }
   .ob-box { flex: 1; min-width: 200px; border-radius: var(--radius-md); padding: 10px 13px; font-size: var(--text-base); }
@@ -189,12 +298,29 @@
 
   /* library — same segmented-track language as the top nav, so "how tabs
      work" reads identically everywhere in the app instead of two styles */
-  .libTabs { display: flex; background: rgba(20,20,25,0.05); border-radius: var(--radius-md); padding: 3px; gap: 2px; margin-bottom: var(--space-4); flex-wrap: wrap; }
-  .libTabs button { background: transparent; border: none; border-radius: var(--radius-sm); padding: 7px 14px; font-size: var(--text-sm); font-weight: 600; cursor: pointer; color: var(--text2); transition: background .18s var(--spring), color .18s; }
-  .libTabs button.active { background: var(--accent); color: var(--text); box-shadow: var(--shadow-sm); }
-  .libItem { border: 1px solid var(--line); border-radius: var(--radius-lg); padding: 16px 18px; margin-bottom: 10px; background: var(--surface-2); cursor: pointer; transition: box-shadow .18s var(--spring), border-color .18s, transform .18s var(--spring); }
-  .libItem:hover { box-shadow: var(--shadow-md); border-color: var(--accent2-line); transform: translateY(-2px); }
-  .libItem:active { transform: translateY(0) scale(0.995); }
+  /* gap bumped 2px -> 8px: at 2px the tabs wrap onto a second row (7 labels
+     don't fit one line) with almost no breathing room between words on
+     that row, reading as one crowded run of text rather than distinct
+     buttons. 8px gives clear separation both within a row and between the
+     two wrapped rows (flex gap applies to both axes). */
+  /* Was a filled segmented control (rgba(20,20,25,0.05) — a leftover
+     light-theme wash, almost invisible on dark) with a solid active pill.
+     Rebuilt as a plain mono tab strip with an underline for the active
+     tab — same "input fields are underlined, not boxed" language as the
+     rest of the system, no fills/shadows. */
+  .libTabs { display: flex; gap: 18px; margin-bottom: var(--space-5); flex-wrap: wrap; border-bottom: 1px solid var(--line); }
+  .libTabs button {
+    background: transparent; border: none; border-bottom: 2px solid transparent; border-radius: 0;
+    padding: 0 0 10px; font-family: var(--font-mono); font-size: var(--text-xs); font-weight: 600; text-transform: uppercase; letter-spacing: .04em;
+    cursor: pointer; color: var(--text3); transition: color .18s, border-color .18s; margin-bottom: -1px;
+  }
+  .libTabs button:hover { color: var(--text2); }
+  .libTabs button.active { color: var(--text); border-bottom-color: var(--accent2); }
+  /* Same flat-card language as .card — no border, no shadow/lift, just a
+     background-color shift on hover — so Library items read as part of
+     the same family as everything else instead of their own component. */
+  .libItem { border: none; border-radius: var(--radius-lg); padding: 16px 18px; margin-bottom: 10px; background: var(--card); cursor: pointer; transition: background-color .18s; }
+  .libItem:hover { background: var(--surface-2); }
   .libItem h4 { margin: 0 0 4px; font-size: var(--text-md); }
   .libItem .m { font-size: var(--text-sm); color: var(--text2); }
   .libItemHead {
@@ -206,28 +332,27 @@
   .libItem.open .full { display: block; }
 
   /* progress */
-  .heatmap { display: grid; grid-template-columns: repeat(9, 1fr); gap: 7px; width: 100%; }
-  .cell { aspect-ratio: 1; border-radius: var(--radius-xs); background: var(--line-strong); }
+  /* Was a fixed 9-column/18px grid with width:fit-content — safe when the
+     card was ~350px (the old two-column progress layout), but once the
+     card became full-width (720px, matching Today/Library) that left a
+     big dead zone of empty card to the right of a small cluster of
+     squares. 15 columns (still 3 clean rows of 15 for 45 days) as 1fr
+     each fills the actual card width at any size — mobile included, no
+     separate breakpoint needed — while staying far short of the ~50-60px
+     "oversized swatch" size that was rejected before, since there are
+     now ~40% more columns sharing the same width. */
+  .heatmap { display: grid; grid-template-columns: repeat(15, 1fr); gap: 5px; width: 100%; }
+  .cell { width: 100%; aspect-ratio: 1; border-radius: 4px; background: var(--line-strong); }
   .cell.done { background: var(--accent2); }
   .cell.today { outline: 2px solid var(--text); outline-offset: 1px; }
   .heatmapLegend { display: flex; align-items: center; gap: 16px; margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--line); }
   .heatmapLegend .li { display: flex; align-items: center; gap: 6px; font-size: var(--text-sm); color: var(--text2); }
-  .heatmapLegend .sw { width: 12px; height: 12px; border-radius: 3px; }
+  .heatmapLegend .sw { width: 14px; height: 14px; border-radius: 4px; }
   .heatmapLegend .sw.done { background: var(--accent2); }
   .heatmapLegend .sw.empty { background: var(--line-strong); }
   .heatmapLegend .sw.today { background: var(--line-strong); outline: 2px solid var(--text); outline-offset: 1px; }
   .heatmapStreak { margin-top: 14px; font-size: var(--text-base); color: var(--text2); }
   .heatmapStreak b { color: var(--text); font-weight: 700; }
-  .scorecard { display: flex; flex-direction: column; gap: var(--space-5); }
-  /* Labels here are full self-assessment sentences, not short tags — a
-     label+slider on one row would either crush the text into a sliver
-     (the old bug) or force the row absurdly wide. Stack instead: label on
-     its own full-width line, slider+value on the line under it. */
-  .scoreRow { display: flex; flex-direction: column; gap: 8px; }
-  .scoreRow .label { font-size: var(--text-base); color: var(--text); line-height: 1.45; }
-  .scoreRow .sliderRow { display: flex; align-items: center; gap: var(--space-3); }
-  .scoreRow input[type=range] { flex: 1; max-width: 220px; accent-color: var(--accent2); }
-  .scoreRow .val { width: 18px; text-align: right; font-weight: 700; color: var(--accent2); font-size: var(--text-base); }
 
   footer.page { text-align: center; font-size: var(--text-sm); color: var(--text2); margin-top: 20px; }
   .resetLink { color: var(--text2); text-decoration: underline; cursor: pointer; }
@@ -239,7 +364,7 @@
     user-select: none; transition-property: background-color, border-color, color; transition-duration: .15s; transition-timing-function: var(--spring);
   }
   .slowToggle:hover { background: var(--surface-2); }
-  .slowToggle.on { background: var(--accent2); color: #fff; border-color: var(--accent2); }
+  .slowToggle.on { background: var(--accent2); color: #eef1f7; border-color: var(--accent2); }
 
   .settingsBtn {
     display: flex; align-items: center; justify-content: center; width: 36px; height: 36px;
@@ -251,7 +376,7 @@
 
   /* ---- AI settings modal (bring-your-own API key, for plain-browser use) ---- */
   .modalOverlay {
-    display: none; position: fixed; inset: 0; z-index: var(--z-popup); background: rgba(20,20,30,0.4);
+    display: none; position: fixed; inset: 0; z-index: var(--z-popup); background: rgba(10,10,10,0.7);
     align-items: center; justify-content: center; padding: 20px;
   }
   .modalOverlay.show { display: flex; }
@@ -263,7 +388,7 @@
   .modalHead h3 { font-size: var(--text-lg); font-weight: 700; margin: 0; }
   .modalClose { background: none; border: none; font-size: var(--text-lg); color: var(--text2); cursor: pointer; padding: 4px; line-height: 1; }
   .modalHint { font-size: var(--text-sm); color: var(--text2); line-height: 1.5; margin: 6px 0 16px; }
-  .modalLabel { display: block; font-size: var(--text-xs); font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: var(--text2); margin: 14px 0 6px; }
+  .modalLabel { display: block; font-family: var(--font-mono); font-size: var(--text-xs); font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: var(--text2); margin: 14px 0 6px; }
   .modalLabel:first-of-type { margin-top: 0; }
   .modalInput {
     width: 100%; border: 1.5px solid var(--line); border-radius: var(--radius-sm); padding: 9px 11px; font-size: var(--text-base);
@@ -273,21 +398,45 @@
   .modalActions { display: flex; gap: 8px; margin-top: 18px; }
   .modalStatus { font-size: var(--text-sm); margin-top: 10px; min-height: 16px; }
   .modalStatus.ok { color: var(--good); }
-  .modalStatus.err { color: #e08a8a; }
+  .modalStatus.err { color: var(--error); }
   .modalFoot { font-size: var(--text-xs); color: var(--text2); line-height: 1.5; margin-top: 14px; padding-top: 12px; border-top: 1px dashed var(--line); }
+
+  /* ---- style guide modal ---- */
+  .modalCard.wide { max-width: 640px; }
+  .sgSection { margin-top: 20px; }
+  .sgSection:first-of-type { margin-top: 0; }
+  .sgSection h4 { font-family: var(--font-mono); font-size: var(--text-xs); font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: var(--text2); margin: 0 0 4px; }
+  .sgSection .sgDesc { font-size: var(--text-sm); color: var(--text2); line-height: 1.5; margin: 0 0 12px; }
+  .swatchGrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; }
+  .swatchCard { border: 1px solid var(--line); border-radius: var(--radius-md); overflow: hidden; background: var(--surface-2); }
+  .swatchColor { height: 44px; }
+  .swatchMeta { padding: 8px 10px; }
+  .swatchMeta .sname { font-family: var(--font-mono); font-size: var(--text-xs); font-weight: 700; color: var(--text); display: block; }
+  .swatchMeta .shex { font-family: var(--font-mono); font-size: var(--text-2xs); color: var(--text2); display: block; margin-top: 1px; }
+  .swatchMeta .suse { font-size: var(--text-2xs); color: var(--text2); line-height: 1.4; display: block; margin-top: 4px; }
+  .swatchMeta .scontrast { font-size: var(--text-2xs); font-weight: 700; display: block; margin-top: 4px; }
+  .swatchMeta .scontrast.pass { color: var(--good); }
+  .sgRule { display: flex; gap: 8px; align-items: flex-start; font-size: var(--text-sm); color: var(--text2); line-height: 1.5; padding: 8px 0; border-top: 1px dashed var(--line); }
+  .sgRule:first-child { border-top: none; }
+  .sgRule b { color: var(--text); font-weight: 700; }
+  .sgType div { margin-bottom: 8px; }
+  .sgType .lbl { font-size: var(--text-2xs); color: var(--text3); text-transform: uppercase; letter-spacing: .04em; margin-bottom: 2px; }
   .btnGhost {
-    flex: 1; background: rgba(255,255,255,0.03); border: 1px solid var(--line); border-radius: var(--radius-md);
+    flex: 1; background: transparent; border: 1px solid var(--line-strong); border-radius: var(--radius-md);
     padding: 11px 16px; font-size: var(--text-base); font-weight: 600; color: var(--text2); cursor: pointer;
-    transition-property: background-color, transform; transition-duration: .15s; transition-timing-function: var(--spring);
+    transition-property: background-color, border-color, transform; transition-duration: .15s; transition-timing-function: var(--spring);
   }
-  .btnGhost:hover { background: var(--line); }
+  .btnGhost:hover { background: var(--surface-2); border-color: var(--accent2-line); }
+  /* Flat — no shadow, no glow. Warm-white fill with dark text, per the
+     reference's own component spec ("Primary buttons use a Warm White
+     fill with dark text for maximum impact"); the slate accent is
+     reserved for smaller interactive/active touches, not the main CTA. */
   .btnPrimary {
-    flex: 1; background: linear-gradient(180deg, #7ba0f5, var(--accent2)); border: none; border-radius: var(--radius-md);
-    padding: 11px 16px; font-size: var(--text-base); font-weight: 600; color: #fff; cursor: pointer;
-    box-shadow: 0 1px 0 rgba(255,255,255,0.15) inset, 0 6px 14px -6px rgba(108,147,240,0.55);
+    flex: 1; background: var(--secondary); border: none; border-radius: var(--radius-md);
+    padding: 11px 16px; font-size: var(--text-base); font-weight: 600; color: var(--on-secondary); cursor: pointer;
     transition-property: background-color, transform; transition-duration: .15s; transition-timing-function: var(--spring);
   }
-  .btnPrimary:hover { background: var(--accent2-strong); }
+  .btnPrimary:hover { background: #e5e1d6; }
   .btnPrimary:active, .btnGhost:active { transform: scale(0.96); }
   /* Both buttons default to flex:1 for their original use — two buttons
      splitting one row evenly. Every standalone use (a single CTA button on
@@ -297,7 +446,7 @@
 
   .speakRow { display: flex; align-items: center; gap: 8px; margin: 8px 0; }
   .playBtn {
-    width: var(--icon-sm); height: var(--icon-sm); border-radius: 50%; border: none; background: var(--accent2); color: #fff;
+    width: var(--icon-sm); height: var(--icon-sm); border-radius: 50%; border: none; background: var(--accent2); color: #eef1f7;
     display: inline-flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; font-size: var(--text-xs);
     transition: transform .15s var(--spring), background .15s;
   }
@@ -310,7 +459,7 @@
   /* ---- full audio player (script / long passages) ---- */
   .player { display: flex; align-items: center; gap: 12px; background: var(--accent2-weak); border: 1px solid var(--accent2-line); border-radius: var(--radius-lg); padding: 10px 14px; margin: 10px 0; }
   .playerBtn {
-    width: var(--icon-lg); height: var(--icon-lg); border-radius: 50%; background: var(--accent2); color: #fff; border: none;
+    width: var(--icon-lg); height: var(--icon-lg); border-radius: 50%; background: var(--accent2); color: #eef1f7; border: none;
     display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; font-size: var(--text-md);
     transition: background .15s, transform .15s var(--spring);
   }
@@ -329,12 +478,12 @@
   /* ---- shadowing: one sentence at a time, listen then repeat ---- */
   .shadowWrap { background: var(--accent2-weak); border: 1px solid var(--accent2-line); border-radius: var(--radius-lg); padding: 14px 16px; margin: 10px 0; }
   .shadowHead { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 10px; }
-  .shadowLabel { font-size: var(--text-sm); font-weight: 600; color: var(--accent2-strong); }
+  .shadowLabel { font-size: var(--text-sm); font-weight: 600; color: var(--accent2-fg); }
   .shadowCount { font-size: var(--text-xs); font-weight: 700; color: var(--text2); font-variant-numeric: tabular-nums; white-space: nowrap; }
   .shadowSentence { font-size: var(--text-lg); line-height: 1.6; color: var(--text); background: var(--surface-2); border-radius: var(--radius-md); padding: 12px 14px; margin-bottom: 10px; min-height: 26px; }
   .shadowControls { display: flex; align-items: center; justify-content: center; gap: 12px; }
   .shadowNavBtn {
-    background: var(--surface-2); border: 1px solid var(--accent2-line); color: var(--accent2-strong); border-radius: var(--radius-full);
+    background: var(--surface-2); border: 1px solid var(--accent2-line); color: var(--accent2-fg); border-radius: var(--radius-md);
     padding: 8px 14px; font-size: var(--text-sm); font-weight: 700; cursor: pointer;
     transition-property: background-color, opacity, transform; transition-duration: .15s; transition-timing-function: var(--spring);
   }
@@ -344,8 +493,12 @@
 
   .script.selectable, .body-text.selectable { cursor: text; }
   .selPopup {
+    /* Was background: var(--text) (near-white) + color: #fff — white text
+       on a near-white pill, so the label was practically invisible. Now
+       matches the same warm-fill/dark-text pairing as .btnPrimary, the
+       one other "floating action" surface in the system. */
     position: fixed; z-index: var(--z-popup); transform: translateX(-50%); display: none;
-    background: var(--text); color: #fff; border: none; border-radius: var(--radius-full); padding: 8px 14px;
+    background: var(--secondary); color: var(--on-secondary); border: none; border-radius: var(--radius-sm); padding: 8px 14px;
     font-size: var(--text-sm); font-weight: 700; cursor: pointer; box-shadow: var(--shadow-lg);
   }
   .selPopup.show { display: block; }
@@ -371,11 +524,30 @@
   .dictAnswer { font-size: var(--text-sm); color: var(--text2); margin: -4px 0 8px 38px; display: none; }
   .dictAnswer.show { display: block; }
 
+  /* ---- report key terms: user-editable, individually selectable ---- */
+  .termPill { display: flex; align-items: center; gap: 8px; }
+  .termPill input[type=checkbox] { width: 16px; height: 16px; accent-color: var(--accent2); flex-shrink: 0; cursor: pointer; }
+  /* Same input/button treatment as .dictRow — both are "small inline data
+     entry row" components and should look like one family. */
+  .termAddRow { display: flex; align-items: center; gap: 8px; margin: 4px 0 10px; flex-wrap: wrap; }
+  .termAddRow input {
+    flex: 1; min-width: 120px; border: 1.5px solid var(--line); border-radius: var(--radius-sm); padding: 8px 10px; font-size: var(--text-base);
+    font-family: inherit; transition: border-color .15s;
+  }
+  .termAddRow input:focus { outline: none; border-color: var(--accent2); }
+  .termAddRow button {
+    background: var(--surface-2); border: 1px solid var(--line); border-radius: var(--radius-sm); padding: 8px 11px;
+    font-size: var(--text-xs); font-weight: 600; cursor: pointer; white-space: nowrap; color: var(--text);
+    transition: background .15s, border-color .15s, transform .15s var(--spring);
+  }
+  .termAddRow button:hover { background: var(--line); border-color: var(--line-strong); }
+  .termAddRow button:active { transform: scale(0.96); }
+
   /* ---- weak spot drill: targeted fill-in-the-blank ---- */
   .drillItem { margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px dashed var(--line); }
   .drillItem:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
   .drillSentence { font-size: var(--text-base); line-height: 1.65; color: var(--text); margin-bottom: 10px; }
-  .drillBlank { display: inline-block; min-width: 56px; border-bottom: 2px dashed var(--accent2); color: var(--accent2-strong); font-weight: 700; text-align: center; margin: 0 2px; }
+  .drillBlank { display: inline-block; min-width: 56px; border-bottom: 2px dashed var(--accent2); color: var(--accent2-fg); font-weight: 700; text-align: center; margin: 0 2px; }
   .drillInput { flex: 1; border: 1.5px solid var(--line); border-radius: var(--radius-sm); padding: 8px 10px; font-size: var(--text-base); font-family: inherit; transition: border-color .15s; }
   .drillInput:focus { outline: none; border-color: var(--accent2); }
   .drillInput.ok { border-color: var(--good); background: var(--good-weak); }
@@ -383,29 +555,46 @@
   .drillWhy { margin-left: 0 !important; line-height: 1.5; }
   .drillWhy b { color: var(--good); }
 
-  /* ---- real listening: link out to the actual audio (video can't embed here) ---- */
+  /* ---- real listening: link out to the actual audio (video can't embed here) ----
+     Was a single-line radius-full pill with title + speaker + duration all
+     crammed into one inline string — fine when short, but titles here run
+     long, so it wrapped to 2-3 lines and the fully-rounded pill shape read
+     as a warped stadium blob (exactly the bug .videoLink below was already
+     fixed for once, per its comment — this one just never got the same
+     treatment). Rebuilt on the same icon + two-line-text-stack language as
+     .topicBadge/.player elsewhere: a fixed-size circular icon that doesn't
+     distort, a bold title that can wrap freely, and a quieter meta line
+     for speaker + duration instead of squeezing everything into one row. */
   .realListenLink {
-    display: inline-flex; align-items: center; gap: 8px; background: var(--accent2); color: #fff; text-decoration: none;
-    border-radius: var(--radius-full); padding: 11px 18px; font-size: var(--text-base); font-weight: 700; margin: 10px 0;
-    transition: transform .15s var(--spring), background .15s;
+    display: flex; align-items: center; gap: 12px; background: var(--accent2-weak); color: var(--text);
+    text-decoration: none; border: 1px solid var(--accent2-line); border-radius: var(--radius-lg);
+    padding: 12px 14px; margin: 10px 0; transition: transform .15s var(--spring), background .15s, border-color .15s;
   }
-  .realListenLink:hover { background: var(--accent2-strong); transform: translateY(-1px); }
-  .realListenLink:active { transform: scale(0.96); }
-  .realListenTopic { font-size: var(--text-sm); color: var(--text2); line-height: 1.5; margin-top: 8px; }
+  .realListenLink:hover { background: var(--accent2-line); transform: translateY(-1px); }
+  .realListenLink:active { transform: scale(0.98); }
+  .rllIcon {
+    width: var(--icon-md); height: var(--icon-md); border-radius: 50%; background: var(--accent2); color: #eef1f7;
+    display: flex; align-items: center; justify-content: center; font-size: var(--text-xs); flex-shrink: 0;
+  }
+  .rllText { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .rllTitle { font-size: var(--text-base); font-weight: 700; color: var(--text); line-height: 1.35; text-wrap: pretty; }
+  .rllMeta { font-size: var(--text-xs); color: var(--text2); }
 
   .recWidget { margin-top: 12px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
   .recBtn {
-    background: rgba(224,120,120,0.14); color: #e08a8a; border: 1px solid transparent; border-radius: var(--radius-full); padding: 9px 15px;
+    background: var(--error-weak); color: var(--error); border: 1px solid transparent; border-radius: var(--radius-md); padding: 9px 15px;
     font-size: var(--text-sm); font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 6px;
     transition: transform .15s var(--spring), background .15s, border-color .15s;
   }
-  .recBtn:hover { background: rgba(224,120,120,0.22); border-color: rgba(224,120,120,0.4); }
+  .recBtn:hover { background: rgba(207,154,146,0.22); border-color: rgba(207,154,146,0.4); }
   .recBtn:active { transform: scale(0.96); }
-  .recBtn.active { background: #c0392b; color: #fff; box-shadow: 0 0 0 4px rgba(192,57,43,0.14); }
+  /* Was a bright #c0392b + glow box-shadow — a leftover from the old
+     gamified system that never got migrated to the desaturated --error
+     tokens or the flat/no-shadow rule. */
+  .recBtn.active { background: var(--error); color: var(--on-secondary); box-shadow: none; }
   .recBtn.unavailable { background: var(--surface-2); color: var(--text2); cursor: not-allowed; }
   .recBtn.unavailable:hover { background: var(--surface-2); }
-  .recUnavailNote { font-size: var(--text-xs); color: var(--text2); line-height: 1.5; }
-  .recTimer { font-size: var(--text-sm); font-weight: 700; color: #e08a8a; font-variant-numeric: tabular-nums; }
+  .recTimer { font-size: var(--text-sm); font-weight: 700; color: var(--error); font-variant-numeric: tabular-nums; }
   .recPlayer audio { height: 32px; vertical-align: middle; }
   .recNote { font-size: var(--text-xs); color: var(--text2); }
   .recTranscript {
@@ -415,7 +604,7 @@
 
   /* ---- fill-in fields ---- */
   .noteBlock { margin-top: 12px; }
-  .noteLabel { font-size: var(--text-xs); font-weight: 700; color: var(--text2); text-transform: uppercase; letter-spacing: .04em; margin-bottom: 6px; }
+  .noteLabel { font-family: var(--font-mono); font-size: var(--text-xs); font-weight: 700; color: var(--text2); text-transform: uppercase; letter-spacing: .04em; margin-bottom: 6px; }
   .noteInput {
     width: 100%; border: 1.5px solid var(--line); border-radius: var(--radius-md); padding: 10px 12px; font-size: var(--text-base);
     font-family: inherit; color: var(--text); background: var(--surface-2); transition: border-color .15s, background .15s, box-shadow .15s;
@@ -423,6 +612,26 @@
   .noteInput:hover { border-color: var(--line-strong); }
   .noteInput:focus { outline: none; border-color: var(--accent2); background: var(--surface-2); box-shadow: 0 0 0 3px var(--accent2-weak); }
   textarea.noteInput { resize: vertical; min-height: 56px; line-height: 1.5; }
+  /* Editable model-answer text (Core Answers / My Answers) — reads like
+     body copy until you click in, then behaves like any autosaving field. */
+  .editableAnswer {
+    width: 100%; border: 1.5px solid var(--line); border-radius: var(--radius-md); padding: 10px 12px;
+    font-size: var(--text-md); line-height: 1.7; font-family: inherit; color: var(--text2); background: var(--surface-2);
+    resize: vertical; min-height: 110px; transition: border-color .15s, background .15s, box-shadow .15s;
+  }
+  .editableAnswer:hover { border-color: var(--line-strong); }
+  .editableAnswer:focus { outline: none; border-color: var(--accent2); background: var(--surface-2); box-shadow: 0 0 0 3px var(--accent2-weak); color: var(--text); }
+  /* Looks like .noteInput but deliberately NOT that class — this is a manual
+     paste-and-click-save box (Mock Interview Log), not an autosave field, so
+     it must not trigger the global .noteInput input listener (which would
+     write into state.notes under an undefined key, since it has no data-note). */
+  .plainTextarea {
+    width: 100%; border: 1.5px solid var(--line); border-radius: var(--radius-md); padding: 10px 12px; font-size: var(--text-base);
+    font-family: inherit; color: var(--text); background: var(--surface-2); transition: border-color .15s, background .15s, box-shadow .15s;
+    resize: vertical; min-height: 56px; line-height: 1.5;
+  }
+  .plainTextarea:hover { border-color: var(--line-strong); }
+  .plainTextarea:focus { outline: none; border-color: var(--accent2); background: var(--surface-2); box-shadow: 0 0 0 3px var(--accent2-weak); }
   /* Looks like .noteInput but deliberately NOT that class — the SRS quiz
      attempt box is scratch space before you reveal the answer, not a
      saved note, and must not trigger the global .noteInput autosave
@@ -455,8 +664,12 @@
 
   /* ---- toast ---- */
   .toast {
+    /* Same latent bug as .selPopup was: background: var(--text) (near-
+       white) + color: #fff made the label nearly unreadable. Now uses
+       the same warm-fill/dark-text pairing as the other floating
+       surfaces (.btnPrimary, .selPopup). */
     position: fixed; left: 50%; bottom: 92px; transform: translateX(-50%) translateY(10px); z-index: var(--z-toast);
-    background: var(--text); color: #fff; padding: 11px 18px; border-radius: var(--radius-md); font-size: var(--text-base); font-weight: 600;
+    background: var(--secondary); color: var(--on-secondary); padding: 11px 18px; border-radius: var(--radius-md); font-size: var(--text-base); font-weight: 600;
     opacity: 0; pointer-events: none; transition: opacity .2s, transform .2s; max-width: 90vw; text-align: center;
   }
   .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
@@ -464,22 +677,31 @@
   /* ---- in-page AI correction ---- */
   .aiCheckBlock { margin-top: 14px; padding-top: 12px; border-top: 1px dashed var(--line); }
   .aiBtn {
-    background: var(--accent2-weak); color: var(--accent2-strong); border: 1px solid var(--accent2-line); border-radius: var(--radius-full);
+    background: var(--accent2-weak); color: var(--accent2-fg); border: 1px solid var(--accent2-line); border-radius: var(--radius-md);
     padding: 9px 16px; font-size: var(--text-sm); font-weight: 700; cursor: pointer; transition: transform .15s var(--spring), background .15s;
   }
   .aiBtn:hover { background: var(--accent2-line); transform: translateY(-1px); }
   .aiBtn:active { transform: scale(0.96); }
+  .aiCheckHint { font-size: var(--text-2xs); color: var(--text3); margin-top: 6px; }
+
+  /* ---- mock interview countdown (visual pacer only, nothing recorded) ---- */
+  .mockTimer {
+    display: flex; align-items: center; gap: var(--space-4); background: var(--surface-2); border: 1px solid var(--line);
+    border-radius: var(--radius-lg); padding: 16px 20px;
+  }
+  .mockTimerDisplay { font-family: var(--font-mono); font-size: var(--text-2xl); font-weight: 700; color: var(--text); font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
+  .mockTimerBtns { display: flex; gap: 8px; }
+  .mockTimerBtns .btnPrimary, .mockTimerBtns .btnGhost { flex: none; padding: 9px 16px; }
   .aiBtn:disabled { opacity: 0.6; cursor: default; transform: none; }
   .aiFeedback { display: none; margin-top: 10px; background: var(--accent2-weak); border: 1px solid var(--accent2-line); border-radius: var(--radius-md); padding: 12px 14px; }
   .aiFeedback.show { display: block; }
-  .aiLabel { font-size: var(--text-2xs); font-weight: 700; color: var(--accent2-strong); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 6px; }
+  .aiLabel { font-family: var(--font-mono); font-size: var(--text-2xs); font-weight: 700; color: var(--accent2-fg); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 6px; }
   .aiMsg { font-size: var(--text-base); line-height: 1.65; color: var(--text); white-space: pre-wrap; }
-  .redoBlock { margin-top: 12px; padding-top: 12px; border-top: 1px dashed var(--accent2-line); }
 
   /* ---- structured AI correction cards: clean before/after, not a wall of text ---- */
   .correctionCard { margin-bottom: 14px; }
   .correctionCard:last-child { margin-bottom: 0; }
-  .correctionLabel { font-size: var(--text-2xs); font-weight: 700; color: var(--accent2-strong); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 6px; }
+  .correctionLabel { font-size: var(--text-2xs); font-weight: 700; color: var(--accent2-fg); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 6px; }
   .correctionWhy { font-size: var(--text-sm); color: var(--text2); margin-top: 6px; line-height: 1.5; }
   .correctionGood { font-size: var(--text-base); color: var(--good); font-weight: 600; background: var(--good-weak); border-radius: var(--radius-sm); padding: 8px 11px; }
   /* Two of the four columns hold full sentences now (BEFORE/AFTER text is
@@ -488,13 +710,13 @@
      one: scroll horizontally instead of overflowing or crushing the text. */
   .tableScroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
   .correctionTable { width: 100%; min-width: 560px; border-collapse: separate; border-spacing: 0; margin: 4px 0; font-size: var(--text-base); border: 1px solid var(--line); border-radius: var(--radius-md); overflow: hidden; }
-  .correctionTable th { text-align: left; font-size: var(--text-2xs); font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: var(--text2); background: var(--surface-2); padding: 8px 12px; border-bottom: 1px solid var(--line); }
+  .correctionTable th { text-align: left; font-family: var(--font-mono); font-size: var(--text-2xs); font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: var(--text2); background: var(--surface-2); padding: 8px 12px; border-bottom: 1px solid var(--line); }
   .correctionTable td { padding: 10px 12px; vertical-align: top; border-bottom: 1px solid var(--line); line-height: 1.5; }
   .correctionTable tr:last-child td { border-bottom: none; }
   .correctionTable td.ct-old { color: var(--warn); background: var(--warn-weak); width: 32%; }
   .correctionTable td.ct-new { color: var(--good); background: var(--good-weak); font-weight: 600; width: 32%; }
   .correctionTable td.ct-why { color: var(--text2); font-size: var(--text-sm); }
-  .correctionTable td.ct-item { font-weight: 700; font-size: var(--text-xs); color: var(--accent2-strong); }
+  .correctionTable td.ct-item { font-weight: 700; font-size: var(--text-xs); color: var(--accent2-fg); }
   .correctionTable tr.ct-good td.ct-old, .correctionTable tr.ct-good td.ct-new { background: var(--good-weak); color: var(--good); font-weight: 600; }
   .ct-blurRow { cursor: pointer; }
   .ct-blur { filter: blur(5px); user-select: none; transition: filter .15s ease; }
@@ -503,7 +725,7 @@
   /* ---- spaced review: past AI corrections, re-surfaced ---- */
   .aiHistoryList { display: flex; flex-direction: column; gap: 10px; margin: 10px 0 4px; }
   .aiHistoryItem { background: var(--accent2-weak); border: 1px solid var(--accent2-line); border-radius: var(--radius-md); padding: 12px 14px; }
-  .aiHistoryMeta { font-size: var(--text-2xs); font-weight: 700; color: var(--accent2-strong); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 6px; }
+  .aiHistoryMeta { font-size: var(--text-2xs); font-weight: 700; color: var(--accent2-fg); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 6px; }
 
   /* ---- visual aids: topic icons, diagrams, video links ---- */
   .topicRow { display: flex; align-items: center; gap: 12px; }
@@ -519,8 +741,12 @@
   pre.mermaid { margin: 0; text-align: center; }
 
   .videoLink {
+    /* radius-lg, not radius-full: this block can wrap to two lines of text like a
+       small card, so a full pill (999px) reads as an oversized stadium shape once
+       it's taller than one line. Match it to other same-size content blocks
+       (.player, .shadowWrap, .aiHistoryItem) instead of small single-line badges. */
     display: inline-flex; align-items: center; gap: 9px; margin-top: 10px; font-size: var(--text-sm); font-weight: 600;
-    color: var(--accent2-strong); text-decoration: none; background: var(--accent2-weak); border-radius: var(--radius-full);
+    color: var(--accent2-fg); text-decoration: none; background: var(--accent2-weak); border-radius: var(--radius-lg);
     padding: 7px 8px 7px 14px; transition: transform .15s var(--spring), background .15s;
   }
   .videoLink:hover { background: var(--accent2-line); }
@@ -537,19 +763,29 @@
   .progressFill { height: 100%; width: 100%; transform: scaleX(0); transform-origin: left center; background: linear-gradient(90deg, var(--accent), var(--accent2)); transition: transform .35s var(--spring); border-radius: var(--radius-full); }
   .progressLabel { font-size: var(--text-xs); color: var(--text2); font-weight: 700; white-space: nowrap; }
 
-  .sectionLabel { font-size: var(--text-xs); font-weight: 700; color: var(--text2); text-transform: uppercase; letter-spacing: .05em; margin: 28px 2px 10px; }
+  .sectionLabel { font-family: var(--font-mono); font-size: var(--text-xs); font-weight: 700; color: var(--text2); text-transform: uppercase; letter-spacing: .05em; margin: 28px 2px 10px; }
   .sectionLabel:first-of-type { margin-top: 0; }
 
   /* ---- task rail: single reading-width vertical list. The current task
      expands inline in place — no separate floating card, no dead space,
-     and the eye never has to jump across the page to act on it. ---- */
-  .taskRail {
-    border-radius: var(--radius-lg); background: rgba(255,255,255,0.025); border: 1px solid var(--line);
-    overflow: hidden; margin: var(--space-1) 0 var(--space-5);
-  }
+     and the eye never has to jump across the page to act on it.
+     Reskinned per the reference: the list itself has no outer box/border —
+     rows sit flush on the page background, separated only by hairlines.
+     The one row that's open gets a filled --card block (radius-lg) so it
+     reads as "the thing you're doing now," same as the reference's boxed
+     "Core Answers Drill" card sitting inside an otherwise flat list. ---- */
+  .taskRail { margin: var(--space-1) 0 var(--space-5); }
   .railRow { border-bottom: 1px solid var(--line); }
   .railRow:last-child { border-bottom: none; }
-  .railRow.isCurrent { background: linear-gradient(180deg, var(--accent2-weak), transparent 45%); }
+  .railRow.isCurrent {
+    background: var(--card); border-radius: var(--radius-lg); border-bottom: none;
+    margin: 4px 0; padding-bottom: 4px;
+    /* Extra hierarchy cue beyond the surface-fill step (that step alone
+       was ~1.1:1 against --bg before the token bump above — barely
+       there): a thin accent-colored left edge makes "this is the task
+       you're on" unmistakable at a glance, not just discoverable. */
+    box-shadow: inset 2px 0 0 var(--accent2);
+  }
   .railHead {
     position: relative; display: flex; align-items: center; gap: 13px; width: 100%;
     padding: 14px 16px; cursor: pointer; transition: background-color 0.15s ease;
@@ -557,38 +793,44 @@
   }
   .railHead:focus-visible { outline: 2.5px solid var(--accent2); outline-offset: -2px; }
   .railRow:not(.isCurrent) .railHead:hover { background: rgba(255,255,255,0.025); }
+  /* Done/current used to be two different hues (green vs. brand purple);
+     now they're the same accent at two intensities — a weak tint + a
+     checkmark glyph for "done," a solid fill + the number for "current" —
+     so the two states are still unmistakable at a glance without needing
+     a second color (per the 2026-08-30 decision to follow the reference's
+     single-accent system exactly). */
   .taskDot {
     width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
-    font-size: var(--text-sm); font-weight: 700; color: var(--text3); background: var(--surface-2); border: 2px solid transparent;
-    flex-shrink: 0; transition-property: background-color, border-color, color, box-shadow, transform;
+    font-family: var(--font-mono); font-size: var(--text-sm); font-weight: 700; color: var(--text3); background: transparent; border: 1.5px solid var(--line-strong);
+    flex-shrink: 0; transition-property: background-color, border-color, color, transform;
     transition-duration: .18s; transition-timing-function: var(--spring); cursor: pointer;
   }
-  .taskDot.done { background: var(--good-weak); color: var(--good); border-color: rgba(79,191,139,0.3); }
-  .taskDot.done:hover { transform: scale(1.1); }
-  .taskDot.current { background: var(--accent2); border-color: var(--accent2); color: #fff; box-shadow: 0 0 0 3px var(--accent2-weak); }
+  .taskDot.done { background: var(--accent2-weak); color: var(--accent2-fg); border-color: transparent; }
+  .taskDot.done:hover { transform: scale(1.08); }
+  .taskDot.current { background: var(--accent2); border-color: var(--accent2); color: #eef1f7; }
   .railLabel { flex: 1; min-width: 0; }
   .railLabel .t { font-size: var(--text-md); font-weight: 500; color: var(--text); letter-spacing: -0.005em; }
   .railLabel .m { font-size: var(--text-sm); color: var(--text3); margin-top: 1px; }
   .railChev { color: var(--text3); flex-shrink: 0; transition: transform 0.15s ease; }
-  .railRow.isCurrent .railChev { color: var(--accent2); transform: rotate(90deg); }
+  .railRow.isCurrent .railChev { color: var(--accent2-fg); transform: rotate(90deg); }
 
   .railDetail { padding: 2px 16px 22px 59px; position: relative; animation: focusIn .25s var(--spring); }
   @keyframes focusIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
-  .focusEyebrow { font-size: var(--text-2xs); font-weight: 700; color: var(--accent2); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 10px; }
+  .focusEyebrow { font-family: var(--font-mono); font-size: var(--text-2xs); font-weight: 700; color: var(--text2); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 10px; }
   .focusHead { display: none; }
   .focusIcon { width: var(--icon-lg); height: var(--icon-lg); border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
   .focusHead .titleRow { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
   .focusHead h3 { font-family: var(--font-display); margin: 0; font-size: var(--text-xl); font-weight: 600; letter-spacing: -0.005em; text-wrap: balance; }
   .focusHead .meta { font-size: var(--text-sm); color: var(--text2); margin-top: 1px; }
-  /* Optional-task badge — a real visual signal (not just text in the meta
-     line) so a skippable task reads as skippable at a glance, both in the
-     card header and in the dot rail. Amber/warn-weak on purpose: distinct
-     from the brand teal used everywhere else, and from the green "done"
-     state, so it can't be confused with either. */
+  /* Optional-task badge — still its own color (the warm tertiary tone),
+     kept distinct from --accent2 so "skippable" can't be mistaken for
+     "done"/"current." Rectangular now, not a pill, per the new shape
+     language — pill/stadium shapes are reserved for nothing in this
+     system; even small tags are minimally-rounded rectangles. */
   .optionalBadge {
-    display: inline-flex; align-items: center; font-size: var(--text-2xs); font-weight: 700; text-transform: uppercase;
-    letter-spacing: .04em; color: var(--warn); background: var(--warn-weak); border: 1px solid rgba(224,169,82,0.3);
-    border-radius: var(--radius-full); padding: 2px 8px;
+    display: inline-flex; align-items: center; font-family: var(--font-mono); font-size: var(--text-2xs); font-weight: 700; text-transform: uppercase;
+    letter-spacing: .04em; color: var(--warn); background: var(--warn-weak); border: 1px solid transparent;
+    border-radius: var(--radius-sm); padding: 2px 8px;
   }
   .taskDot.optional { border-style: dashed; border-color: var(--warn); background: var(--warn-weak); color: var(--warn); }
   .taskDot.optional.done { border-style: solid; }
@@ -597,17 +839,21 @@
   .skipLink:hover { color: var(--text); }
   .reviewBanner {
     display: flex; align-items: center; justify-content: space-between; gap: 10px; background: var(--accent2-weak); border: 1px solid var(--accent2-line);
-    border-radius: var(--radius-md); padding: 9px 14px; margin-bottom: var(--space-4); font-size: var(--text-sm); color: var(--accent2-strong); font-weight: 600;
+    border-radius: var(--radius-md); padding: 9px 14px; margin-bottom: var(--space-4); font-size: var(--text-sm); color: var(--accent2-fg); font-weight: 600;
   }
-  .reviewBanner button { background: var(--surface-2); border: 1px solid var(--accent2-line); border-radius: var(--radius-sm); padding: 5px 10px; font-size: var(--text-xs); font-weight: 700; cursor: pointer; color: var(--accent2-strong); }
+  /* Padding/font matched to .dictRow button — both are the same "small
+     secondary utility button" role (Check/Reveal there, Back-to-current
+     here), so they should read as one consistent button size across the
+     app instead of two slightly different scales. */
+  .reviewBanner button { background: var(--surface-2); border: 1px solid var(--accent2-line); border-radius: var(--radius-sm); padding: 8px 11px; font-size: var(--text-xs); font-weight: 700; cursor: pointer; color: var(--accent2-fg); }
 
   .advanceToast {
-    position: absolute; inset: 0; background: rgba(15,17,21,0.94); border-radius: var(--radius-xl); display: flex;
+    position: absolute; inset: 0; background: rgba(10,10,10,0.94); border-radius: var(--radius-xl); display: flex;
     flex-direction: column; align-items: center; justify-content: center; gap: 10px; opacity: 0; pointer-events: none;
     transition: opacity .25s;
   }
   .advanceToast.show { opacity: 1; pointer-events: all; }
-  .advanceToast .tick { width: 52px; height: 52px; border-radius: 50%; background: var(--good); color: #fff; font-size: var(--text-2xl); font-weight: 800; display: flex; align-items: center; justify-content: center; }
+  .advanceToast .tick { width: 52px; height: 52px; border-radius: 50%; background: var(--good); color: var(--on-secondary); font-size: var(--text-2xl); font-weight: 800; display: flex; align-items: center; justify-content: center; }
   .advanceToast .msg { font-weight: 700; color: var(--text); }
 
   /* ---- library layout ---- */
@@ -617,10 +863,56 @@
     .libGrid.two-col { grid-template-columns: 1fr 1fr; align-items: start; }
   }
 
-  /* ---- progress layout ---- */
+  /* ---- progress layout ----
+     Was side-by-side above 760px, but the heatmap card is naturally much
+     taller than the "Share with Claude" card, so the two-column version
+     left the shorter card looking oddly short/empty next to it. Stacked
+     top-to-bottom at every width instead — matches the single-column,
+     one-thing-at-a-time reading rhythm the rest of the app already uses.
+     No max-width override here (that was a mistake — it made this view
+     narrower than .wrap's 720px, inconsistent with Today/Library, which
+     both fill the full content column). */
   .progressGrid { display: grid; grid-template-columns: 1fr; gap: 14px; align-items: start; }
-  @media (min-width: 760px) {
-    .progressGrid { grid-template-columns: 1.15fr 1fr; }
+
+  /* ---- mobile pass ----
+     Base styles above were tuned on a ~720-980px canvas and, until now,
+     shipped with NO <meta viewport> tag at all — so every phone rendered
+     the desktop layout at ~980px and scaled it down, which is why nothing
+     here was ever actually broken on mobile, it was just tiny and required
+     pinch-zoom. The viewport tag (see <head>) fixes that; everything below
+     is the follow-up pass now that phones render at their real width:
+     tighter spacing so content isn't crowded against the edges, the header
+     restacked into clear rows instead of an unpredictable flex-wrap, larger
+     touch targets on icon buttons (36px was under the ~40-44px comfortable
+     minimum), and a smaller hero heading so it doesn't dominate a narrow
+     screen. Every value here reuses the existing spacing/radius/type scale
+     tokens above — no new one-off numbers introduced. */
+  @media (max-width: 640px) {
+    .wrap { padding: 20px 16px 90px; }
+    .topbar-inner {
+      flex-direction: column; align-items: stretch; padding: 16px 16px 14px; gap: var(--space-3);
+    }
+    .brand { justify-content: flex-start; }
+    .topbarRight { justify-content: space-between; }
+    .utilCluster { padding-right: var(--space-2); gap: var(--space-1); }
+    /* 36px was under the general ~40-44px comfortable touch-target
+       minimum; bumped on mobile only since desktop's mouse pointer doesn't
+       need it and the smaller size reads fine there. */
+    .settingsBtn { width: 40px; height: 40px; }
+    .stats { gap: var(--space-1); }
+    .stat { padding: 6px 10px; min-width: 46px; }
+    /* 25px reads oversized against a 375px-wide screen relative to
+       everything below it; one step down the existing type scale keeps it
+       still clearly the largest text on the page without dominating. */
+    .hero h2 { font-size: var(--text-xl); }
+    .card { padding: var(--space-4); }
+    .modalCard { padding: 18px var(--space-4); }
+    /* Same visual relationship as desktop (dot width + row gap + row
+       left-padding = detail indent), just scaled down so the reading
+       column isn't squeezed to ~260px on a narrow phone. */
+    .taskDot { width: 26px; height: 26px; }
+    .railHead { padding: 12px 14px; gap: 10px; }
+    .railDetail { padding: 2px 14px 20px 50px; }
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -633,25 +925,25 @@
 <header class="topbar">
   <div class="topbar-inner">
     <div class="brand">
-      <div class="mark"></div>
+      <svg class="mark" viewBox="0 0 22 22" aria-hidden="true">
+        <rect width="22" height="22" rx="4" style="fill:var(--card)"/>
+        <path d="M5 15 Q11 15 16 6.5" fill="none" style="stroke:var(--accent2)" stroke-width="1.6" stroke-linecap="round"/>
+        <circle cx="16" cy="6.5" r="1.8" style="fill:var(--accent2)"/>
+      </svg>
       <div>
         <h1>Growth Daily</h1>
         <div class="tag">English for Product &amp; AI · Singapore track</div>
       </div>
     </div>
-    <nav class="nav" aria-label="Main">
-      <button class="active" data-view="today" onclick="switchView('today')">Today</button>
-      <button data-view="library" onclick="switchView('library')">Library</button>
-      <button data-view="progress" onclick="switchView('progress')">Progress</button>
-    </nav>
     <div class="topbarRight">
       <div class="utilCluster">
         <button class="slowToggle" id="slowToggle" onclick="toggleSlow()" title="Slow down audio playback" aria-label="Toggle slow audio playback"><svg width="15" height="15" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="13" r="8" stroke="currentColor" stroke-width="2"/><path d="M12 9v4l3 2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 2h6M12 2v3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+        <button class="settingsBtn" id="styleGuideBtn" onclick="openStyleGuide()" title="Style guide" aria-label="Open style guide"><svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c1.1 0 2-.9 2-2 0-.5-.2-1-.5-1.3-.3-.4-.5-.8-.5-1.3 0-1.1.9-2 2-2h2.4c2.3 0 4.1-1.8 4.1-4.1C21.5 6.4 17.2 2 12 2Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><circle cx="7" cy="12" r="1.3" fill="currentColor"/><circle cx="9" cy="7.5" r="1.3" fill="currentColor"/><circle cx="15" cy="7.5" r="1.3" fill="currentColor"/><circle cx="17" cy="12" r="1.3" fill="currentColor"/></svg></button>
         <button class="settingsBtn" id="settingsBtn" onclick="openAiSettings()" title="AI check settings" aria-label="AI check settings"><svg width="15" height="15" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg></button>
       </div>
       <div class="stats">
-        <div class="stat"><span class="ic">🔥</span><div class="col"><div class="n" id="streakN">0</div><div class="l">Streak</div></div></div>
-        <div class="stat"><span class="ic">⚡</span><div class="col"><div class="n" id="xpN">0</div><div class="l">XP</div></div></div>
+        <div class="stat"><span class="ic"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 2c2 3-1 5-1 8a3 3 0 1 0 6 0c0-1-.4-1.8-.4-1.8 1.4 1 2.4 2.8 2.4 4.8a7 7 0 1 1-14 0c0-3.4 2-4.9 3-6.4C9 5.2 10 3.2 12 2Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg></span><div class="col"><div class="n" id="streakN">0</div><div class="l">Streak</div></div></div>
+        <div class="stat"><span class="ic"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg></span><div class="col"><div class="n" id="xpN">0</div><div class="l">XP</div></div></div>
       </div>
     </div>
   </div>
@@ -677,6 +969,76 @@
     </div>
     <div class="modalStatus" id="apiKeyStatus" role="status" aria-live="polite"></div>
     <div class="modalFoot">Stored only in this browser's local storage, on this device. Requests go straight from your browser to Anthropic's API — we never see the key. Using it incurs normal Anthropic API charges on your account.</div>
+  </div>
+</div>
+
+<div class="modalOverlay" id="styleGuideOverlay" onclick="if(event.target===this) closeStyleGuide()">
+  <div class="modalCard wide">
+    <div class="modalHead">
+      <h3>Style guide</h3>
+      <button class="modalClose" onclick="closeStyleGuide()" aria-label="Close">✕</button>
+    </div>
+    <p class="modalHint">"Obsidian Journal" — Growth Daily's color/type system since the 2026-08-30 redesign (built from real Stitch-generated reference screens, not guessed). Kept here so any future change can be checked against a rule instead of a gut feeling.</p>
+
+    <div class="sgSection">
+      <h4>Accent — desaturated slate blue</h4>
+      <p class="sgDesc">The app's one accent hue. Used at brand/interactive touchpoints (active nav, links, focus rings, drill blanks) <b>and</b> as the "done"/"current" signal in the task list and progress heatmap — a deliberate merge (2026-08-30), read apart by icon (checkmark vs. number vs. outline), not a second color. Content-correctness feedback below stays a separate set of colors; that distinction is still load-bearing.</p>
+      <div class="swatchGrid">
+        <div class="swatchCard"><div class="swatchColor" style="background:var(--accent2)"></div><div class="swatchMeta"><span class="sname">accent2</span><span class="shex">#6f80a0</span><span class="suse">Solid fills — task dots, icon circles, heatmap "done" cells. Pair with accent2-fg or #eef1f7 text, not pure white.</span><span class="scontrast pass">~3.7:1 — fine for icons/UI, not for body text</span></div></div>
+        <div class="swatchCard"><div class="swatchColor" style="background:var(--accent2-strong)"></div><div class="swatchMeta"><span class="sname">accent2-strong</span><span class="shex">#56637d</span><span class="suse">Hover/pressed states; the "interview" task icon (weightier tone of the same hue, not a second color)</span></div></div>
+        <div class="swatchCard"><div class="swatchColor" style="background:var(--accent2-fg)"></div><div class="swatchMeta"><span class="sname">accent2-fg</span><span class="shex">#c3d0ea</span><span class="suse">Accent-colored text/labels on a dark card</span><span class="scontrast pass">on card ~11:1 ✓</span></div></div>
+        <div class="swatchCard"><div class="swatchColor" style="background:var(--accent2-weak)"></div><div class="swatchMeta"><span class="sname">accent2-weak</span><span class="shex">18% wash</span><span class="suse">Tinted backgrounds behind accent-colored blocks</span></div></div>
+      </div>
+    </div>
+
+    <div class="sgSection">
+      <h4>Secondary — warm cream</h4>
+      <p class="sgDesc">Reserved for the primary CTA fill only (e.g. the big "Continue" button) — per the reference's own spec, "primary buttons use a Warm White fill with dark text for maximum impact." Not used anywhere else; using it more often would dilute what makes the main action stand out.</p>
+      <div class="swatchGrid">
+        <div class="swatchCard"><div class="swatchColor" style="background:var(--secondary)"></div><div class="swatchMeta"><span class="sname">secondary</span><span class="shex">#f4f1ea</span><span class="suse">Primary button fill, toast, selection popup — always paired with on-secondary text</span></div></div>
+        <div class="swatchCard"><div class="swatchColor" style="background:var(--on-secondary)"></div><div class="swatchMeta"><span class="sname">on-secondary</span><span class="shex">#1c1c18</span><span class="suse">Text on top of secondary fills</span></div></div>
+      </div>
+    </div>
+
+    <div class="sgSection">
+      <h4>Neutrals</h4>
+      <p class="sgDesc">Near-black base with two visible surface steps above it — deliberately more separated than the reference's own raw tokens, since a barely-perceptible step defeats the point of "tonal layering."</p>
+      <div class="swatchGrid">
+        <div class="swatchCard"><div class="swatchColor" style="background:var(--bg)"></div><div class="swatchMeta"><span class="sname">bg</span><span class="shex">#0a0a0a</span><span class="suse">Page background</span></div></div>
+        <div class="swatchCard"><div class="swatchColor" style="background:var(--card)"></div><div class="swatchMeta"><span class="sname">card</span><span class="shex">#1a1a1a</span><span class="suse">Cards, the current-task highlight</span></div></div>
+        <div class="swatchCard"><div class="swatchColor" style="background:var(--surface-2)"></div><div class="swatchMeta"><span class="sname">surface-2</span><span class="shex">#242424</span><span class="suse">Hover states, inputs, chips — one step above card</span></div></div>
+        <div class="swatchCard"><div class="swatchColor" style="background:var(--text)"></div><div class="swatchMeta"><span class="sname">text</span><span class="shex">#e5e2e1</span><span class="suse">Primary reading text</span></div></div>
+        <div class="swatchCard"><div class="swatchColor" style="background:var(--text2)"></div><div class="swatchMeta"><span class="sname">text2</span><span class="shex">#9a9a9a</span><span class="suse">Secondary text, captions</span></div></div>
+        <div class="swatchCard"><div class="swatchColor" style="background:var(--text3)"></div><div class="swatchMeta"><span class="sname">text3</span><span class="shex">#5c5c5c</span><span class="suse">Tertiary labels, eyebrows</span></div></div>
+      </div>
+    </div>
+
+    <div class="sgSection">
+      <h4>Semantic feedback</h4>
+      <p class="sgDesc">Correct / needs work / recording — for content correctness only (AI grammar corrections, drill validation). Desaturated to sit quietly in this palette instead of the old bright green/amber/red, but kept as a separate color family from the accent on purpose: this is the one distinction that's still functionally load-bearing.</p>
+      <div class="swatchGrid">
+        <div class="swatchCard"><div class="swatchColor" style="background:var(--good)"></div><div class="swatchMeta"><span class="sname">good</span><span class="shex">#8fae94</span><span class="suse">Correct / success</span><span class="scontrast pass">on card ~7:1 ✓</span></div></div>
+        <div class="swatchCard"><div class="swatchColor" style="background:var(--warn)"></div><div class="swatchMeta"><span class="sname">warn</span><span class="shex">#cba572</span><span class="suse">Needs review / caution / optional-task tag</span></div></div>
+        <div class="swatchCard"><div class="swatchColor" style="background:var(--error)"></div><div class="swatchMeta"><span class="sname">error</span><span class="shex">#cf9a92</span><span class="suse">Incorrect / recording indicator</span></div></div>
+      </div>
+    </div>
+
+    <div class="sgSection">
+      <h4>Usage rules</h4>
+      <div class="sgRule"><span>🔷</span><span><b>Accent = interaction + completion, never content correctness.</b> It marks what's clickable, active, or done — the separate good/warn/error family is what tells you if an answer was right or wrong.</span></div>
+      <div class="sgRule"><span>🔠</span><span><b>Monospace is for short UI chrome only.</b> Labels, numbers, nav, meta counters — never paragraphs, scripts, drills, or anything read at length; monospace slows long-form reading.</span></div>
+      <div class="sgRule"><span>✒️</span><span><b>Serif is for the daily headline only.</b> Source Serif 4 is the one deliberate flourish — "thought of the day" moments and card/section titles. Geist carries every paragraph, script, and drill (chosen to stay legible for a non-native reader).</span></div>
+      <div class="sgRule"><span>◻️</span><span><b>No pills.</b> Corner radius is small and rectangular everywhere (2–10px); radius-full is reserved strictly for true circles and progress-bar caps, never for buttons, tags, or badges.</span></div>
+      <div class="sgRule"><span>▬</span><span><b>Flat, no shadows.</b> Surfaces are told apart by background-color steps and hairline borders (var(--line)/var(--line-strong)), not drop shadows or lift-on-hover.</span></div>
+      <div class="sgRule"><span>👁️</span><span><b>Contrast is checked</b> against the exact surface a color sits on, not assumed from the palette alone — see the ratios noted above.</span></div>
+    </div>
+
+    <div class="sgSection sgType">
+      <h4>Type</h4>
+      <div><div class="lbl">Serif — daily headline only</div><div style="font-family:var(--font-display); font-size:var(--text-xl); font-weight:600;">Sound to meaning</div></div>
+      <div><div class="lbl">Mono — UI chrome</div><div style="font-family:var(--font-mono); font-size:var(--text-md); font-weight:650;">Growth Daily · Day 12 · Streak 7</div></div>
+      <div><div class="lbl">Body — reading content (Geist)</div><div style="font-size:var(--text-md); line-height:1.6; color:var(--text2);">Short sentences, weak forms, linking, one-minute retells.</div></div>
+    </div>
   </div>
 </div>
 
@@ -711,12 +1073,14 @@
   <div id="view-library" style="display:none;">
     <div class="libTabs">
       <button class="active" data-lib="listening" onclick="switchLib('listening')">Listening Labs</button>
+      <button data-lib="myanswers" onclick="switchLib('myanswers')">My Answers</button>
       <button data-lib="stories" onclick="switchLib('stories')">Story Bank</button>
       <button data-lib="sentence" onclick="switchLib('sentence')">Sentence Network</button>
       <button data-lib="grammar" onclick="switchLib('grammar')">Grammar Repair</button>
       <button data-lib="questions" onclick="switchLib('questions')">Question Decoder</button>
       <button data-lib="scenarios" onclick="switchLib('scenarios')">Workplace Scenarios</button>
       <button data-lib="reports" onclick="switchLib('reports')">AI Industry Reports</button>
+      <button data-lib="mocklog" onclick="switchLib('mocklog')">Mock Interview Log</button>
     </div>
     <div id="libContent"></div>
   </div>
@@ -734,32 +1098,34 @@
         </div>
         <div class="heatmapStreak" id="heatmapStreak"></div>
       </div>
-      <div class="card">
-        <div class="card-head"><h3>Weekly self-scorecard</h3></div>
-        <div class="meta" style="margin:-8px 0 12px;">Rate yourself 1–5, update any time.</div>
-        <div class="scorecard" id="scorecard"></div>
-      </div>
-      <div class="card" style="border-left: 3px solid var(--accent2);">
+      <div class="card" style="box-shadow: inset 3px 0 0 var(--accent2);">
         <div class="card-head"><h3>Share with Claude</h3></div>
         <div class="meta" style="margin:-8px 0 12px;">Everything you've written stays only on this device — I can't read it directly. Copy it here, then paste into the chat if you want it reviewed.</div>
-        <button class="btnPrimary solo" onclick="exportAnswersToClipboard()">📋 Copy all my answers</button>
+        <button class="btnPrimary solo" onclick="exportAnswersToClipboard()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" style="vertical-align:-2px; margin-right:6px;"><rect x="8" y="2" width="8" height="4" rx="1" stroke="currentColor" stroke-width="1.6"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>Copy all my answers</button>
         <div class="modalStatus" id="exportStatus" style="margin-top:10px;" role="status" aria-live="polite"></div>
-      </div>
-      <div class="card" style="border-left: 3px solid var(--accent2);">
-        <div class="card-head"><h3>Backup &amp; restore</h3></div>
-        <div class="meta" style="margin:-8px 0 12px;">Your streak, XP, and every answer live only in this browser. If you move this app to a new address, download a backup here first, then restore it on the new site — nothing carries over automatically otherwise.</div>
-        <div class="btnRow">
-          <button class="btnPrimary solo" onclick="downloadBackup()">⬇️ Download backup (.json)</button>
-          <button class="btnGhost solo" onclick="document.getElementById('restoreFileInput').click()">⬆️ Restore from backup</button>
-        </div>
-        <input type="file" id="restoreFileInput" accept="application/json" style="display:none;" onchange="restoreBackup(this.files[0])">
-        <div class="modalStatus" id="backupStatus" style="margin-top:10px;" role="status" aria-live="polite"></div>
       </div>
     </div>
   </div>
 
   <footer class="page">Progress is saved on this device. <span class="resetLink" id="resetLink">Reset all progress</span></footer>
 </main>
+
+<nav class="bottomNav nav" aria-label="Main">
+  <div class="bottomNav-inner">
+    <button class="active" data-view="today" onclick="switchView('today')">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="16" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="M3 9.5h18M8 3v3M16 3v3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+      Today
+    </button>
+    <button data-view="library" onclick="switchView('library')">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H12v18H6.5A2.5 2.5 0 0 1 4 18.5v-13Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M12 3h5.5A2.5 2.5 0 0 1 20 5.5v13a2.5 2.5 0 0 1-2.5 2.5H12" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+      Library
+    </button>
+    <button data-view="progress" onclick="switchView('progress')">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M4 20V10M12 20V4M20 20v-7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+      Progress
+    </button>
+  </div>
+</nav>
 
 <script src="https://cdn.jsdelivr.net/npm/mermaid@11.15.0/dist/mermaid.min.js" integrity="sha384-yQ4mmBBT+vhTAwjFH0toJXNYJ6O4usWnt6EPIdWwrRvx2V/n5lXuDZQwQFeSFydF" crossorigin="anonymous"></script>
 <script>
@@ -790,6 +1156,18 @@ function renderMermaids() {
 }
 </script>
 <script>
+/* ============================================================
+   Small inline icon set — matches the stroke-based, currentColor style
+   used by the nav-bar icons (slow-toggle clock, settings gear, style
+   guide palette) instead of platform emoji, which render as full-color
+   glyphs that clash with the app's flat monochrome/violet chrome.
+   Used as prefixes inside button labels via innerHTML (not textContent,
+   which would print the tags literally instead of rendering them).
+   ============================================================ */
+const ICO_SPARKLE = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" style="vertical-align:-2px; margin-right:5px;"><path d="m12 3-1.6 4.9a2 2 0 0 1-1.3 1.3L4 11l5.1 1.7a2 2 0 0 1 1.3 1.3L12 19l1.6-4.9a2 2 0 0 1 1.3-1.3L20 11l-5.1-1.7a2 2 0 0 1-1.3-1.3L12 3Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>';
+const ICO_MIC = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" style="vertical-align:-2px; margin-right:5px;"><rect x="9" y="2" width="6" height="12" rx="3" stroke="currentColor" stroke-width="1.7"/><path d="M5 10v1a7 7 0 0 0 14 0v-1M12 18v3" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>';
+const ICO_CLIPBOARD = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" style="vertical-align:-2px; margin-right:6px;"><rect x="8" y="2" width="8" height="4" rx="1" stroke="currentColor" stroke-width="1.6"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>';
+
 /* ============================================================
    CONTENT — drawn from Yuwen's uploaded Foundation & Interview packs
    ============================================================ */
@@ -960,7 +1338,33 @@ const REAL_LISTENING = [
   { title:"Lenny Rachitsky on the one question every piece of content needs to answer", speaker:"Lenny Rachitsky, via David Perell", dur:57,
     url:"https://www.youtube.com/shorts/E_GZ_lb6qGU",
     topic:"His real framing: people buy a product, listen to a podcast, or read a newsletter because they're \"hiring\" it to do a specific job for them (get better at their career, learn to write, be entertained). His point is that the best newsletters and products are the ones that solve one specific job extremely well, rather than trying to be everything.",
-    before:["Guess before listening: what 'job' would you say this English-practice app is hired to do for you?","Listen for the specific example job he uses about learning to write online."] }
+    before:["Guess before listening: what 'job' would you say this English-practice app is hired to do for you?","Listen for the specific example job he uses about learning to write online."] },
+  // Added later — sourced from Y Combinator's official Startup Library
+  // (ycombinator.com/library), which publishes full verified transcripts
+  // alongside each video. Topics below are drawn directly from those
+  // transcripts, not guessed from titles/descriptions. These run longer
+  // than the shorts above, so listenWatchInstruction() correctly tells
+  // you to just watch the first 2–3 minutes rather than the whole thing.
+  { title:"How to Plan an MVP", speaker:"Michael Seibel, Y Combinator", dur:830,
+    url:"https://www.youtube.com/watch?v=1hHMwLxN6EM",
+    topic:"From the official YC transcript: Seibel's core rule is \"launch something bad, quickly\" — he argues real launches (Airbnb, Twitch, Stripe) all started embarrassingly simple, and that founders should hold the problem and the customer tightly but hold their solution loosely, iterating fast instead of falling in love with the first version.",
+    before:["Guess before listening: what does he say is the one thing to remember from the whole talk, if you remember nothing else?","Listen for the specific example he gives about Airbnb's first version — what feature was completely missing?"] },
+  { title:"How Much Equity to Give Your Cofounder", speaker:"Michael Seibel, Y Combinator", dur:237,
+    url:"https://www.youtube.com/watch?v=9NhEBVPlJs4",
+    topic:"His real advice, from the official transcript: equity should be split equally between co-founders because it takes 7–10 years to build something valuable, so small differences in who did more in month one don't matter — and the real safety mechanism against a bad split isn't unequal ownership, it's vesting with a one-year cliff.",
+    before:["Guess before listening: does he recommend equal or unequal equity splits between co-founders?","Listen for the two specific numbers he gives for a standard vesting schedule — how many years, and how long is the cliff?"] },
+  { title:"Biggest Mistakes First-Time Founders Make", speaker:"Michael Seibel, Y Combinator", dur:423,
+    url:"https://www.youtube.com/watch?v=D56QeyyQMLI",
+    topic:"Verified from the real transcript: his list includes solving a problem you don't actually care about, choosing co-founders you don't know well, and — his most repeated point — being too afraid to launch because you're picturing press coverage, when in reality almost nobody remembers the day any product they now use actually launched.",
+    before:["Guess before listening: name one product you use today — do you remember the actual day it launched?","Listen for which named products he uses as his examples of launches nobody remembers."] },
+  { title:"How Pitching Investors Is Different Than Pitching Customers", speaker:"Michael Seibel, Y Combinator", dur:380,
+    url:"https://www.youtube.com/watch?v=pQnOBHNKlgs",
+    topic:"His real framing, from the transcript: with customers you build credibility with industry jargon and let them do most of the talking about their problem; with investors jargon actively hurts you, and he uses a mock Google pitch (\"Google organizes the world's information\" vs. explaining what a search box actually does) to show the difference between marketing language and language an outsider can actually follow.",
+    before:["Guess before listening: should you use more or less industry jargon when talking to an investor, compared to a customer?","Listen for the exact company he uses as his pitch example."] },
+  { title:"Why Do Startups Fail?", speaker:"Harj Taggar, Y Combinator", dur:150,
+    url:"https://www.youtube.com/watch?v=gQ_rZc0YUNw",
+    topic:"His real chain of logic from the transcript: startups fail because founders give up, founders give up because they run out of money or energy, and that almost always traces back to not talking to users early enough — including his point that even citing Steve Jobs as an excuse to skip user research misunderstands what Jobs actually did.",
+    before:["Guess before listening: what's the very first reason he gives for why startups fail, before he works backward to the real root cause?","Listen for the analogy he uses — comparing a founder to a doctor and users to what?"] }
 ];
 
 // Each theme has 2 variant sets so the same 8-theme rotation doesn't show
@@ -1078,8 +1482,64 @@ const STORY_BANK = [
  { title:"Alti — high-altitude safety companion", icon:"mountain", use:"field insight, consumer product concept, wearable data, safety design, AI guidance",
    short:"Alti is a high-altitude safety companion inspired by field observation in western Sichuan. Existing wearables show health data, but users experiencing altitude sickness may not have the energy to interpret it. The concept turns passive signals into clear guidance across preparation, tracking, offline maps and SOS.",
    long:"I developed Alti after observing a friend use oxygen during a high-altitude trip in western Sichuan. Existing wearables provide passive health data, but when someone feels unwell they may not be able to interpret heart rate, oxygen saturation and altitude together. I designed an experience across four moments: planning before the trip, real-time guidance during the activity, an offline map with hospitals and rescue points, and SOS support. Safety requires conservative thresholds, transparent reasoning and clear escalation to professional help.",
-   follow:"How do you manage medical risk? What data would the product need? Why is AI useful here?" }
+   follow:"How do you manage medical risk? What data would the product need? Why is AI useful here?" },
+ { title:"Huawei two-week pitch (pressure story)", icon:"time", use:"handling pressure, ruthless prioritisation, cross-functional leadership, tight deadlines",
+   short:"In 2018, my team had two weeks to build a business intelligence platform for a pitch to Huawei — normally a six-to-eight week project. As product owner, I quickly aligned with stakeholders on the three or four most important features, built simple wireframes instead of polished designs, and ran 30-minute daily check-ins to keep engineering, business and marketing aligned. We delivered on time and won the partnership — our biggest pitch success that year.",
+   long:"One story that shows how I handle pressure is from 2018. My team had a chance to pitch to Huawei, the biggest potential client we had that year, but the task was to build a business intelligence platform in just two weeks — normally this kind of project takes six to eight weeks. As product owner, I led the design and worked closely with engineering, business and marketing. First, I quickly gathered requirements from stakeholders and prioritised only the three or four features that mattered most, deliberately cutting everything else. Then, instead of chasing polished designs, I built simple wireframes and got fast feedback so we could keep moving. I also set up 30-minute daily check-ins with the cross-functional team so everyone stayed aligned without long meetings eating into the timeline. We delivered on time with high quality and won the Huawei partnership — the biggest pitch success of that year. It taught me that under real pressure, the job isn't to do everything — it's to focus ruthlessly on what actually matters.",
+   follow:"What did you cut, and how did you decide? How did you keep quality high with such a short timeline? What would you do differently with more time?" },
+ { title:"AI Agent — RAG + Brand Personalization", icon:"blocks", use:"0-to-1 AI feature design, RAG, enterprise clients, brand customisation, measurable business impact",
+   short:"I worked with enterprise clients who wanted their own AI agents but ran into two problems: answers weren't accurate to their own data, and the agent didn't reflect their brand. As product lead, I designed a RAG system so clients could upload their own documents for accurate answers, plus a Brand Personalization Suite for logo, tone and guidelines. After launch, accuracy satisfaction went from 40% to 80%, and we landed five new enterprise contracts in three months.",
+   long:"I worked with enterprise clients who wanted to build their own AI agents but ran into two key issues: the agents weren't answering questions accurately using the company's own data, like internal docs or product specs, and the agents didn't reflect the client's brand — the tone, colors and guidelines felt generic. As product lead, I designed two core features to solve this. First, I integrated a Retrieval-Augmented Generation system so clients could upload their own documents and the agent could pull answers directly from their data. Second, I added a Brand Personalization Suite — clients could upload their logo, brand colors, tone guidelines and custom greetings, so the agent felt like an extension of their brand instead of a generic tool. The biggest challenge was usability: some clients weren't technical, so I simplified the upload flow with drag-and-drop, auto-tagging and a preview tool to test if the agent was pulling the right information. For branding, early versions felt clunky, so I added a brand preview feature plus templates for common industries. After launch, 80% of clients reported the agent's answers were consistently accurate, up from 40% with the generic version, and 90% said it felt like part of their brand. We landed five new enterprise contracts in three months, and renewal rates went up 20%. It taught me that for enterprise AI, customisation in both data and brand matters just as much as the underlying technology.",
+   follow:"How did you handle non-technical clients? What made the RAG system hard to build? How did you measure 'felt like their brand'?" }
 ];
+
+// Your own real interview Q&A — imported from your notes so daily practice
+// uses material you'll actually be asked, not generic prompts. Also powers
+// the daily "Core Answers Drill" required task. "answer" is the full
+// reference version (editable, shown as a check-after-you-speak comparison);
+// "points" are the key beats she's asked to hit from memory each day, so
+// she's rebuilding the answer live instead of reciting a fixed script —
+// scripted verbatim delivery is a known interviewer red flag.
+// Swap "[Company]" for whoever you're actually interviewing with.
+const CORE_ANSWERS_BANK = [
+  { key:"selfintro", icon:"chat", title:"Self-introduction", subtitle:"opening answer for \"tell me about yourself\"",
+    points:["8+ years in design, strategy & AI applications","Started as Product Designer at Shopee & Publicis Groupe","Got deep into AI product logic & complex workflows","Past 2 years: independent AI consultant for Fortune 500 clients + startups","0-to-1 AI agent planning, RAG, working directly with CEOs","Evaluate LLMs (GPT, Gemini, Chinese models), optimise cost/tokens","Lead a small cross-functional R&D team","Passionate about scalable, practical, user-friendly AI → excited about [Company]"],
+    answer:"I'm Yuwen, a product owner with 8+ years of experience in design, strategy and AI applications. I started my career as a product designer at leading tech companies like Shopee, and top advertising groups like Publicis Groupe. Beyond UI design, I got deeply involved in defining AI product logic and planning complex product workflows. For the past two years, I've been working independently as an AI consultant for Fortune 500 clients and startups. My work focuses on end-to-end zero-to-one planning of AI agents — I collaborate directly with CEOs to define features, integrate RAG into AI agents, and oversee everything from design to launch. I also design AI consumer apps and evaluate different large language models, including ChatGPT, Gemini and Chinese models, to select the best fit for each product, optimize token usage, reduce costs and ensure a smooth user experience. On top of that, in my most recent project, I lead a small cross-functional R&D team, coordinating front-end, back-end and QA engineers to drive delivery of AI products. I'm really passionate about building AI products that are scalable, practical and user-friendly, which is why I'm excited about [Company]'s AI-first vision." },
+  { key:"whyfulltime", icon:"path", title:"Why full-time now (leaving contract work)", subtitle:"why did you do contract work, why look for full-time now",
+    points:["AI evolving fast → wanted to explore different projects","Used latest AI tech to stay current, build skills","Now: ready to apply that experience for bigger impact","Ideally at a company like [Company] — reaches many users, long-term value"],
+    answer:"Over the past two years, AI has been evolving really fast, and I wanted to explore different projects to see how AI can be applied in practice. I've also been using the latest AI technologies to stay on top of trends and build my skills. Now, after gaining that experience, I'm looking for a full-time role where I can apply what I've learned to make a bigger impact — ideally at a company like [Company], building products that reach many users and have long-term value." },
+  { key:"whyleaving", icon:"compass", title:"Why are you looking for a new opportunity", subtitle:"离职原因",
+    points:["Current CEO shifted strategy: AI applications → AI research","Doesn't align with my interest in AI products / applied AI","My role: lead cross-functional team, 0-to-1 AI apps & agents","Gained valuable hands-on applied-AI + execution experience","Now looking for a role using design + AI application + product strategy","See this role as a strong fit"],
+    answer:"My current CEO has shifted the company's strategy from building AI applications toward AI research. That direction doesn't fully align with my interests, since I'm keen to keep working on AI products and applied AI technologies. In my current role, I lead a cross-functional team to quickly develop AI apps and agents, driving products from zero to one and turning large-model capabilities into practical solutions. That's given me valuable hands-on experience in applied AI and product execution. I'm now looking for a role where I can further use my strengths in design, AI application and product strategy — and I see this role as a strong fit." },
+  { key:"achievement", icon:"present", title:"Biggest achievement", subtitle:"AI agent platform — concept to prototype in days",
+    points:["AI agent platform project","Worked directly with the CEO — business plan → product vision","Designed the IA and UX/UI","Collaborated with a small dev team","Concept → working prototype in just a few days","Helped validate the business model quickly","Learning: strategy, design & execution come together in AI products"],
+    answer:"One project I'm proud of is an AI agent platform. I worked directly with the CEO, translated the business plan into a product vision, designed the information architecture and UX/UI, and collaborated with a small dev team. We went from concept to a working prototype in just a few days, which helped validate the business model quickly. That project really showed me how strategy, design and execution come together in AI products." },
+  { key:"salary", icon:"negotiate", title:"Salary expectations", subtitle:"期望薪资",
+    points:["Current salary: 8,500 SGD/month","Flexible depending on total package (bonus, benefits)","Market rate for AI roles: 10,000–12,000 SGD","Priority right now: finding the right team fit"],
+    answer:"My current salary is 8,500 SGD per month. I'm flexible depending on the total package, including bonus and benefits. Based on my experience and current market rates for AI roles, I'm looking at a range around 10,000 to 12,000 SGD. That said, finding the right team fit is my priority right now." },
+  { key:"motivation", icon:"ai", title:"Motivation for this company", subtitle:"why [Company]",
+    points:["Reason 1: product direction aligns with my AI-native workflow experience","Reason 2: excited about the scale and user impact this team has"],
+    answer:"Two reasons. First, the product direction aligns closely with my recent experience in AI-native workflows and complex product design. Second, I'm excited about the scale and user impact your team has — it's the kind of environment where design decisions truly matter." },
+  { key:"llmexperience", icon:"robot", title:"Experience with AI / LLMs", subtitle:"model selection & cost optimisation",
+    points:["Expertise: strategic model selection & cost optimisation","Evaluated global LLMs (GPT-4) vs Chinese LLMs","Designed a routing strategy — simple tasks → cheap models, complex → powerful models","Result: reduced token costs by 40%, kept quality high"],
+    answer:"My expertise is in strategic model selection and cost optimisation. In my recent projects, I independently led the product logic for AI applications, evaluating both global LLMs, like GPT-4, and Chinese LLMs, to find the best fit. I designed a routing strategy — directing simple tasks to cheaper models and complex tasks to more powerful models. This approach reduced token costs by 40% while maintaining high quality." },
+  { key:"workwithengineers", icon:"network", title:"How you work with engineers", subtitle:"shared problem-solving, not a handoff",
+    points:["Prefer working closely with engineers, especially on AI projects","Align early on technical constraints","Co-create the interaction logic","Test ideas with quick prototypes","Example: prompt structure, response display, error/edge cases","It's shared problem-solving, not a handoff"],
+    answer:"I prefer working very closely with engineers, especially on AI projects, where feasibility changes quickly. Instead of designing everything upfront, I usually align early on technical constraints, co-create the interaction logic, and test ideas with quick prototypes. For example, on my AI project, I worked with engineers on how prompts are structured, how responses are displayed, and how to handle errors and edge cases. I see it as a shared problem-solving process rather than a handoff." },
+  { key:"aitrust", icon:"shield", title:"How you build AI trust", subtitle:"transparency + feedback loops",
+    points:["Prioritise transparency + user feedback","Show how the AI arrives at answers (sources, reasoning steps)","Feedback loop: rate answers helpful / not helpful","Iterate — e.g. refine unclear medical explanations","Result: transparent system that improves over time, builds trust"],
+    answer:"When building an AI answer system, I prioritise transparency and user feedback to build trust. First, I show how the AI arrives at its answers — for example, listing key sources or reasoning steps — so users understand the logic. Second, I add a feedback loop: users can rate answers as helpful or not helpful, which flags issues like unclear explanations or errors. Third, I use that feedback to iterate — for example, if users often mark medical answers as unclear, I refine how the AI explains health terms. This makes the system transparent and lets it get better over time, which builds user trust." }
+];
+
+// Mock Interview Log — a growing, self-service record of real transcripts
+// from the live Mock Interview roleplay. She runs the transcript through a
+// correction agent she built in Doubao (the app she does the live roleplay
+// in) and pastes the raw output into a box in the "Mock Interview Log"
+// Library tab. That's parsed (splitMockLogOutput / parseAiFeedback below)
+// and stored in state.mockLog — not hardcoded here — so it persists across
+// sessions the same way everything else does, with no dependency on this
+// chat being open. Deliberately not part of Today: a standalone archive she
+// checks on her own time to see real trend over weeks.
 
 const REVIEW_CHECKLIST = [
   "Did I answer the actual question in the first 15 seconds?",
@@ -1102,14 +1562,18 @@ const ICONS = {
   scenario: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="8" cy="8" r="2.3" stroke="#fff" stroke-width="1.75"/><circle cx="16" cy="8" r="2.3" stroke="#fff" stroke-width="1.75"/><path d="M4 19c0-3 2-5 4-5s4 2 4 5M12 19c0-3 2-5 4-5s4 2 4 5" stroke="#fff" stroke-width="1.75" stroke-linecap="round"/></svg>`,
   report: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="9" r="4.2" stroke="#fff" stroke-width="1.75"/><path d="M12 13.2V17M8.5 20h7M9.5 6.2c.6-.9 1.6-1.4 2.5-1.4s1.9.5 2.5 1.4" stroke="#fff" stroke-width="1.75" stroke-linecap="round"/><circle cx="7" cy="9" r="1" fill="#fff"/><circle cx="17" cy="9" r="1" fill="#fff"/></svg>`
 };
+// Leftover from the old indigo/gradient system (2026-08-31: #6c93f0/
+// #4a6fd1 never got migrated to Obsidian Journal's tokens, and #262a33
+// was a dark-slate fill from before --surface-2 existed). Gradients are
+// out per the reference; "listening" (lighter/in-motion) vs "interview"
+// (weightier) is now two tonal steps of the same --accent2 hue instead
+// of two different hues, and the neutral icons use --surface-2 so they
+// read as part of the same surface system as everything else.
 const ICON_BG = {
-  // Single accent hue throughout — tonal (light→dark indigo) for the
-  // "in motion" listening task, solid deep indigo for the weightier
-  // interview task, instead of a two-hue "AI gradient" look.
-  listening:"linear-gradient(135deg,#6c93f0,#4a6fd1)",
-  interview:"#4a6fd1",
-  sentence:"#262a33", grammar:"#262a33", speaking:"#262a33", review:"#262a33", drill:"#262a33",
-  scenario:"#262a33", report:"#262a33"
+  listening:"var(--accent2)",
+  interview:"var(--accent2-strong)",
+  sentence:"var(--surface-2)", grammar:"var(--surface-2)", speaking:"var(--surface-2)", review:"var(--surface-2)", drill:"var(--surface-2)",
+  scenario:"var(--surface-2)", report:"var(--surface-2)"
 };
 function iconEl(key) { return `<div class="icon" style="background:${ICON_BG[key]}">${ICONS[key]}</div>`; }
 
@@ -1135,12 +1599,19 @@ const TOPIC_ICONS = {
   smalltalk: `<svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M4 9h10v5a5 5 0 0 1-5 5 5 5 0 0 1-5-5V9z" stroke="#fff" stroke-width="1.75" stroke-linejoin="round"/><path d="M14 10h2a2.5 2.5 0 0 1 0 5h-1" stroke="#fff" stroke-width="1.75"/><path d="M6.5 6.5c.5-1 .5-1.5 0-2.3M9.5 6.5c.5-1 .5-1.5 0-2.3" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/></svg>`,
   help: `<svg width="26" height="26" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#fff" stroke-width="1.75"/><path d="M9.3 9.5a2.7 2.7 0 1 1 3.9 2.4c-.8.5-1.2 1-1.2 1.9" stroke="#fff" stroke-width="1.75" stroke-linecap="round"/><circle cx="12" cy="17" r="0.9" fill="#fff"/></svg>`
 };
+// Muted flat swatches, not the old bright two-color gradients — Obsidian
+// Journal is explicit ("avoids decorative elements like gradients... a
+// desaturated, restrained palette"). Topic-to-color variety is kept (it's
+// a real memory hook across ~19 different topics, per the comment above
+// SCENARIO_BANK), just toned down to the same quiet register as --accent2
+// and reused across related topic families instead of 19 unique neon
+// hues. topicBadgeHTML below reads only the first value as a flat fill.
 const TOPIC_GRADIENTS = {
-  ai:["#0f766e","#5eead4"], time:["#f59e0b","#fbbf24"], camera:["#0ea5e9","#38bdf8"], blocks:["#10b981","#34d399"],
-  cities:["#8b5cf6","#a78bfa"], path:["#f97316","#fb923c"], shield:["#ec4899","#f472b6"], compass:["#0071e3","#4a9eff"],
-  chat:["#0071e3","#4a9eff"], network:["#8b5cf6","#a78bfa"], robot:["#c026d3","#e879f9"], seed:["#15803d","#34d399"], mountain:["#475569","#64748b"],
-  meeting:["#0071e3","#4a9eff"], feedback:["#15803d","#34d399"], negotiate:["#f59e0b","#fbbf24"],
-  present:["#8b5cf6","#a78bfa"], smalltalk:["#f97316","#fb923c"], help:["#ec4899","#f472b6"]
+  ai:["#4d7d76","#4d7d76"], time:["#a98550","#a98550"], camera:["#5c86a0","#5c86a0"], blocks:["#4f8f72","#4f8f72"],
+  cities:["#7c72a3","#7c72a3"], path:["#b3754f","#b3754f"], shield:["#b06a86","#b06a86"], compass:["#5a7aa3","#5a7aa3"],
+  chat:["#5a7aa3","#5a7aa3"], network:["#7c72a3","#7c72a3"], robot:["#96628f","#96628f"], seed:["#5b8f66","#5b8f66"], mountain:["#63697a","#63697a"],
+  meeting:["#5a7aa3","#5a7aa3"], feedback:["#5b8f66","#5b8f66"], negotiate:["#a98550","#a98550"],
+  present:["#7c72a3","#7c72a3"], smalltalk:["#b3754f","#b3754f"], help:["#b06a86","#b06a86"]
 };
 // Elective workplace scenarios — not part of the daily rotation, deliberately
 // kept out of Today so it doesn't add to the mandatory daily load. Each has
@@ -1207,9 +1678,9 @@ const REPORT_BANK = [
     retell:"Explain the \"capability vs. governance gap\" in your own words, using one example from the report." }
 ];
 function topicBadgeHTML(key, title, subtitle) {
-  const [c1,c2] = TOPIC_GRADIENTS[key] || ["#0f766e","#5eead4"];
+  const [c1] = TOPIC_GRADIENTS[key] || ["#63697a"];
   return `<div class="topicRow">
-    <div class="topicBadge" style="background:linear-gradient(135deg, ${c1}, ${c2});">${TOPIC_ICONS[key] || ""}</div>
+    <div class="topicBadge" style="background:${c1};">${TOPIC_ICONS[key] || ""}</div>
     <div class="topicText"><h4>${title}</h4><div class="m">${subtitle}</div></div>
     <div class="railChev libChev"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
   </div>`;
@@ -1538,7 +2009,7 @@ document.addEventListener("click", (e) => {
    ============================================================ */
 let ANS = [];
 function regAns(text) { ANS.push(text); return ANS.length - 1; }
-function normalize(s) { return s.toLowerCase().replace(/[…"''.,!?—-]/g, "").replace(/\s+/g, " ").trim(); }
+function normalize(s) { return s.toLowerCase().replace(/[…"'’.,!?—-]/g, "").replace(/\s+/g, " ").trim(); }
 function dictationHTML(chunks) {
   const rows = chunks.map(c => {
     const si = regSpeak(c);
@@ -1892,23 +2363,16 @@ function micIsAvailable() {
     return hasApi && secure;
   } catch (e) { return false; }
 }
-// fallbackNote: override for the "mic unavailable" message — the default
-// assumes there's a typed-note field above the recorder ("type your answer
-// above instead"), which isn't true for every card (Workplace Scenario and
-// AI Industry Report have no note field, just the recorder), and pointing
-// someone at a text box that doesn't exist is worse than saying nothing.
-function recorderHTML(label, cardKey, fallbackNote) {
+function recorderHTML(label, cardKey) {
   const id = "rec" + (recCounter++);
   const saved = cardKey ? getNote(cardKey + "-transcript") : "";
   if (!micIsAvailable()) {
-    const note = fallbackNote || "Mic isn't available in this preview — type your answer above instead, that counts too. (Open the saved file directly in a browser tab to record.)";
     return `<div class="recWidget" data-rec-id="${id}" ${cardKey?`data-card="${cardKey}"`:""}>
-        <button class="recBtn unavailable" disabled>🎙 ${label || "Record 60s"}</button>
-        <span class="recUnavailNote">${note}</span>
+        <button class="recBtn unavailable" disabled>${ICO_MIC}${label || "Record 60s"}</button>
       </div>`;
   }
   return `<div class="recWidget" data-rec-id="${id}" ${cardKey?`data-card="${cardKey}"`:""}>
-      <button class="recBtn" data-rec-id="${id}">🎙 ${label || "Record 60s"}</button>
+      <button class="recBtn" data-rec-id="${id}">${ICO_MIC}${label || "Record 60s"}</button>
       <span class="recTimer" data-rec-id="${id}" style="display:none;">60</span>
       <span class="recPlayer" data-rec-id="${id}"></span>
     </div>
@@ -1969,7 +2433,7 @@ async function startRecording(id, btn) {
       if (player) player.innerHTML = `<audio controls src="${url}"></audio>`;
       const timer = document.querySelector(`.recTimer[data-rec-id="${id}"]`);
       if (timer) timer.style.display = "none";
-      btn.classList.remove("active"); btn.textContent = "🎙 Record again";
+      btn.classList.remove("active"); btn.innerHTML = ICO_MIC + "Record again";
       clearInterval(RECORDERS[id].interval);
       const wrap = btn.closest(".recWidget");
       const cardKey = wrap && wrap.dataset.card;
@@ -2044,6 +2508,8 @@ if (!state.gistHistory) state.gistHistory = {};
 if (!state.srsItems) state.srsItems = {};
 if (!state.drillHistory) state.drillHistory = {};
 if (!state.drillWeakMeta) state.drillWeakMeta = {};
+if (!state.customCoreAnswers) state.customCoreAnswers = {};
+if (!state.mockLog) state.mockLog = [];
 
 /* ============================================================
    Fill-in fields — write directly on the page, autosaved locally
@@ -2129,6 +2595,22 @@ document.addEventListener("focusout", (e) => {
   if (!e.target.classList.contains("noteInput")) return;
   const key = noteKeyToCard(e.target.dataset.note);
   if (key) refreshAutoComplete(key);
+});
+// Core Answers text is editable in place — unlike the daily notes above,
+// this isn't day-scoped: an edit sticks permanently (state.customCoreAnswers),
+// since it's *your* model answer, not a one-off daily response.
+function getCoreAnswerText(a) {
+  const custom = state.customCoreAnswers && state.customCoreAnswers[a.key];
+  return (custom != null && custom !== "") ? custom : a.answer;
+}
+function coreAnswerEditableHTML(a) {
+  return `<textarea class="editableAnswer" data-answerkey="${a.key}" rows="6">${escapeHtmlText(getCoreAnswerText(a))}</textarea>`;
+}
+document.addEventListener("input", (e) => {
+  if (!e.target.classList.contains("editableAnswer")) return;
+  if (!state.customCoreAnswers) state.customCoreAnswers = {};
+  state.customCoreAnswers[e.target.dataset.answerkey] = e.target.value;
+  save();
 });
 document.addEventListener("change", (e) => {
   if (!e.target.classList.contains("noteCheck")) return;
@@ -2218,10 +2700,10 @@ function buildListeningCard(dIdx) {
     return { key:"listening", title:"Listening Lab", primary:true, meta:"real audio — " + item.speaker, steps: [
       { title:"Before you listen", body:() => `
         <p class="body-text">Today's listening is real, unscripted audio — no transcript, no synthetic voice. ${listenWatchInstruction(item.dur)}</p>
-        <a href="${item.url}" target="_blank" rel="noopener noreferrer" class="realListenLink">▶ ${item.title} — ${item.speaker} <span style="opacity:.65;">(${formatDur(item.dur)} video)</span></a>
-        <p class="body-text" style="margin-top:6px;">Before you press play:</p>
-        <ul class="qlist">${item.before.map(b=>`<li>${b}</li>`).join("")}</ul>
-        <p class="realListenTopic">Topic, for context: ${item.topic}</p>
+        <a href="${item.url}" target="_blank" rel="noopener noreferrer" class="realListenLink">
+          <span class="rllIcon">▶</span>
+          <span class="rllText"><span class="rllTitle">${item.title}</span><span class="rllMeta">${item.speaker} · ${formatDur(item.dur)} video</span></span>
+        </a>
       `},
       { title:"Blind gist — before you replay anything", body:() => `
         <p class="body-text">Without replaying: write 2–3 sentences on what it was actually about, plus one specific thing they said.</p>
@@ -2245,8 +2727,7 @@ function buildListeningCard(dIdx) {
   return { key:"listening", title:"Listening Lab", primary:true, meta:lab.focus, steps: [
     { title:"Before you listen", body:() => `
       ${topicBadgeHTML(lab.icon, lab.title, lab.focus)}
-      <p class="body-text">Think about these before you press play:</p>
-      <ul class="qlist">${lab.before.map(b=>`<li>${b}</li>`).join("")}</ul>
+      <ul class="qlist" style="margin-top:10px;">${lab.before.map(b=>`<li>${b}</li>`).join("")}</ul>
     `},
     { title:"Listen to the script", body:() => `
       ${playerHTML(lab.script)}
@@ -2281,6 +2762,7 @@ function buildTodayCardsRaw(dIdx) {
   const story = STORY_BANK[Math.floor(dIdx/2) % STORY_BANK.length];
   const scenario = SCENARIO_BANK[dIdx % SCENARIO_BANK.length];
   const report = REPORT_BANK[Math.floor(dIdx/2) % REPORT_BANK.length];
+  const core = CORE_ANSWERS_BANK[dIdx % CORE_ANSWERS_BANK.length];
 
   return [
     buildListeningCard(dIdx),
@@ -2361,6 +2843,22 @@ function buildTodayCardsRaw(dIdx) {
         ${aiCheckHTML("interview")}
       `}
     ]},
+    { key:"coreanswers", title:"Core Answers Drill", primary:true, meta:core.title, steps: [
+      { title:"Today's question", body:() => `
+        ${topicBadgeHTML(core.icon, core.title, core.subtitle)}
+        <div class="subhead">Key points to hit — say it in your own words, don't recite</div>
+        <ul class="qlist">${core.points.map(p=>`<li>${p}</li>`).join("")}</ul>
+      `},
+      { title:"Say it out loud", body:() => `
+        <p class="body-text" style="margin-bottom:10px;">Build the answer live from the points above — it's fine if the wording is a little different each time. That's the point.</p>
+        ${recorderHTML("Record yourself saying this", "coreanswers")}
+      `},
+      { title:"Compare with your reference answer", body:() => `
+        <p class="body-text" style="margin-bottom:10px;">Now check against your full written version — see what you missed or could phrase better.</p>
+        ${playerHTML(getCoreAnswerText(core))}
+        ${coreAnswerEditableHTML(core)}
+      `}
+    ]},
     { key:"review", title:"Spaced Review", primary:false, meta:"2 minutes", steps: [
       { title:"Recall quiz — due today", body:() => `
         <p class="body-text">Cover the answer, write your own attempt first, then reveal it. Grading yourself honestly is what makes this work — items you get wrong come back tomorrow, items you get right come back later and later.</p>
@@ -2372,12 +2870,20 @@ function buildTodayCardsRaw(dIdx) {
       { title:"Self-check", body:() => `
         <p class="body-text">Recall yesterday's chunks and one passage without looking. Then check:</p>
         <div class="noteBlock">${REVIEW_CHECKLIST.map((r,i)=>checkRowHTML("review-check-"+i, r)).join("")}</div>
+      `}
+    ]},
+    // Deliberately last of the required cards — everything above is a
+    // decomposed skill (a pattern, a story, a weak spot); this is the one
+    // moment that puts them all under real, unpredictable pressure at once.
+    { key:"mockinterview", title:"Mock Interview (30 min)", primary:true, meta:"live roleplay", steps: [
+      { title:"Before you start", body:() => `
+        ${mockInterviewCopyButtonHTML()}
       `},
-      { title:"Reflect", body:() => `
-        <div class="noteGrid">
-          ${noteFieldHTML("review-longsentence","Which sentence became too long?")}
-          ${noteFieldHTML("review-translated","Which phrase did I translate directly from Chinese?")}
-        </div>
+      { title:"During — 30 min timer", body:() => `
+        ${mockInterviewTimerHTML()}
+      `},
+      { title:"After", body:() => `
+        <p class="body-text">When you're done, run the transcript through your correction agent in Doubao, then paste its output into <b>Library → Mock Interview Log</b>. It saves there automatically, so you can flip back through past sessions and see what's actually changing. Nothing to fill in here.</p>
       `}
     ]},
     // Optional, appended at the end on purpose: these pull from the same
@@ -2395,7 +2901,7 @@ function buildTodayCardsRaw(dIdx) {
         <div class="subhead">Example exchange</div>
         <p class="body-text selectable" style="white-space:pre-line;">${escapeHtmlText(scenario.dialogue)}</p>
         <div class="taskline">Optional — try this if you have a few extra minutes today. Skipping it doesn't affect today's completion.</div>
-        ${recorderHTML("Record your own version of this scenario", "scenario", "Mic isn't available in this preview — that's fine, this one's optional. (Open the saved file directly in a browser tab to record.)")}
+        ${recorderHTML("Record your own version of this scenario", "scenario")}
       `}
     ]},
     { key:"report", title:"AI Industry Report", optional:true, primary:false, meta:report.title, steps: [
@@ -2406,10 +2912,9 @@ function buildTodayCardsRaw(dIdx) {
         <div class="subhead">翻译练习 — 先用英文说一遍，再对照原文</div>
         <p class="body-text selectable">${escapeHtmlText(report.zh)}</p>
         <div class="subhead">Key terms</div>
-        <div class="chunks">${report.terms.map(t=>`<div class="chunk-pill">${speakBtnHTML(t.w,'small')}<span>${t.w} — ${t.m}</span></div>`).join("")}</div>
-        <button class="btnGhost solo" style="margin:6px 0;" onclick="addReportTermsToSRS('${report.key}')">+ Add these words to Spaced Review</button>
+        ${reportTermsBlockHTML(report.key, "card")}
         <div class="taskline">Optional — ${report.retell} Skipping it doesn't affect today's completion.</div>
-        ${recorderHTML("Record your retelling", "report", "Mic isn't available in this preview — that's fine, this one's optional. (Open the saved file directly in a browser tab to record.)")}
+        ${recorderHTML("Record your retelling", "report")}
       `}
     ]}
   ];
@@ -2474,22 +2979,37 @@ function renderFocus() {
   // dead-end screen with nothing to read. Default to the first task so
   // today's material is still visible; rows let you jump anywhere.
   const followIdx = allDone ? 0 : idx;
+  // -1 is a real, distinct state (deliberately collapsed — see
+  // collapseTask()), separate from null (no explicit choice yet, so follow
+  // whatever's next). Both need to survive here without colliding.
   const showIdx = viewingIndex == null ? followIdx : viewingIndex;
 
   const railEl = document.getElementById("taskRail");
   const skipLink = document.getElementById("skipLink");
   if (!railEl) return;
 
-  const card = TODAY_CARDS[showIdx];
-  displayedCardKey = card.key;
-  const cardDone = !!(AUTO_RULES[card.key] && AUTO_RULES[card.key](day));
+  const card = showIdx >= 0 ? TODAY_CARDS[showIdx] : null;
+  displayedCardKey = card ? card.key : null;
+
+  // Core Answers Drill & Mock Interview: just opening and reading counts as
+  // done — no recording required. Fires once per day the first time each
+  // is expanded.
+  if (card && (card.key === "coreanswers" || card.key === "mockinterview") && !hasRecording(card.key)) {
+    const doneKey = card.key;
+    markRecorded(doneKey);
+    setTimeout(() => refreshAutoComplete(doneKey), 0);
+  }
+
+  const cardDone = card ? !!(AUTO_RULES[card.key] && AUTO_RULES[card.key](day)) : false;
 
   let banner = "";
-  if (allDone) {
-    const requiredCount = TODAY_CARDS.filter(c => !c.optional).length;
-    banner = `<div class="reviewBanner">✓ All ${requiredCount} required tasks done today — browsing your answers, edit anything anytime. (${TODAY_CARDS.length - requiredCount} optional task${TODAY_CARDS.length - requiredCount === 1 ? "" : "s"} below if you have extra time.)</div>`;
-  } else if (showIdx !== idx) {
-    banner = `<div class="reviewBanner">Reviewing "${card.title}"${cardDone ? " — already done" : ""}<button onclick="viewTask(${idx})">Back to current task</button></div>`;
+  if (card) {
+    if (allDone) {
+      const requiredCount = TODAY_CARDS.filter(c => !c.optional).length;
+      banner = `<div class="reviewBanner">✓ All ${requiredCount} required tasks done today — browsing your answers, edit anything anytime. (${TODAY_CARDS.length - requiredCount} optional task${TODAY_CARDS.length - requiredCount === 1 ? "" : "s"} below if you have extra time.)</div>`;
+    } else if (showIdx !== idx) {
+      banner = `<div class="reviewBanner">Reviewing "${card.title}"${cardDone ? " — already done" : ""}<button onclick="viewTask(${idx})">Back to current task</button></div>`;
+    }
   }
 
   // Numbered against required tasks only when the card itself is required,
@@ -2497,9 +3017,9 @@ function renderFocus() {
   // (that also only counts required tasks). Optional cards get their own
   // label instead of a fake position in a required-tasks count.
   const requiredCards = TODAY_CARDS.filter(c => !c.optional);
-  const eyebrowText = card.optional
+  const eyebrowText = card ? (card.optional
     ? "Optional — doesn't count toward today's progress"
-    : `Task ${requiredCards.indexOf(card) + 1} of ${requiredCards.length}`;
+    : `Task ${requiredCards.indexOf(card) + 1} of ${requiredCards.length}`) : "";
 
   railEl.innerHTML = TODAY_CARDS.map((c, i) => {
     const done = !!(AUTO_RULES[c.key] && AUTO_RULES[c.key](day));
@@ -2509,8 +3029,12 @@ function renderFocus() {
     const dotContent = done && !isShown ? "✓" : (i + 1);
     const chev = `<span class="railChev" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>`;
     const tag = c.optional ? `<span class="optionalBadge">Optional</span>` : "";
+    // Clicking the row that's already open collapses it instead of
+    // re-opening the same thing — that's the only way to get back to a
+    // fully collapsed list of just the day's task names.
+    const clickAction = isShown ? "collapseTask()" : `viewTask(${i})`;
     const head = `
-      <button type="button" class="railHead" onclick="viewTask(${i})" aria-expanded="${isShown}" aria-current="${isShown ? "true" : "false"}">
+      <button type="button" class="railHead" onclick="${clickAction}" aria-expanded="${isShown}" aria-current="${isShown ? "true" : "false"}">
         <span class="${dotCls}" title="${c.title}${c.optional ? " (optional)" : ""}" aria-hidden="true">${dotContent}</span>
         <span class="railLabel"><span class="t">${c.title} ${tag}</span><span class="m">${c.meta}</span></span>
         ${isShown ? chev : ""}
@@ -2527,7 +3051,7 @@ function renderFocus() {
   }).join("");
 
   if (skipLink) {
-    if (!allDone && showIdx === idx && idx < TODAY_CARDS.length - 1) {
+    if (card && !allDone && showIdx === idx && idx < TODAY_CARDS.length - 1) {
       skipLink.style.display = "";
       skipLink.textContent = "Skip for now → " + TODAY_CARDS[idx + 1].title;
     } else {
@@ -2537,11 +3061,17 @@ function renderFocus() {
 
   document.querySelectorAll("#taskRail .noteInput").forEach(renderHint);
   renderMermaids();
+  renderMockTimer();
 }
 
 function viewTask(i) {
   if (window.speechSynthesis) speechSynthesis.cancel();
   viewingIndex = i;
+  renderFocus();
+}
+function collapseTask() {
+  if (window.speechSynthesis) speechSynthesis.cancel();
+  viewingIndex = -1;
   renderFocus();
 }
 
@@ -2582,6 +3112,11 @@ const AUTO_RULES = {
   drill:     (day) => drillAllChecked(day),
   speaking:  (day) => hasAny(day, ["speaking-notes"]) || hasRecording("speaking"),
   interview: (day) => hasAny(day, ["interview-plan","interview-storynotes"]) || hasRecording("interview"),
+  // Reading counts as done here — no recording required. "_recorded_X" is set
+  // the moment the card is opened (see renderFocus), reusing the same flag
+  // hasRecording() checks, since it's just a generic "engaged with this" signal.
+  mockinterview: (day) => hasRecording("mockinterview"),
+  coreanswers: (day) => hasRecording("coreanswers"),
   review:    (day) => allChecked(day, ["review-check-0","review-check-1","review-check-2","review-check-3"]),
   // Optional cards — these have a real "done" signal too (so their dot
   // still checks off if you do them), but currentFocusIndex()/updateProgressUI
@@ -2590,7 +3125,7 @@ const AUTO_RULES = {
   report:    (day) => hasRecording("report")
 };
 function noteKeyToCard(dataNote) {
-  for (const k of ["listening","sentence","grammar","speaking","interview","review","scenario","report"]) {
+  for (const k of ["listening","sentence","grammar","speaking","mockinterview","interview","coreanswers","review","scenario","report"]) {
     if (dataNote.indexOf(k) === 0) return k;
   }
   return null;
@@ -2753,7 +3288,7 @@ Start now by introducing yourself briefly, then ask your opening question.`;
 // nothing). One shared function now, so both paths always stay in sync.
 function interviewCopyButtonsHTML(subject) {
   return `<div class="aiCheckBlock" style="margin-top:14px;">
-      <button class="btnPrimary solo" onclick="copyInterviewRoleplayPrompt()">📋 Copy today's live interview prompt</button>
+      <button class="btnPrimary solo" onclick="copyInterviewRoleplayPrompt()">${ICO_CLIPBOARD}Copy today's live interview prompt</button>
       <p class="body-text" style="color:var(--text2); margin-top:8px;">Paste this into a real-time voice AI app for a genuine back-and-forth on ${subject} — it'll ask a real follow-up based on what you actually say, then give feedback. A different prompt is generated every day.</p>
       <div id="interviewPromptFallback"></div>
     </div>`;
@@ -2783,6 +3318,132 @@ async function copyInterviewRoleplayPrompt() {
     }
   }
 }
+
+/* ============================================================
+   Mock Interview (30 min) — a full-length live session, not just one
+   question. Reuses the same "copy a system prompt for a real-time voice
+   AI" mechanism as the single-question version above, but strings
+   together 4 moments (2 questions + 2 stories) with an explicit ~30-min
+   pacing instruction, plus an in-app countdown timer as a visual pacer
+   (nothing recorded — the actual conversation happens outside the app).
+   ============================================================ */
+function mockInterviewPromptText() {
+  const dIdx = daysSinceStart();
+  const base = Math.floor(dIdx / 2);
+  const q1 = QUESTION_BANK[base % QUESTION_BANK.length];
+  const q2 = QUESTION_BANK[(base + 3) % QUESTION_BANK.length];
+  const s1 = STORY_BANK[base % STORY_BANK.length];
+  const s2 = STORY_BANK[(base + 2) % STORY_BANK.length];
+  return `You are a real interviewer conducting a full ~30-minute live behavioral interview for a Product Manager / AI Product role at a tech company in Singapore. Stay fully in character as the interviewer for the ENTIRE session — do not break character to explain things, and do not correct my English mid-conversation. This needs to feel like a real interview, not a language lesson.
+
+About the candidate (me): I'm a product designer transitioning into AI/PM work, preparing for interviews in Singapore. English is my second language (B1–B2) — speak at a natural but clear pace, don't simplify your questions for me.
+
+Run a full session covering these 4 moments, roughly 6-7 minutes each:
+1. Open with exactly this question: "${q1.q}" — a strong answer covers: ${q1.want}
+2. Ask me to walk you through the "${s1.title}" project — just ask, don't give away any details. Background for your own reference only, don't read this to me: ${s1.long}
+3. Ask exactly this question: "${q2.q}" — a strong answer covers: ${q2.want}
+4. Ask me to walk you through the "${s2.title}" project — just ask, don't give away any details. Background for your own reference only, don't read this to me: ${s2.long}
+Then close with one tough curveball follow-up on whichever of my answers had the weakest evidence or clearest gap.
+
+How to run each moment:
+- After I answer, ask at least one genuine, specific follow-up based on what I actually said — probe a number, a trade-off, a decision, or ask "why" on something specific. React to my real answer, not a generic pre-written follow-up.
+- Keep your own turns short — 1-3 sentences, like a real interviewer.
+- Move on after 1-2 follow-ups per moment so the whole session fits in about 30 minutes.
+
+When all 4 moments plus the curveball are done, switch out of interviewer character and give me direct, concrete feedback as an English-speaking interview coach:
+1. Content: across the session, did I answer the actual question, was there a clear structure (context → decision → result), did I give evidence/numbers when I could have?
+2. Language: 5-8 specific things I said that a native speaker would phrase differently — quote what I said, then the better version, then a one-line reason.
+3. Two specific things to work on tomorrow.
+
+Start now by introducing yourself briefly, then ask your first question.`;
+}
+function mockInterviewCopyButtonHTML() {
+  return `<div class="aiCheckBlock" style="margin-top:14px; padding-top:0; border-top:none;">
+      <button class="btnPrimary solo" onclick="copyMockInterviewPrompt()">${ICO_CLIPBOARD}Copy today's 30-min interview session prompt</button>
+    </div>`;
+}
+async function copyMockInterviewPrompt() {
+  const text = mockInterviewPromptText();
+  // Try the modern Clipboard API first; some embedded/sandboxed contexts
+  // (like this artifact preview) block it even though it looks available,
+  // so we fall back to the legacy execCommand("copy") trick via a hidden
+  // textarea, which works in more restricted environments.
+  try {
+    if (!navigator.clipboard || !navigator.clipboard.writeText) throw new Error("no clipboard API");
+    await navigator.clipboard.writeText(text);
+    showToast("Copied! Paste it into a real-time voice AI app for a full 30-minute mock interview.");
+    return;
+  } catch (err) {
+    // fall through to legacy method below
+  }
+  try {
+    const ta = document.createElement("textarea");
+    ta.value = text;
+    ta.style.position = "fixed";
+    ta.style.top = "-1000px";
+    ta.style.left = "-1000px";
+    document.body.appendChild(ta);
+    ta.focus();
+    ta.select();
+    const ok = document.execCommand("copy");
+    document.body.removeChild(ta);
+    if (!ok) throw new Error("execCommand copy failed");
+    showToast("Copied! Paste it into a real-time voice AI app for a full 30-minute mock interview.");
+  } catch (err2) {
+    showToast("Couldn't copy automatically — try again, or open this file directly in a browser tab.");
+  }
+}
+const MOCK_TIMER_START = 30 * 60;
+let mockTimerSecondsLeft = MOCK_TIMER_START;
+let mockTimerInterval = null;
+function mockInterviewTimerHTML() {
+  return `<div class="mockTimer">
+      <div class="mockTimerDisplay" id="mockTimerDisplay">${formatMockTimer(mockTimerSecondsLeft)}</div>
+      <div class="mockTimerBtns">
+        <button class="btnPrimary solo" id="mockTimerStartBtn" onclick="toggleMockTimer()">${mockTimerInterval ? "⏸ Pause" : "▶ Start"}</button>
+        <button class="btnGhost solo" onclick="resetMockTimer()">↺ Reset</button>
+      </div>
+    </div>
+    <p class="body-text" style="color:var(--text2); margin-top:8px;">Start this when your live session begins — it's just a visual pacer, nothing is recorded or sent anywhere.</p>`;
+}
+function formatMockTimer(s) {
+  const m = Math.floor(s / 60), sec = s % 60;
+  return String(m).padStart(2, "0") + ":" + String(sec).padStart(2, "0");
+}
+function renderMockTimer() {
+  const el = document.getElementById("mockTimerDisplay");
+  if (el) el.textContent = formatMockTimer(mockTimerSecondsLeft);
+}
+function toggleMockTimer() {
+  const btn = document.getElementById("mockTimerStartBtn");
+  if (mockTimerInterval) {
+    clearInterval(mockTimerInterval); mockTimerInterval = null;
+    if (btn) btn.innerHTML = "▶ Resume";
+    return;
+  }
+  if (mockTimerSecondsLeft <= 0) mockTimerSecondsLeft = MOCK_TIMER_START;
+  if (btn) btn.innerHTML = "⏸ Pause";
+  markRecorded("mockinterview");
+  refreshAutoComplete("mockinterview");
+  mockTimerInterval = setInterval(() => {
+    mockTimerSecondsLeft--;
+    renderMockTimer();
+    if (mockTimerSecondsLeft <= 0) {
+      clearInterval(mockTimerInterval); mockTimerInterval = null;
+      showToast("30 minutes up — wrap up and move to feedback.");
+      const startBtn = document.getElementById("mockTimerStartBtn");
+      if (startBtn) startBtn.innerHTML = "▶ Start";
+    }
+  }, 1000);
+}
+function resetMockTimer() {
+  clearInterval(mockTimerInterval); mockTimerInterval = null;
+  mockTimerSecondsLeft = MOCK_TIMER_START;
+  renderMockTimer();
+  const btn = document.getElementById("mockTimerStartBtn");
+  if (btn) btn.innerHTML = "▶ Start";
+}
+
 async function copyAnswers() {
   const text = gatherAnswers();
   if (!text) { showToast("Nothing written yet today — fill in a few answers first."); return; }
@@ -2848,6 +3509,14 @@ function openAiSettings() {
 }
 function closeAiSettings() {
   const overlay = document.getElementById("aiSettingsOverlay");
+  if (overlay) overlay.classList.remove("show");
+}
+function openStyleGuide() {
+  const overlay = document.getElementById("styleGuideOverlay");
+  if (overlay) overlay.classList.add("show");
+}
+function closeStyleGuide() {
+  const overlay = document.getElementById("styleGuideOverlay");
   if (overlay) overlay.classList.remove("show");
 }
 function saveApiKey() {
@@ -2927,14 +3596,11 @@ function aiCheckHTML(cardKey, patternRequirement) {
   // in-memory DOM (not state) held the feedback.
   const day = todayStr();
   const saved = state.aiHistory && state.aiHistory[day] && state.aiHistory[day][cardKey];
-  const savedBlock = saved ? `<div class="aiLabel">✨ AI feedback</div>${renderAiFeedbackHTML(saved.feedback)}
-        <div class="redoBlock">
-          <div class="noteLabel">Now rewrite the corrected version yourself — don't just read it</div>
-          ${noteAreaHTML(cardKey + "-redo", "Type the corrected version here, in your own words…", 2)}
-        </div>` : "";
+  const savedBlock = saved ? `<div class="aiLabel">${ICO_SPARKLE}AI feedback</div>${renderAiFeedbackHTML(saved.feedback)}` : "";
   const patternAttr = patternRequirement ? ` data-pattern="${escapeHtmlText(patternRequirement).replace(/"/g,"&quot;")}"` : "";
   return `<div class="aiCheckBlock">
-      <button class="aiBtn" data-aicard="${cardKey}"${patternAttr}>✨ Check my answers with AI</button>
+      <button class="aiBtn" data-aicard="${cardKey}"${patternAttr}>${ICO_SPARKLE}Check my answers with AI</button>
+      <div class="aiCheckHint">Usually 10–30s, can take up to a minute for longer answers.</div>
       <div class="aiFeedback${saved ? " show" : ""}" data-aifeedback="${cardKey}" role="status" aria-live="polite">${savedBlock}</div>
     </div>`;
 }
@@ -2948,9 +3614,10 @@ function cardNoteKeys(cardKey) {
 function vocabCheckHTML(cardKey) {
   const day = todayStr();
   const saved = state.vocabHistory && state.vocabHistory[day] && state.vocabHistory[day][cardKey];
-  const savedBlock = saved ? `<div class="aiLabel">✨ Vocabulary check</div>${renderVocabFeedbackHTML(saved.feedback)}` : "";
+  const savedBlock = saved ? `<div class="aiLabel">${ICO_SPARKLE}Vocabulary check</div>${renderVocabFeedbackHTML(saved.feedback)}` : "";
   return `<div class="aiCheckBlock" style="margin-top:12px;">
-      <button class="aiBtn" data-vocabcard="${cardKey}">✨ Check my word guesses</button>
+      <button class="aiBtn" data-vocabcard="${cardKey}">${ICO_SPARKLE}Check my word guesses</button>
+      <div class="aiCheckHint">Usually 10–30s, can take up to a minute.</div>
       <div class="aiFeedback${saved ? " show" : ""}" data-vocabfeedback="${cardKey}" role="status" aria-live="polite">${savedBlock}</div>
     </div>`;
 }
@@ -2971,18 +3638,57 @@ function escapeHtmlText(s) {
 // Parse the AI's structured ITEM/BEFORE/AFTER/WHY blocks into a clean
 // before-vs-after comparison instead of one dense paragraph. Falls back to
 // the raw text untouched if the model didn't follow the format.
+// Scans for ITEM:/BEFORE:/AFTER:/WHY: labels anywhere in the text and slices
+// the content between consecutive labels — instead of requiring each label
+// on its own line in a blank-line-separated block. External sources (like a
+// correction agent built in another app) don't reliably follow the exact
+// line-break format we ask Claude for in-app to use, and this still parses
+// the well-formed case exactly the same as before.
 function parseAiFeedback(text) {
-  const blocks = String(text).split(/\n\s*\n/).map(b => b.trim()).filter(Boolean);
+  const str = String(text);
+  const labelRe = /\b(ITEM|BEFORE|AFTER|WHY)\s*:\s*/gi;
+  const marks = [];
+  let mm;
+  while ((mm = labelRe.exec(str))) {
+    marks.push({ label: mm[1].toUpperCase(), contentStart: mm.index + mm[0].length, start: mm.index });
+  }
+  if (!marks.length) return [];
   const items = [];
-  blocks.forEach(block => {
-    const m = {};
-    block.split("\n").forEach(line => {
-      const mm = line.match(/^\s*(ITEM|BEFORE|AFTER|WHY)\s*:\s*(.*)$/i);
-      if (mm) m[mm[1].toUpperCase()] = mm[2].trim();
-    });
-    if (m.BEFORE || m.AFTER) items.push(m);
+  let current = null;
+  marks.forEach((mark, i) => {
+    const end = i + 1 < marks.length ? marks[i + 1].start : str.length;
+    const value = str.slice(mark.contentStart, end).trim();
+    if (mark.label === "ITEM" || !current) { if (current) items.push(current); current = {}; }
+    current[mark.label] = value;
   });
-  return items;
+  if (current) items.push(current);
+  return items.filter(it => it.BEFORE || it.AFTER);
+}
+// Pulls the SUMMARY: line out of a Mock Interview Log paste, returning the
+// summary text plus whatever's left (fed to parseAiFeedback for the table).
+function splitMockLogOutput(raw) {
+  const m = String(raw).match(/SUMMARY\s*:\s*([\s\S]*?)(?=\bITEM\s*:|$)/i);
+  const summary = m ? m[1].trim() : "";
+  const corrections = m ? String(raw).slice(m.index + m[0].length).trim() : String(raw).trim();
+  return { summary, corrections };
+}
+function saveMockLogEntry() {
+  const input = document.getElementById("mockLogInput");
+  const msgEl = document.getElementById("mockLogSaveMsg");
+  const raw = input ? input.value.trim() : "";
+  if (!raw) { if (msgEl) msgEl.textContent = "Paste something first."; return; }
+  const { summary, corrections } = splitMockLogOutput(raw);
+  if (!state.mockLog) state.mockLog = [];
+  state.mockLog.push({ date: todayStr(), summary, corrections, raw });
+  save();
+  if (msgEl) msgEl.textContent = "Saved.";
+  renderLibrary("mocklog");
+}
+function deleteMockLogEntry(i) {
+  if (!state.mockLog) return;
+  state.mockLog.splice(i, 1);
+  save();
+  renderLibrary("mocklog");
 }
 function renderAiFeedbackHTML(text) {
   const items = parseAiFeedback(text);
@@ -3023,8 +3729,8 @@ async function runAiCheck(cardKey, btn) {
     if (fbEl) { fbEl.classList.add("show"); fbEl.innerHTML = `<div class="aiMsg">Write something in this section first, then check it.</div>`; }
     return;
   }
-  const oldLabel = btn.textContent;
-  btn.disabled = true; btn.textContent = "✨ Checking…";
+  const oldLabel = btn.innerHTML;
+  btn.disabled = true; btn.innerHTML = ICO_SPARKLE + "Checking…";
   try {
     const patternReq = btn.dataset.pattern || "";
     const patternClause = patternReq
@@ -3034,7 +3740,12 @@ async function runAiCheck(cardKey, btn) {
     // Guard against a hung bridge call — without this, if window.cowork.askClaude
     // never resolves or rejects, the button sits on "Checking…" forever with
     // no error and no way to tell what went wrong.
-    const TIMEOUT_MS = 30000;
+    // 30s used to be tight enough that real (successful) responses were
+    // routinely killed as false "TIMEOUT" failures — the debug log showed
+    // pairs of a 30s timeout error immediately followed by the same answer
+    // landing seconds later. 60s cuts most of that off without making a
+    // truly stuck request hang forever.
+    const TIMEOUT_MS = 60000;
     const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(Object.assign(new Error("TIMEOUT"), { code: "TIMEOUT" })), TIMEOUT_MS));
     const result = await Promise.race([askAI(prompt, parts), timeoutPromise]);
     const text = extractAiText(result);
@@ -3043,12 +3754,7 @@ async function runAiCheck(cardKey, btn) {
     }
     if (fbEl) {
       fbEl.classList.add("show");
-      fbEl.innerHTML = `<div class="aiLabel">✨ AI feedback</div>${renderAiFeedbackHTML(text)}
-        <div class="redoBlock">
-          <div class="noteLabel">Now rewrite the corrected version yourself — don't just read it</div>
-          ${noteAreaHTML(cardKey + "-redo", "Type the corrected version here, in your own words…", 2)}
-        </div>`;
-      renderHint(fbEl.querySelector(".noteInput"));
+      fbEl.innerHTML = `<div class="aiLabel">${ICO_SPARKLE}AI feedback</div>${renderAiFeedbackHTML(text)}`;
     }
     if (!state.aiHistory) state.aiHistory = {};
     if (!state.aiHistory[day]) state.aiHistory[day] = {};
@@ -3060,17 +3766,17 @@ async function runAiCheck(cardKey, btn) {
     if (fbEl) {
       fbEl.classList.add("show");
       if (err && err.code === "NO_AI_BRIDGE") {
-        fbEl.innerHTML = `<div class="aiMsg">AI check needs an Anthropic API key when this page is opened outside Cowork. <a href="#" onclick="openAiSettings(); return false;" style="color:var(--accent2-strong); font-weight:700;">Set it up in AI settings (⚙️)</a> — takes a minute, works from then on in this browser.</div>`;
+        fbEl.innerHTML = `<div class="aiMsg">AI check needs an Anthropic API key when this page is opened outside Cowork. <a href="#" onclick="openAiSettings(); return false;" style="color:var(--accent2-fg); font-weight:700;">Set it up in AI settings (⚙️)</a> — takes a minute, works from then on in this browser.</div>`;
       } else if (err && err.code === "TIMEOUT") {
-        fbEl.innerHTML = `<div class="aiMsg">The AI check didn't respond within 30 seconds. This usually means Cowork's connection stalled — try clicking "✨ Check my answers with AI" again.</div>`;
+        fbEl.innerHTML = `<div class="aiMsg">The AI check didn't respond within 60 seconds. This usually means Cowork's connection stalled — try clicking "Check my answers with AI" again.</div>`;
       } else if (err && (err.status === 401 || err.status === 403)) {
-        fbEl.innerHTML = `<div class="aiMsg">Anthropic rejected the API key (${escapeHtmlText(String(err.status))}). <a href="#" onclick="openAiSettings(); return false;" style="color:var(--accent2-strong); font-weight:700;">Check it in AI settings</a> — it may be wrong, expired, or out of credit.</div>`;
+        fbEl.innerHTML = `<div class="aiMsg">Anthropic rejected the API key (${escapeHtmlText(String(err.status))}). <a href="#" onclick="openAiSettings(); return false;" style="color:var(--accent2-fg); font-weight:700;">Check it in AI settings</a> — it may be wrong, expired, or out of credit.</div>`;
       } else {
         fbEl.innerHTML = `<div class="aiMsg">Something went wrong reaching the AI check${err && err.message ? ": " + escapeHtmlText(err.message) : ""}. Try again in a moment.</div>`;
       }
     }
   } finally {
-    btn.disabled = false; btn.textContent = oldLabel;
+    btn.disabled = false; btn.innerHTML = oldLabel;
   }
 }
 document.addEventListener("click", (e) => {
@@ -3123,17 +3829,22 @@ async function runVocabCheck(cardKey, btn) {
     if (fbEl) { fbEl.classList.add("show"); fbEl.innerHTML = `<div class="aiMsg">Write down a word or phrase and your guess first, then check it.</div>`; }
     return;
   }
-  const oldLabel = btn.textContent;
-  btn.disabled = true; btn.textContent = "✨ Checking…";
+  const oldLabel = btn.innerHTML;
+  btn.disabled = true; btn.innerHTML = ICO_SPARKLE + "Checking…";
   try {
     const prompt = "You are an English vocabulary coach for a B1-B2 Chinese ESL speaker. Each item below is a word or phrase they heard, followed by their own guess at what it means (free text, format varies — e.g. 'screw up, means ignore' or just 'screw up - ignore?'). For each item, identify the word/phrase and their guess, judge whether the guess is correct, and give the real meaning in simple English.\n\nReply with ONE block per item, in exactly this plain-text format, blocks separated by a blank line, nothing else before/after/between them — no markdown, no numbering:\nWORD: <the word or phrase>\nGUESS: <their guess, copied from the item>\nCORRECT: <yes or no>\nMEANING: <the real, correct meaning in one short simple sentence>";
-    const TIMEOUT_MS = 30000;
+    // 30s used to be tight enough that real (successful) responses were
+    // routinely killed as false "TIMEOUT" failures — the debug log showed
+    // pairs of a 30s timeout error immediately followed by the same answer
+    // landing seconds later. 60s cuts most of that off without making a
+    // truly stuck request hang forever.
+    const TIMEOUT_MS = 60000;
     const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(Object.assign(new Error("TIMEOUT"), { code: "TIMEOUT" })), TIMEOUT_MS));
     const result = await Promise.race([askAI(prompt, parts), timeoutPromise]);
     const text = extractAiText(result);
     if (fbEl) {
       fbEl.classList.add("show");
-      fbEl.innerHTML = `<div class="aiLabel">✨ Vocabulary check</div>${renderVocabFeedbackHTML(text)}`;
+      fbEl.innerHTML = `<div class="aiLabel">${ICO_SPARKLE}Vocabulary check</div>${renderVocabFeedbackHTML(text)}`;
     }
     if (!state.vocabHistory) state.vocabHistory = {};
     if (!state.vocabHistory[day]) state.vocabHistory[day] = {};
@@ -3145,17 +3856,17 @@ async function runVocabCheck(cardKey, btn) {
     if (fbEl) {
       fbEl.classList.add("show");
       if (err && err.code === "NO_AI_BRIDGE") {
-        fbEl.innerHTML = `<div class="aiMsg">Vocab check needs an Anthropic API key when this page is opened outside Cowork. <a href="#" onclick="openAiSettings(); return false;" style="color:var(--accent2-strong); font-weight:700;">Set it up in AI settings (⚙️)</a>.</div>`;
+        fbEl.innerHTML = `<div class="aiMsg">Vocab check needs an Anthropic API key when this page is opened outside Cowork. <a href="#" onclick="openAiSettings(); return false;" style="color:var(--accent2-fg); font-weight:700;">Set it up in AI settings (⚙️)</a>.</div>`;
       } else if (err && err.code === "TIMEOUT") {
-        fbEl.innerHTML = `<div class="aiMsg">The check didn't respond within 30 seconds. Try clicking "✨ Check my word guesses" again.</div>`;
+        fbEl.innerHTML = `<div class="aiMsg">The check didn't respond within 60 seconds. Try clicking "Check my word guesses" again.</div>`;
       } else if (err && (err.status === 401 || err.status === 403)) {
-        fbEl.innerHTML = `<div class="aiMsg">Anthropic rejected the API key (${escapeHtmlText(String(err.status))}). <a href="#" onclick="openAiSettings(); return false;" style="color:var(--accent2-strong); font-weight:700;">Check it in AI settings</a>.</div>`;
+        fbEl.innerHTML = `<div class="aiMsg">Anthropic rejected the API key (${escapeHtmlText(String(err.status))}). <a href="#" onclick="openAiSettings(); return false;" style="color:var(--accent2-fg); font-weight:700;">Check it in AI settings</a>.</div>`;
       } else {
         fbEl.innerHTML = `<div class="aiMsg">Something went wrong reaching the check${err && err.message ? ": " + escapeHtmlText(err.message) : ""}. Try again in a moment.</div>`;
       }
     }
   } finally {
-    btn.disabled = false; btn.textContent = oldLabel;
+    btn.disabled = false; btn.innerHTML = oldLabel;
   }
 }
 document.addEventListener("click", (e) => {
@@ -3171,9 +3882,9 @@ document.addEventListener("click", (e) => {
 function gistCheckHTML(cardKey) {
   const day = todayStr();
   const saved = state.gistHistory && state.gistHistory[day] && state.gistHistory[day][cardKey];
-  const savedBlock = saved ? `<div class="aiLabel">✨ Correct gist</div><div class="aiMsg">${escapeHtmlText(saved.topic)}</div>` : "";
+  const savedBlock = saved ? `<div class="aiLabel">${ICO_SPARKLE}Correct gist</div><div class="aiMsg">${escapeHtmlText(saved.topic)}</div>` : "";
   return `<div class="aiCheckBlock" style="margin-top:12px;">
-      <button class="aiBtn" data-gistcard="${cardKey}">✨ Show the correct gist</button>
+      <button class="aiBtn" data-gistcard="${cardKey}">${ICO_SPARKLE}Show the correct gist</button>
       <div class="aiFeedback${saved ? " show" : ""}" data-gistfeedback="${cardKey}" role="status" aria-live="polite">${savedBlock}</div>
     </div>`;
 }
@@ -3182,7 +3893,7 @@ function revealGist(cardKey) {
   const fbEl = document.querySelector(`.aiFeedback[data-gistfeedback="${cardKey}"]`);
   if (fbEl) {
     fbEl.classList.add("show");
-    fbEl.innerHTML = `<div class="aiLabel">✨ Correct gist</div><div class="aiMsg">${escapeHtmlText(currentListeningTopic)}</div>`;
+    fbEl.innerHTML = `<div class="aiLabel">${ICO_SPARKLE}Correct gist</div><div class="aiMsg">${escapeHtmlText(currentListeningTopic)}</div>`;
   }
   if (!state.gistHistory) state.gistHistory = {};
   if (!state.gistHistory[day]) state.gistHistory[day] = {};
@@ -3268,26 +3979,82 @@ function ingestVocabHistoryIntoSRS(day, cardKey, feedbackText) {
     }
   });
 }
-// Push an AI Industry Report's key terms into the same Spaced Review deck
-// used for grammar/vocab mistakes — same review mechanics, just a different
-// source. Re-clicking is safe: it just refreshes the same ids in place.
-function addReportTermsToSRS(reportKey) {
+// ---- Report key terms: user can add their own terms, and picks exactly
+// which ones (built-in or custom) go into Spaced Review, instead of an
+// all-or-nothing button. Custom terms persist per report in
+// state.customReportTerms; idPrefix ("card" vs "lib") keeps DOM ids unique
+// since the same report can be rendered both in Today's card and in the
+// Library tab at once.
+function getCustomReportTerms(reportKey) {
+  return (state.customReportTerms && state.customReportTerms[reportKey]) || [];
+}
+function allReportTerms(reportKey) {
   const r = REPORT_BANK.find(x => x.key === reportKey);
-  if (!r) return;
+  return (r ? r.terms : []).concat(getCustomReportTerms(reportKey));
+}
+function reportTermsInnerHTML(reportKey, idPrefix) {
+  const terms = allReportTerms(reportKey);
+  const base = idPrefix + "-terms-" + reportKey;
+  const pills = terms.length
+    ? `<div class="chunks">${terms.map(t => `
+        <div class="chunk-pill termPill">
+          <input type="checkbox" class="termCheck" checked data-w="${escapeHtmlText(t.w).replace(/"/g,"&quot;")}" data-m="${escapeHtmlText(t.m).replace(/"/g,"&quot;")}">
+          ${speakBtnHTML(t.w,'small')}<span>${t.w} — ${t.m}</span>
+        </div>`).join("")}</div>`
+    : `<p class="body-text" style="margin:4px 0;">No terms yet — add one below.</p>`;
+  return `${pills}
+    <div class="termAddRow">
+      <input type="text" id="${base}-w" placeholder="New term">
+      <input type="text" id="${base}-m" placeholder="Meaning">
+      <button onclick="addCustomReportTerm('${reportKey}','${idPrefix}')">+ Add term</button>
+    </div>
+    <button class="btnGhost solo" style="margin:6px 0;" onclick="addSelectedReportTermsToSRS('${reportKey}','${idPrefix}')">+ Add selected words to Spaced Review</button>`;
+}
+function reportTermsBlockHTML(reportKey, idPrefix) {
+  return `<div id="${idPrefix}-termsWrap-${reportKey}">${reportTermsInnerHTML(reportKey, idPrefix)}</div>`;
+}
+function refreshReportTerms(reportKey, idPrefix) {
+  const wrap = document.getElementById(idPrefix + "-termsWrap-" + reportKey);
+  if (wrap) wrap.innerHTML = reportTermsInnerHTML(reportKey, idPrefix);
+}
+function addCustomReportTerm(reportKey, idPrefix) {
+  const base = idPrefix + "-terms-" + reportKey;
+  const wEl = document.getElementById(base + "-w");
+  const mEl = document.getElementById(base + "-m");
+  const w = (wEl && wEl.value || "").trim();
+  const m = (mEl && mEl.value || "").trim();
+  if (!w) { if (wEl) wEl.focus(); return; }
+  if (!state.customReportTerms) state.customReportTerms = {};
+  if (!state.customReportTerms[reportKey]) state.customReportTerms[reportKey] = [];
+  state.customReportTerms[reportKey].push({ w: w, m: m || "(no meaning added)" });
+  save();
+  refreshReportTerms(reportKey, idPrefix);
+}
+// Push only the checked terms into the same Spaced Review deck used for
+// grammar/vocab mistakes — same review mechanics, just a different source.
+// Re-clicking is safe: it just refreshes the same ids in place.
+function addSelectedReportTermsToSRS(reportKey, idPrefix) {
+  const r = REPORT_BANK.find(x => x.key === reportKey);
+  const wrap = document.getElementById(idPrefix + "-termsWrap-" + reportKey);
+  if (!wrap) return;
+  const checked = Array.from(wrap.querySelectorAll(".termCheck:checked"));
+  if (!checked.length) { showToast("Select at least one term first."); return; }
   if (!state.srsItems) state.srsItems = {};
   const day = todayStr();
-  r.terms.forEach((t, idx) => {
-    const id = "report__" + reportKey + "__" + idx;
+  checked.forEach(cb => {
+    const w = cb.dataset.w, m = cb.dataset.m;
+    const id = "report__" + reportKey + "__" + normalize(w).replace(/\s+/g,"_");
+    const existing = state.srsItems[id];
     state.srsItems[id] = {
-      item: `Term from "${r.title}"`,
-      before: `What does "${t.w}" mean?`, after: t.m, why: "",
-      cardKey: "reports", box: (state.srsItems[id] ? state.srsItems[id].box : 1),
-      dueDate: state.srsItems[id] ? state.srsItems[id].dueDate : addDaysStr(day, 1),
-      createdDay: state.srsItems[id] ? state.srsItems[id].createdDay : day
+      item: `Term from "${r ? r.title : reportKey}"`,
+      before: `What does "${w}" mean?`, after: m, why: "",
+      cardKey: "reports", box: existing ? existing.box : 1,
+      dueDate: existing ? existing.dueDate : addDaysStr(day, 1),
+      createdDay: existing ? existing.createdDay : day
     };
   });
   save();
-  showToast(`Added ${r.terms.length} terms to Spaced Review.`);
+  showToast(`Added ${checked.length} term${checked.length > 1 ? "s" : ""} to Spaced Review.`);
 }
 function dueSrsItems(limit) {
   limit = limit || 6;
@@ -3303,7 +4070,7 @@ function srsQuizHTML() {
   const totalDue = Object.keys(state.srsItems || {}).filter(id => state.srsItems[id].dueDate <= todayStr()).length;
   if (!due.length) {
     const hasAny = Object.keys(state.srsItems || {}).length > 0;
-    return `<p class="body-text" style="color:var(--text2);">${hasAny ? "Nothing due for review today — everything you've missed before is scheduled for a later day. Come back tomorrow." : "No items yet — once you use ✨ Check my answers with AI on other tasks, real mistakes worth drilling will show up here automatically."}</p>`;
+    return `<p class="body-text" style="color:var(--text2);">${hasAny ? "Nothing due for review today — everything you've missed before is scheduled for a later day. Come back tomorrow." : "No items yet — once you use \"Check my answers with AI\" on other tasks, real mistakes worth drilling will show up here automatically."}</p>`;
   }
   const rows = due.map(it => `
     <div class="srsItem" data-srsid="${it.id}">
@@ -3395,7 +4162,7 @@ function flattenAiHistoryItems() {
 function aiHistoryReviewHTML() {
   const all = flattenAiHistoryItems();
   if (!all.length) {
-    return `<p class="body-text" style="color:var(--text2);">No AI corrections yet — once you use "✨ Check my answers with AI" on other tasks, they'll show up here to review later.</p>`;
+    return `<p class="body-text" style="color:var(--text2);">No AI corrections yet — once you use "Check my answers with AI" on other tasks, they'll show up here to review later.</p>`;
   }
   const groups = {};
   all.forEach(it => { const k = it.category || "other"; (groups[k] = groups[k] || []).push(it); });
@@ -3511,6 +4278,18 @@ function renderLibrary(tab) {
           ${videoLinkHTML(l.title + " English listening practice")}
         </div>
       </div>`).join("")}</div>`;
+  } else if (tab === "myanswers") {
+    el.innerHTML = `<p class="body-text" style="margin-bottom:14px; color:var(--text2);">Your own real interview answers — swap "[Company]" for whoever you're actually talking to.</p>
+      <div class="libList">${CORE_ANSWERS_BANK.map(a => `
+      <div class="libItem">
+        <button type="button" class="libItemHead" onclick="this.parentElement.classList.toggle('open')" aria-expanded="false">${topicBadgeHTML(a.icon, a.title, a.subtitle)}</button>
+        <div class="full">
+          <div class="subhead">Your answer</div>
+          ${playerHTML(getCoreAnswerText(a))}
+          ${coreAnswerEditableHTML(a)}
+          ${recorderHTML("Record yourself saying this")}
+        </div>
+      </div>`).join("")}</div>`;
   } else if (tab === "stories") {
     el.innerHTML = `<div class="libList">${STORY_BANK.map(s => `
       <div class="libItem">
@@ -3580,13 +4359,30 @@ function renderLibrary(tab) {
           <div class="subhead">翻译练习 — 先用英文说一遍，再对照原文</div>
           <p class="body-text selectable">${escapeHtmlText(r.zh)}</p>
           <div class="subhead">Key terms</div>
-          <div class="chunks">${r.terms.map(t=>`<div class="chunk-pill">${speakBtnHTML(t.w,'small')}<span>${t.w} — ${t.m}</span></div>`).join("")}</div>
-          <button class="btnGhost solo" style="margin:6px 0;" onclick="addReportTermsToSRS('${r.key}')">+ Add these words to Spaced Review</button>
+          ${reportTermsBlockHTML(r.key, "lib")}
           <div class="taskline">${r.retell}</div>
           ${recorderHTML("Record your retelling", "report-"+r.key)}
           <a class="videoLink" href="${r.sourceUrl}" target="_blank" rel="noopener"><span>📄 ${r.source}</span><span class="arrowChip">↗</span></a>
         </div>
       </div>`).join("")}</div>`;
+  } else if (tab === "mocklog") {
+    const entries = state.mockLog || [];
+    el.innerHTML = `
+      <p class="body-text" style="color:var(--text2); margin-bottom:10px;">After a Mock Interview session, run the transcript through your correction agent in Doubao, then paste its full output below.</p>
+      <textarea class="plainTextarea" id="mockLogInput" rows="6" placeholder="Paste the full SUMMARY + ITEM/BEFORE/AFTER/WHY output from your Doubao correction agent here…"></textarea>
+      <button class="btnPrimary solo" style="margin-top:8px;" onclick="saveMockLogEntry()">Save to log</button>
+      <div id="mockLogSaveMsg" class="body-text" style="margin-top:6px; color:var(--text2);"></div>
+      <div style="margin-top:18px;">
+      ${entries.length ? `<div class="libList">${entries.slice().reverse().map((m,ri) => { const i = entries.length - 1 - ri; return `
+      <div class="libItem">
+        <button type="button" class="libItemHead" onclick="this.parentElement.classList.toggle('open')" aria-expanded="false">${topicBadgeHTML("feedback", m.date, (escapeHtmlText(m.summary||"").slice(0,100)) || "No summary")}</button>
+        <div class="full">
+          ${m.summary ? `<div class="subhead">Overall</div><p class="body-text">${escapeHtmlText(m.summary)}</p>` : ""}
+          ${renderAiFeedbackHTML(m.corrections || "")}
+          <button class="btnGhost solo" style="margin-top:10px;" onclick="deleteMockLogEntry(${i})">Delete this entry</button>
+        </div>
+      </div>`; }).join("")}</div>` : `<p class="body-text" style="color:var(--text2);">No entries yet — your first one shows up here after you paste your agent's output above.</p>`}
+      </div>`;
   }
   renderMermaids();
 }
@@ -3613,24 +4409,6 @@ function renderProgress() {
   if (streakEl2) {
     streakEl2.innerHTML = `<b>${computeStreak()}</b>-day streak &nbsp;·&nbsp; <b>${completedIn45}</b> of 45 days completed`;
   }
-
-  const dims = [
-    ["decoding","Question decoding — I can identify the intention after one listen"],
-    ["structure","Structure — I answer directly and use one clear example"],
-    ["retrieval","Retrieval — I can start without translating a full Chinese sentence"],
-    ["clarity","Clarity — most answers stay within 60–90 seconds"],
-    ["flexibility","Flexibility — I can use one story for several different questions"]
-  ];
-  const sc = document.getElementById("scorecard");
-  sc.innerHTML = dims.map(([k,label]) => {
-    const v = state.scorecard[k] || 3;
-    return `<div class="scoreRow"><div class="label">${label}</div><div class="sliderRow"><input type="range" min="1" max="5" value="${v}" oninput="setScore('${k}', this.value)"><div class="val" id="val-${k}">${v}</div></div></div>`;
-  }).join("");
-}
-function setScore(k, v) {
-  state.scorecard[k] = Number(v);
-  document.getElementById("val-"+k).textContent = v;
-  save();
 }
 
 document.getElementById("resetLink").addEventListener("click", () => {
