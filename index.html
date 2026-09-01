@@ -134,6 +134,12 @@
     --spring: cubic-bezier(0.16, 1, 0.3, 1);
   }
   * { box-sizing: border-box; }
+  /* Belt-and-suspenders against the page ever becoming horizontally
+     pannable on mobile (reported 2026-08-31 — a long sentence typed into
+     a single-line input was the actual cause, fixed by switching those
+     fields to wrapping textareas below, but this guards against any
+     future element doing the same thing). */
+  html, body { overflow-x: hidden; max-width: 100%; }
   html { -webkit-font-smoothing: antialiased; }
   :focus-visible { outline: 2.5px solid var(--accent2); outline-offset: 2px; border-radius: 4px; }
   body {
@@ -918,9 +924,79 @@
   @media (prefers-reduced-motion: reduce) {
     * { transition: none !important; }
   }
+
+  /* ============================================================
+     Intro screen — once-per-day quiet ritual, shown before the app.
+     Same token set as everything else (--bg/--accent2/--font-*) —
+     no gradients, no glow shadows, no scanline. Motion carries the
+     "ritual" feeling instead of light effects: staggered fade-in,
+     the seedling drawing itself stroke-by-stroke, then a slow sway
+     loop once it's grown. Tap anywhere to dismiss — never a forced
+     wait, since Growth Daily already has to fight friction getting
+     someone to start their practice at all. ============================================================ */
+  .introOverlay {
+    position: fixed; inset: 0; z-index: 100; background: var(--bg);
+    display: flex; flex-direction: column; align-items: center; justify-content: space-between;
+    padding: 40px 28px; cursor: pointer;
+  }
+  .introOverlay[hidden] { display: none; }
+  .introMeta {
+    display: flex; justify-content: space-between; width: 100%; max-width: 320px;
+    font-family: var(--font-mono); font-size: var(--text-2xs); letter-spacing: .12em;
+    color: var(--accent2); text-transform: uppercase; opacity: 0; transition: opacity .6s ease;
+  }
+  .introMeta.show { opacity: .6; }
+  .introMid { display: flex; flex-direction: column; align-items: center; gap: 26px; }
+  .introSeed { opacity: 0; transition: opacity .3s ease; }
+  .introSeed.show { opacity: 1; }
+  .introSeed .seedLeaf { stroke-dasharray: 66; stroke-dashoffset: 66; transition: stroke-dashoffset 1.4s ease-out; }
+  .introSeed .seedLeaf.drawn { stroke-dashoffset: 0; }
+  .introSeed .seedLeafL { transform-origin: 32px 26px; }
+  .introSeed .seedLeafR { transform-origin: 32px 26px; }
+  .introSeed.sway .seedLeafL { animation: introSwayL 3.6s ease-in-out infinite; }
+  .introSeed.sway .seedLeafR { animation: introSwayR 3.6s ease-in-out infinite; }
+  @keyframes introSwayL { 0%, 100% { transform: rotate(0deg); } 50% { transform: rotate(-2.5deg); } }
+  @keyframes introSwayR { 0%, 100% { transform: rotate(0deg); } 50% { transform: rotate(2.5deg); } }
+  .introQuote { text-align: center; max-width: 320px; opacity: 0; transition: opacity 1s ease; }
+  .introQuote.show { opacity: 1; }
+  .introQuote p.q {
+    font-family: var(--font-display); font-style: italic; font-size: var(--text-xl);
+    color: var(--text); line-height: 1.55; margin: 0;
+  }
+  .introQuote p.a {
+    font-family: var(--font-mono); font-size: var(--text-xs); letter-spacing: .08em;
+    text-transform: uppercase; color: var(--text2); margin: 14px 0 0;
+  }
+  .introTap {
+    font-family: var(--font-mono); font-size: var(--text-2xs); letter-spacing: .2em;
+    color: var(--text3); opacity: 0; transition: opacity .8s ease;
+  }
+  .introTap.show { opacity: .7; }
+  @media (prefers-reduced-motion: reduce) {
+    .introOverlay * { transition: none !important; animation: none !important; }
+    .introMeta, .introSeed, .introQuote, .introTap { opacity: 1 !important; }
+    .introSeed .seedLeaf { stroke-dashoffset: 0 !important; }
+  }
 </style>
 </head>
 <body>
+
+<div class="introOverlay" id="introOverlay" hidden onclick="dismissIntro()">
+  <div class="introMeta" id="introMeta"><span id="introStreak">STREAK 0</span><span id="introDay">DAY 1</span></div>
+  <div class="introMid">
+    <svg class="introSeed" id="introSeed" width="72" height="72" viewBox="0 0 64 64" aria-hidden="true">
+      <path d="M32 54 L32 26" stroke="var(--line-strong)" stroke-width="2" fill="none"/>
+      <g class="seedLeafL"><path class="seedLeaf" id="introLeafL" d="M32 26 C20 26 15 15 15 6 C24 6 32 13 32 26" fill="none" stroke="var(--accent2)" stroke-width="1.6" stroke-linecap="round"/></g>
+      <g class="seedLeafR"><path class="seedLeaf" id="introLeafR" d="M32 26 C44 26 49 15 49 6 C40 6 32 13 32 26" fill="none" stroke="var(--accent2)" stroke-width="1.6" stroke-linecap="round"/></g>
+      <circle cx="32" cy="54" r="2" fill="var(--accent2)"/>
+    </svg>
+    <div class="introQuote" id="introQuote">
+      <p class="q" id="introQuoteText"></p>
+      <p class="a" id="introQuoteAuthor"></p>
+    </div>
+  </div>
+  <div class="introTap" id="introTap">TAP TO BEGIN</div>
+</div>
 
 <header class="topbar">
   <div class="topbar-inner">
@@ -937,13 +1013,8 @@
     </div>
     <div class="topbarRight">
       <div class="utilCluster">
-        <button class="slowToggle" id="slowToggle" onclick="toggleSlow()" title="Slow down audio playback" aria-label="Toggle slow audio playback"><svg width="15" height="15" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="13" r="8" stroke="currentColor" stroke-width="2"/><path d="M12 9v4l3 2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 2h6M12 2v3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
         <button class="settingsBtn" id="styleGuideBtn" onclick="openStyleGuide()" title="Style guide" aria-label="Open style guide"><svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c1.1 0 2-.9 2-2 0-.5-.2-1-.5-1.3-.3-.4-.5-.8-.5-1.3 0-1.1.9-2 2-2h2.4c2.3 0 4.1-1.8 4.1-4.1C21.5 6.4 17.2 2 12 2Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><circle cx="7" cy="12" r="1.3" fill="currentColor"/><circle cx="9" cy="7.5" r="1.3" fill="currentColor"/><circle cx="15" cy="7.5" r="1.3" fill="currentColor"/><circle cx="17" cy="12" r="1.3" fill="currentColor"/></svg></button>
         <button class="settingsBtn" id="settingsBtn" onclick="openAiSettings()" title="AI check settings" aria-label="AI check settings"><svg width="15" height="15" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg></button>
-      </div>
-      <div class="stats">
-        <div class="stat"><span class="ic"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 2c2 3-1 5-1 8a3 3 0 1 0 6 0c0-1-.4-1.8-.4-1.8 1.4 1 2.4 2.8 2.4 4.8a7 7 0 1 1-14 0c0-3.4 2-4.9 3-6.4C9 5.2 10 3.2 12 2Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg></span><div class="col"><div class="n" id="streakN">0</div><div class="l">Streak</div></div></div>
-        <div class="stat"><span class="ic"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg></span><div class="col"><div class="n" id="xpN">0</div><div class="l">XP</div></div></div>
       </div>
     </div>
   </div>
@@ -1271,18 +1342,6 @@ const REAL_LISTENING = [
     url:"https://www.youtube.com/watch?v=fSAodWzmlqM",
     topic:"His actual advice, verbatim from the transcript: the number one thing founders get wrong is not launching — he tells YC companies to launch, asks why it should take longer than two months to get something in front of users, and says \"you're nothing until your launch.\"",
     before:["Guess before listening: do most founders launch too early or too late, in his view?","Listen for the specific time limit (in months) he mentions."] },
-  { title:"Self-Maintaining APIs", speaker:"Y Combinator", dur:75,
-    url:"https://www.youtube.com/shorts/c3TxAUir2R8",
-    topic:"YC's pitch for AI coding agents that could let APIs self-update: instead of a provider just announcing a breaking change, an agent could find every affected spot in a customer's codebase and open the fix itself.",
-    before:["What usually happens to your code when an API you depend on changes without warning?","Listen for what role coding agents play in the fix they describe."] },
-  { title:"Proving You're Human", speaker:"Y Combinator", dur:66,
-    url:"https://www.youtube.com/shorts/nB7QBdjrOwE",
-    topic:"Opens with a real case of a finance worker wiring $25 million after a video call where every other person turned out to be a deepfake, then argues the internet needs a new way to verify a real human is behind a call or transaction.",
-    before:["Guess the dollar amount in the real story they open with, before listening.","Listen for what kind of solution they're proposing."] },
-  { title:"Data for the Real World", speaker:"Y Combinator", dur:65,
-    url:"https://www.youtube.com/shorts/uW7RxkLRsd0",
-    topic:"Why AI is superhuman at code, language and images (thanks to huge datasets) but still weak at understanding the physical world — cites Gecko Robotics (using robots to collect hard-to-reach data) and Source Air (autonomous weather balloons feeding US government forecasts) as examples of what cheaper sensors now make possible.",
-    before:["What do you think is missing for AI to understand the physical world as well as it understands text?","Listen for the two things they say could unlock this."] },
   { title:"Mark Zuckerberg on the only mistake that actually matters", speaker:"Mark Zuckerberg, via a16z", dur:30,
     url:"https://www.youtube.com/shorts/pPvt-vtyOvo",
     topic:"Zuckerberg's actual point, from the transcript: don't even try to avoid mistakes, you'll make tons of them — the important thing is learning quickly and not giving up; he says Facebook nearly died multiple times and you just have to \"keep running through the walls.\"",
@@ -1345,6 +1404,29 @@ const REAL_LISTENING = [
   // transcripts, not guessed from titles/descriptions. These run longer
   // than the shorts above, so listenWatchInstruction() correctly tells
   // you to just watch the first 2–3 minutes rather than the whole thing.
+  // 2026-09-01 batch — confirmed via web search against the current
+  // ycombinator.com/library pages + their linked YouTube uploads, since
+  // the pool had cycled around often enough to feel repetitive.
+  { title:"How to Get Your First 10 Customers", speaker:"Max Kolysh, Y Combinator", dur:900,
+    url:"https://www.youtube.com/watch?v=_FBivfgOvuE",
+    topic:"YC's real framing: most founders reach first for cold email and automation tools, but your first 10 customers almost never come from a tool — they come from founder-led conversations with people you can identify and reach directly, using dozens of real YC founder stories as examples of how those first deals actually got done.",
+    before:["Guess before listening: where do you think most founders' first 10 customers actually come from?","Listen for what he says people reach for first, that usually doesn't work."] },
+  { title:"How To Talk To Users", speaker:"Gustaf Alströmer, Y Combinator", dur:1080,
+    url:"https://www.youtube.com/watch?v=z1iF1c8w5Lg",
+    topic:"His real starting point: YC constantly tells founders to \"talk to your users,\" but actually doing it well is surprisingly tricky — people are naturally polite and will tell you what you want to hear, so the real skill is asking questions that get past politeness to what someone actually does and actually struggles with.",
+    before:["Guess before listening: why would talking to users be 'surprisingly tricky' when it sounds so simple?","Listen for the reason he gives that people's answers can't always be trusted at face value."] },
+  { title:"Startup Pricing 101", speaker:"Kevin Hale, Y Combinator", dur:1500,
+    url:"https://www.youtube.com/watch?v=jwXlo9gy_k4",
+    topic:"Kevin Hale's real point: pricing isn't just a number, it directly shapes your customer acquisition strategy and how fast you can grow — he walks through the most common pricing mistakes early-stage founders make and a few simple rules of thumb for getting the number right at each stage of a company.",
+    before:["Guess before listening: do you think most first-time founders price their product too high or too low?","Listen for the word he uses to describe the tool for visualizing where your price sits."] },
+  { title:"Setting KPIs and Goals", speaker:"Divya Bhat, Y Combinator", dur:900,
+    url:"https://www.youtube.com/watch?v=6DTK9yDP6p0",
+    topic:"Her real framework: prioritization is really about two layers — how you split time between your startup and the rest of your life, and how you prioritize within the startup itself. She argues your primary KPI should almost always be growth (often revenue), with 3–5 supporting metrics like retention, churn, and CAC underneath it, and warns specifically against chasing vanity metrics that feel good but don't actually track whether the business is working.",
+    before:["Guess before listening: what do you think she says should almost always be a startup's primary KPI?","Listen for how many supporting metrics she recommends tracking underneath it."] },
+  { title:"How to Run a User Interview", speaker:"Emmett Shear, Y Combinator", dur:2700,
+    url:"https://www.youtube.com/watch?v=qAws7eXItMk",
+    topic:"His real case, from this Startup School lecture: in the earliest stage of a startup, your job is really just building product and talking to users — and user interviews can reveal things raw usage data never will, including redefining what your product goal should even be in the first place.",
+    before:["Guess before listening: what can a user interview tell you that data alone can't?","Listen for what he says a good interview can end up changing about your product goals."] },
   { title:"How to Plan an MVP", speaker:"Michael Seibel, Y Combinator", dur:830,
     url:"https://www.youtube.com/watch?v=1hHMwLxN6EM",
     topic:"From the official YC transcript: Seibel's core rule is \"launch something bad, quickly\" — he argues real launches (Airbnb, Twitch, Stripe) all started embarrassingly simple, and that founders should hold the problem and the customer tightly but hold their solution loosely, iterating fast instead of falling in love with the first version.",
@@ -2525,9 +2607,18 @@ function noteFieldHTML(key, placeholder) {
 function noteAreaHTML(key, placeholder, rows) {
   return `<div class="fieldWrap"><textarea class="noteInput" data-note="${key}" rows="${rows||3}" placeholder="${placeholder}">${getNote(key)}</textarea><div class="fieldHint" data-hint="${key}" role="status" aria-live="polite"></div></div>`;
 }
-function noteLinesHTML(keyPrefix, count, placeholderPrefix) {
+// multiline=true uses a wrapping <textarea> instead of a single-line
+// <input>. Matters on mobile: a full sentence typed into a single-line
+// input doesn't wrap — it scrolls its own text sideways as you type past
+// the visible width, which feels like the whole page can be dragged
+// left-right (reported 2026-08-31). Short items (a word/phrase guess)
+// stay single-line; anything that's a full sentence should wrap.
+function noteLinesHTML(keyPrefix, count, placeholderPrefix, multiline) {
   let out = `<div class="noteLines">`;
-  for (let i = 1; i <= count; i++) out += noteFieldHTML(keyPrefix + i, placeholderPrefix + " " + i + "…");
+  for (let i = 1; i <= count; i++) {
+    const ph = placeholderPrefix + " " + i + "…";
+    out += multiline ? noteAreaHTML(keyPrefix + i, ph, 2) : noteFieldHTML(keyPrefix + i, ph);
+  }
   out += `</div>`;
   return out;
 }
@@ -2773,7 +2864,7 @@ function buildTodayCardsRaw(dIdx) {
       `},
       { title:"Your three sentences", body:() => `
         <p class="body-text">Make three personal sentences — swap the idea, keep the pattern.</p>
-        <div class="noteBlock">${noteLinesHTML("sentence-", 3, "Sentence")}</div>
+        <div class="noteBlock">${noteLinesHTML("sentence-", 3, "Sentence", true)}</div>
         ${aiCheckHTML("sentence", "one of these sentence starters: " + snChunksForToday(dIdx, snKey).map(c=>'"'+c+'"').join("; "))}
       `}
     ]},
@@ -2787,7 +2878,7 @@ function buildTodayCardsRaw(dIdx) {
       `},
       { title:"Practice", body:() => `
         <div class="taskline">Repair task: ${gr.task}</div>
-        <div class="noteBlock">${noteLinesHTML("grammar-", 3, "Sentence")}</div>
+        <div class="noteBlock">${noteLinesHTML("grammar-", 3, "Sentence", true)}</div>
         ${aiCheckHTML("grammar", `the pattern "${gr.better}"`)}
       `}
     ]},
@@ -2936,8 +3027,10 @@ function renderToday() {
   const dayNum = dIdx + 1;
   const week = Math.floor(dIdx / 7);
   document.getElementById("dayN").textContent = dayNum;
-  document.getElementById("streakN").textContent = computeStreak();
-  document.getElementById("xpN").textContent = state.xp;
+  const streakElT = document.getElementById("streakN");
+  const xpElT = document.getElementById("xpN");
+  if (streakElT) streakElT.textContent = computeStreak();
+  if (xpElT) xpElT.textContent = state.xp;
 
   const fTheme = FOUNDATION_WEEKS[Math.min(week, 7)];
   document.getElementById("weekLabel").textContent = "Week " + Math.min(week+1, 8);
@@ -4469,6 +4562,75 @@ function restoreBackup(file) {
     if (statusEl) { statusEl.textContent = "Couldn't read that file."; statusEl.className = "modalStatus err"; }
   };
   reader.readAsText(file);
+}
+
+/* ============================================================
+   Intro screen — quiet, once-per-day. Tap-anywhere-to-dismiss (never
+   a forced wait). Shows a real streak/day count plus a quote picked
+   deterministically from today's date, so it's the same quote all
+   day but different tomorrow — not random on every reload. */
+const INTRO_QUOTES = [
+  { q: "We are what we repeatedly do. Excellence, then, is not an act, but a habit.", a: "Will Durant" },
+  { q: "The secret of getting ahead is getting started.", a: "Mark Twain" },
+  { q: "A journey of a thousand miles begins with a single step.", a: "Lao Tzu" },
+  { q: "Little by little, one travels far.", a: "J.R.R. Tolkien" },
+  { q: "The only way to do great work is to love what you do.", a: "Steve Jobs" },
+  { q: "Not to know is bad; not to wish to know is worse.", a: "West African proverb" },
+  { q: "I am not afraid of storms, for I am learning how to sail my ship.", a: "Louisa May Alcott" },
+  { q: "What we learn with pleasure we never forget.", a: "Alfred Mercier" },
+  { q: "Learning never exhausts the mind.", a: "Leonardo da Vinci" },
+  { q: "The expert in anything was once a beginner.", a: "Helen Hayes" },
+  { q: "Do the difficult things while they are easy.", a: "Lao Tzu" },
+  { q: "Nothing in the world can take the place of persistence.", a: "Calvin Coolidge" },
+  { q: "Slow and steady wins the race.", a: "Aesop" },
+  { q: "Yesterday I was clever, so I wanted to change the world. Today I am wise, so I am changing myself.", a: "Rumi" },
+  { q: "Better three hours too soon than a minute too late.", a: "William Shakespeare" },
+  { q: "The future depends on what you do today.", a: "Mahatma Gandhi" },
+  { q: "Words are, of course, the most powerful drug used by mankind.", a: "Rudyard Kipling" },
+  { q: "It always seems impossible until it's done.", a: "Nelson Mandela" },
+  { q: "Practice is the best of all instructors.", a: "Publilius Syrus" },
+  { q: "A river cuts through rock, not because of its power, but because of its persistence.", a: "James N. Watkins" }
+];
+const INTRO_SEEN_KEY = "growthDaily_introSeen";
+function pickDailyQuote() {
+  const d = new Date(); const seed = d.getFullYear()*372 + (d.getMonth()+1)*31 + d.getDate();
+  return INTRO_QUOTES[seed % INTRO_QUOTES.length];
+}
+function shouldShowIntro() {
+  try { return localStorage.getItem(INTRO_SEEN_KEY) !== todayStr(); } catch (e) { return false; }
+}
+function dismissIntro() {
+  const el = document.getElementById("introOverlay");
+  if (!el || el.hidden) return;
+  try { localStorage.setItem(INTRO_SEEN_KEY, todayStr()); } catch (e) {}
+  el.style.transition = "opacity .5s ease";
+  el.style.opacity = "0";
+  setTimeout(() => { el.hidden = true; el.style.opacity = ""; el.style.transition = ""; }, 500);
+}
+function playIntro() {
+  const meta = document.getElementById("introMeta");
+  const seed = document.getElementById("introSeed");
+  const leafL = document.getElementById("introLeafL");
+  const leafR = document.getElementById("introLeafR");
+  const quote = document.getElementById("introQuote");
+  const tap = document.getElementById("introTap");
+  document.getElementById("introStreak").textContent = "STREAK " + computeStreak();
+  document.getElementById("introDay").textContent = "DAY " + (daysSinceStart() + 1);
+  const picked = pickDailyQuote();
+  document.getElementById("introQuoteText").textContent = "“" + picked.q + "”";
+  document.getElementById("introQuoteAuthor").textContent = "— " + picked.a;
+  setTimeout(() => meta.classList.add("show"), 150);
+  setTimeout(() => seed.classList.add("show"), 150);
+  setTimeout(() => leafL.classList.add("drawn"), 400);
+  setTimeout(() => leafR.classList.add("drawn"), 750);
+  setTimeout(() => seed.classList.add("sway"), 2200);
+  setTimeout(() => quote.classList.add("show"), 2000);
+  setTimeout(() => tap.classList.add("show"), 2900);
+}
+if (shouldShowIntro()) {
+  const introEl = document.getElementById("introOverlay");
+  introEl.hidden = false;
+  playIntro();
 }
 
 renderToday();
