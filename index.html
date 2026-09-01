@@ -1039,21 +1039,21 @@
 
     <div style="border-top:1px solid var(--line); margin:20px 0 16px;"></div>
     <h3 style="margin:0 0 6px; font-size:var(--text-lg);">Sync across devices</h3>
-    <p class="modalHint">Sign in with your email to keep your streak, notes and progress in sync between your phone and computer.</p>
+    <p class="modalHint">Pick a sync word or phrase and enter the exact same one on your other device to link them — no email, no waiting.</p>
     <div id="syncSignedOut">
-      <input type="email" id="syncEmailInput" class="modalInput" placeholder="you@email.com" autocomplete="email">
+      <input type="text" id="syncCodeInput" class="modalInput" placeholder="e.g. icey-2026" autocomplete="off" spellcheck="false">
       <div class="modalActions">
-        <button class="btnPrimary" onclick="sendMagicLink()">Send sign-in link</button>
+        <button class="btnPrimary" onclick="syncWithCode()">Sync this device</button>
       </div>
     </div>
     <div id="syncSignedIn" style="display:none;">
-      <p class="modalHint">Signed in as <b id="syncUserEmail"></b></p>
+      <p class="modalHint">Synced with: <b id="syncCodeDisplay"></b></p>
       <div class="modalActions">
-        <button class="btnGhost" onclick="signOutSync()">Sign out</button>
+        <button class="btnGhost" onclick="signOutSync()">Stop syncing on this device</button>
       </div>
     </div>
     <div class="modalStatus" id="syncStatus" role="status" aria-live="polite"></div>
-    <div class="modalFoot">No password — click the link in your email to sign in. The same email on any device pulls in this same synced data.</div>
+    <div class="modalFoot">Anyone who knows this phrase could see your practice notes — keep it a little private, but it's low-stakes data, so no real password needed.</div>
   </div>
 </div>
 
@@ -2555,14 +2555,21 @@ if (!state.mockLog) state.mockLog = [];
 
 /* ============================================================
    Cross-device sync (Supabase) — optional, degrades to purely local
-   storage if the CDN script fails to load or the user never signs in.
-   Sign-in is a magic link (no password) sent to the user's own email;
-   Supabase's own auth handles sending it. Once signed in, save() also
-   pushes to a Postgres row keyed by the user's id (row-level security
-   restricts each user to their own row — see the SQL run once in the
-   Supabase dashboard to set this up). On sign-in we pull the remote
-   copy down; if this is the very first sign-in on any device, there's
-   nothing remote yet, so we push the current local state up instead. ============================================================ */
+   storage if the CDN script fails to load or the user never syncs.
+   No email, no magic link: the user picks a sync word/phrase, and we
+   deterministically derive a fake email+password from it, then sign
+   in (or sign up, the first time that phrase is ever used) with
+   Supabase Auth under the hood — same phrase on two devices means the
+   same derived credentials, means the same Supabase user, means the
+   same synced row (row-level security still restricts each user to
+   their own row — see the SQL run once in the Supabase dashboard).
+   Deliberately low-friction over high-security: this is personal
+   English-practice notes, not sensitive data, so trading a little
+   security for "type one phrase, done" is the right call here.
+   NOTE: this requires "Confirm email" to be turned OFF in the
+   Supabase project's Authentication settings — otherwise sign-up
+   will silently need a confirmation email that can never arrive,
+   since the derived email address isn't real. ============================================================ */
 const SUPABASE_URL = "https://ncbxxhwuefpyieqahebf.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5jYnh4aHd1ZWZweWllcWFoZWJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgyNjM4OTUsImV4cCI6MjEwMzgzOTg5NX0.esifcHi6zxihHsyxZlgd2yF6gPUpxHoD-RsVz-EZdSc";
 let sb = null;
@@ -2572,21 +2579,32 @@ try {
   }
 } catch (e) { sb = null; }
 
+const SYNC_CODE_KEY = "growthDaily_syncCode";
 let syncUser = null;
+let syncCodeLabel = "";
+try { syncCodeLabel = localStorage.getItem(SYNC_CODE_KEY) || ""; } catch (e) {}
 let syncPulling = false; // true while a remote pull is in flight, so save()'s
                           // own localStorage write doesn't immediately queue
                           // a push right back up.
 let pushTimer = null;
 
+function deriveSyncCredentials(code) {
+  const clean = code.trim().toLowerCase();
+  return {
+    email: "sync-" + clean.replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "") + "@growthdaily.sync",
+    password: "gd-sync-v1-" + clean
+  };
+}
+
 function updateSyncUI() {
   const outEl = document.getElementById("syncSignedOut");
   const inEl = document.getElementById("syncSignedIn");
-  const emailEl = document.getElementById("syncUserEmail");
+  const codeEl = document.getElementById("syncCodeDisplay");
   if (!outEl || !inEl) return;
   if (syncUser) {
     outEl.style.display = "none";
     inEl.style.display = "";
-    if (emailEl) emailEl.textContent = syncUser.email || "";
+    if (codeEl) codeEl.textContent = syncCodeLabel || "(this device)";
   } else {
     outEl.style.display = "";
     inEl.style.display = "none";
@@ -2600,31 +2618,35 @@ async function initSync() {
     syncUser = data && data.session ? data.session.user : null;
     updateSyncUI();
     if (syncUser) await pullRemoteState();
-    sb.auth.onAuthStateChange(async (event, session) => {
-      syncUser = session ? session.user : null;
-      updateSyncUI();
-      if (syncUser && event === "SIGNED_IN") {
-        await pullRemoteState();
-        const statusEl = document.getElementById("syncStatus");
-        if (statusEl) { statusEl.textContent = "Signed in — synced."; statusEl.className = "modalStatus ok"; }
-      }
-    });
   } catch (e) {}
 }
 
-async function sendMagicLink() {
-  const input = document.getElementById("syncEmailInput");
+async function syncWithCode() {
+  const input = document.getElementById("syncCodeInput");
   const statusEl = document.getElementById("syncStatus");
-  const email = input ? input.value.trim() : "";
+  const code = input ? input.value.trim() : "";
   if (!sb) { if (statusEl) { statusEl.textContent = "Sync isn't available in this view — try opening this page in a regular browser tab."; statusEl.className = "modalStatus err"; } return; }
-  if (!email || !email.includes("@")) { if (statusEl) { statusEl.textContent = "Enter a valid email first."; statusEl.className = "modalStatus err"; } return; }
-  if (statusEl) { statusEl.textContent = "Sending link…"; statusEl.className = "modalStatus"; }
+  if (!code) { if (statusEl) { statusEl.textContent = "Enter a sync word or phrase first."; statusEl.className = "modalStatus err"; } return; }
+  if (statusEl) { statusEl.textContent = "Syncing…"; statusEl.className = "modalStatus"; }
+  const { email, password } = deriveSyncCredentials(code);
   try {
-    const { error } = await sb.auth.signInWithOtp({ email, options: { emailRedirectTo: window.location.href } });
-    if (error) throw error;
-    if (statusEl) { statusEl.textContent = "Check your email for a sign-in link, then open it on this device."; statusEl.className = "modalStatus ok"; }
+    let signInRes = await sb.auth.signInWithPassword({ email, password });
+    if (signInRes.error) {
+      const signUpRes = await sb.auth.signUp({ email, password });
+      if (signUpRes.error) throw signUpRes.error;
+      if (!signUpRes.data.session) {
+        throw new Error("This Supabase project still requires email confirmation — turn that off in Authentication settings, then try again.");
+      }
+      signInRes = signUpRes;
+    }
+    syncUser = signInRes.data.user;
+    syncCodeLabel = code;
+    try { localStorage.setItem(SYNC_CODE_KEY, code); } catch (e) {}
+    updateSyncUI();
+    await pullRemoteState();
+    if (statusEl) { statusEl.textContent = "Synced."; statusEl.className = "modalStatus ok"; }
   } catch (e) {
-    if (statusEl) { statusEl.textContent = "Couldn't send link: " + e.message; statusEl.className = "modalStatus err"; }
+    if (statusEl) { statusEl.textContent = "Couldn't sync: " + e.message; statusEl.className = "modalStatus err"; }
   }
 }
 
@@ -2632,9 +2654,11 @@ async function signOutSync() {
   if (!sb) return;
   try { await sb.auth.signOut(); } catch (e) {}
   syncUser = null;
+  syncCodeLabel = "";
+  try { localStorage.removeItem(SYNC_CODE_KEY); } catch (e) {}
   updateSyncUI();
   const statusEl = document.getElementById("syncStatus");
-  if (statusEl) { statusEl.textContent = "Signed out. This device keeps its own local copy."; statusEl.className = "modalStatus"; }
+  if (statusEl) { statusEl.textContent = "Stopped syncing. This device keeps its own local copy."; statusEl.className = "modalStatus"; }
 }
 
 async function pullRemoteState() {
