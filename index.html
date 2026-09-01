@@ -1053,6 +1053,16 @@
       </div>
     </div>
     <div class="modalStatus" id="syncStatus" role="status" aria-live="polite"></div>
+
+    <div style="border-top:1px solid var(--line); margin:20px 0 16px;"></div>
+    <h3 style="margin:0 0 6px; font-size:var(--text-lg);">Backup &amp; restore</h3>
+    <p class="modalHint">Download a full copy of your data as a file, or restore from one — useful for moving data between devices by hand.</p>
+    <div class="modalActions">
+      <button class="btnGhost" onclick="downloadBackup()">Download backup</button>
+      <button class="btnGhost" onclick="document.getElementById('restoreFileInput').click()">Restore from backup…</button>
+      <input type="file" id="restoreFileInput" accept="application/json" style="display:none;" onchange="restoreBackup(this.files[0])">
+    </div>
+    <div class="modalStatus" id="backupStatus" role="status" aria-live="polite"></div>
     <div class="modalFoot">Anyone who knows this phrase could see your practice notes — keep it a little private, but it's low-stakes data, so no real password needed.</div>
   </div>
 </div>
