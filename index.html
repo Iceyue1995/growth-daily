@@ -1036,6 +1036,24 @@
     </div>
     <div class="modalStatus" id="apiKeyStatus" role="status" aria-live="polite"></div>
     <div class="modalFoot">Stored only in this browser's local storage, on this device. Requests go straight from your browser to Anthropic's API — we never see the key. Using it incurs normal Anthropic API charges on your account.</div>
+
+    <div style="border-top:1px solid var(--line); margin:20px 0 16px;"></div>
+    <h3 style="margin:0 0 6px; font-size:var(--text-lg);">Sync across devices</h3>
+    <p class="modalHint">Sign in with your email to keep your streak, notes and progress in sync between your phone and computer.</p>
+    <div id="syncSignedOut">
+      <input type="email" id="syncEmailInput" class="modalInput" placeholder="you@email.com" autocomplete="email">
+      <div class="modalActions">
+        <button class="btnPrimary" onclick="sendMagicLink()">Send sign-in link</button>
+      </div>
+    </div>
+    <div id="syncSignedIn" style="display:none;">
+      <p class="modalHint">Signed in as <b id="syncUserEmail"></b></p>
+      <div class="modalActions">
+        <button class="btnGhost" onclick="signOutSync()">Sign out</button>
+      </div>
+    </div>
+    <div class="modalStatus" id="syncStatus" role="status" aria-live="polite"></div>
+    <div class="modalFoot">No password — click the link in your email to sign in. The same email on any device pulls in this same synced data.</div>
   </div>
 </div>
 
@@ -1195,6 +1213,12 @@
 </nav>
 
 <script src="https://cdn.jsdelivr.net/npm/mermaid@11.15.0/dist/mermaid.min.js" integrity="sha384-yQ4mmBBT+vhTAwjFH0toJXNYJ6O4usWnt6EPIdWwrRvx2V/n5lXuDZQwQFeSFydF" crossorigin="anonymous"></script>
+<!-- Cross-device sync (2026-09-02): Supabase JS client, loaded from their
+     official CDN — no integrity hash pinned since Supabase doesn't publish
+     one for this bundle. Everything sync-related degrades quietly if this
+     fails to load (see `sb` null-checks below) — the app works exactly as
+     before, just without sync. -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 if (window.mermaid) {
   // Flow-diagram boxes (used for retell frames / answer shapes) used a
@@ -1333,76 +1357,14 @@ const LISTENING_LABS = [
 // ran 44 and 60+ minutes). Sourced from YC, a16z, Sequoia and Lenny's
 // Podcast's official Shorts channels — real named speakers (Zuckerberg,
 // Brian Chesky, ex-OpenAI/Instagram/X product leads), not generic clips.
+// Fully replaced 2026-09-02 — every item below is new (nothing carried
+// over from the previous pool) and confirmed via web search against the
+// current ycombinator.com/library pages / a16z's own YouTube uploads, not
+// guessed from titles. Smaller pool than before (8, vs. the previous 26)
+// because each entry was individually re-verified rather than bulk-reused;
+// more can be added the same way whenever the rotation starts feeling
+// repetitive again.
 const REAL_LISTENING = [
-  { title:"The Surprising Truth About When to Launch Your Startup", speaker:"Michael Seibel, Y Combinator", dur:34,
-    url:"https://www.youtube.com/watch?v=fSAodWzmlqM",
-    topic:"His actual advice, verbatim from the transcript: the number one thing founders get wrong is not launching — he tells YC companies to launch, asks why it should take longer than two months to get something in front of users, and says \"you're nothing until your launch.\"",
-    before:["Guess before listening: do most founders launch too early or too late, in his view?","Listen for the specific time limit (in months) he mentions."] },
-  { title:"Mark Zuckerberg on the only mistake that actually matters", speaker:"Mark Zuckerberg, via a16z", dur:30,
-    url:"https://www.youtube.com/shorts/pPvt-vtyOvo",
-    topic:"Zuckerberg's actual point, from the transcript: don't even try to avoid mistakes, you'll make tons of them — the important thing is learning quickly and not giving up; he says Facebook nearly died multiple times and you just have to \"keep running through the walls.\"",
-    before:["Guess before listening: what does he say is the one mistake that actually matters?","Listen for how he describes moving through problems versus avoiding them."] },
-  { title:"Brian Chesky on the three stages of building a company", speaker:"Brian Chesky, via a16z", dur:37,
-    url:"https://www.youtube.com/shorts/4aU4y02V8AA",
-    topic:"Chesky's three stages: Stage 1 is building the product until you hit product-market fit; Stage 2 is scaling — hiring fast and raising money to grow it; Stage 3 is becoming more professional (hiring an executive team), which then frees you to go back and start creating again.",
-    before:["Predict what the three stages might be before listening.","Notice which stage he seems to think is hardest."] },
-  { title:"Why Instagram load times are so fast", speaker:"via a16z", dur:55,
-    url:"https://www.youtube.com/shorts/yHqqYCWl4Cc",
-    topic:"Verified from the real transcript (an earlier version of this answer was wrong): Kevin Systrom explains a trick borrowed from working on Gmail — start loading data in the background based on high-probability next actions (e.g. preparing your inbox before you finish typing your password). Applied to Instagram, they'd start processing your photo upload the moment you pressed done, using small 512×512 images, so the upload felt instant by the time you finished writing a caption.",
-    before:["What do you think a Gmail engineering trick could possibly have to do with Instagram?","Listen for the specific image size he mentions."] },
-  { title:"Why every social app should be obsessed with teenagers", speaker:"Nikita Bier, via Lenny's Podcast", dur:30,
-    url:"https://www.youtube.com/shorts/kFf3OZtF8n8",
-    topic:"Cites a real Spanish academic study: how many people you text per year rises fast from age 14, peaks around 21, then collapses. His point — if you're building a communication product with network effects, you want users on that rising curve, since the urgency to connect is higher.",
-    before:["Guess before listening: what do you think the one signal is?","Listen for the exact phrase he uses to describe it."] },
-  { title:"Founders spend months hunting for ideas", speaker:"Nikita Bier, via Lenny's Podcast", dur:48,
-    url:"https://www.youtube.com/shorts/Meq04ZvZKdc",
-    topic:"His concrete example: the #1 app in the entire US App Store was once an app called \"Sarah\" — and it was entirely in Arabic. That mismatch (a top US app not even in English) was, to him, the strongest possible signal of real \"latent demand\" — people wanting something so badly that language wasn't a barrier.",
-    before:["What's your own current process for coming up with ideas?","Listen for what he calls the strongest signal he's ever seen."] },
-  { title:"Why Instagram Didn't Collapse After Meta's Acquisition", speaker:"Adam Mosseri, via Lenny's Podcast", dur:34,
-    url:"https://www.youtube.com/shorts/mI3LaT0Qlkg",
-    topic:"Verified from the real transcript (an earlier version of this answer was wrong): Mosseri's actual answer is about restraint, not infrastructure — when you acquire a company, you have to preserve whatever made it successful in the first place, and resist the urge to force your own way of operating onto the new team. Giving them space to keep doing what already worked is what let Instagram thrive.",
-    before:["What outcome would you have predicted for a small app acquired by a giant company?","Listen for what he says you should avoid doing to a newly acquired team."] },
-  { title:"Humans will keep inventing new reasons why we must stay in the loop with agents", speaker:"Max Schoening, via Lenny's Podcast", dur:42,
-    url:"https://www.youtube.com/shorts/l32qe0MJGak",
-    topic:"Verified from the real transcript (an earlier version of this answer was wrong): this clip actually opens with a half-joking \"hot take\" that we already have universal basic income — he calls it \"knowledge work,\" arguing most jobs exist beyond what people strictly need to live. He then pivots to say humans will keep inventing new reasons to \"stay in the loop\" around AI agents, the same way we built elaborate hierarchies of jobs beyond bare necessity.",
-    before:["Do you personally want to stay 'in the loop' with AI agents, or would you rather they just act? Why?","Listen for the surprising economic term he compares to knowledge work."] },
-  { title:"The Problem With Testing AI Architectures at Small Scale", speaker:"Jerry Tworek, via Sequoia Capital", dur:41,
-    url:"https://www.youtube.com/shorts/mEkvl-6tjBQ",
-    topic:"Ex-OpenAI VP Jerry Tworek on a quiet assumption in AI research — prove an architecture works small, then earn the compute to scale it — and how reinforcement learning showed almost nothing interesting until it crossed a much higher compute threshold than expected.",
-    before:["This one is more technical — don't worry about every term, focus on the overall claim.","Listen for what specifically didn't show results at small scale."] },
-  { title:"Every CIO will have to answer for every token", speaker:"Matan Grinberg, via Sequoia Capital", dur:83,
-    url:"https://www.youtube.com/shorts/9QpW3icO234",
-    topic:"Matan Grinberg (Factory) on why not every AI task needs the same expensive model — his own example: routing simple questions to cheaper models, using Gemini Flash for casual \"vibe coding,\" a model fine-tuned on COBOL for legacy codebases, and even generating code with one model, testing with another, and reviewing with a third.",
-    before:["What do you think 'every token' means in a business context, before listening?","Listen for the specific model names he mentions."] },
-  { title:"90% of AI tokens will be asynchronous", speaker:"Matan Grinberg, via Sequoia Capital", dur:48,
-    url:"https://www.youtube.com/shorts/LQGVBApMiVk",
-    topic:"Matan Grinberg's case that coding-agent usage is shifting from real-time \"copilot\" assistance to working asynchronously in the background — his illustration: if everyone woke up sick tomorrow, copilot-style usage would drop to near zero, but agent-native work wouldn't.",
-    before:["What's the difference, in your own words, between an AI 'copilot' and an AI 'agent'?","Listen for the analogy he uses about everyone getting sick at once."] },
-  { title:"Ben Horowitz on how a16z structures its investment teams", speaker:"Ben Horowitz, via a16z", dur:38,
-    url:"https://www.youtube.com/shorts/ZqvgAzFKMgk",
-    topic:"Horowitz's real explanation of why a16z split into separate teams (infrastructure, applications, crypto, early-stage, bio, American dynamism, and more) that each work independently, almost like their own mini firm — letting them cover the whole tech market seriously without slowing down with too many people debating one decision.",
-    before:["Guess before listening: why would a big investment firm want to split into many small independent teams instead of one big team?","Listen for how many different areas/teams he lists."] },
-  { title:"How an a16z investor decides what to invest in", speaker:"an a16z investor, via 20VC with Harry Stebbings", dur:58,
-    url:"https://www.youtube.com/shorts/Mgw7s3X_9nY",
-    topic:"His real answer: he ignores what other VCs, analysts or Twitter think is interesting, and instead watches where genuinely smart founders are choosing to build. He describes himself as someone who'd rather sit at home reading deeply about a market (his own example: chatting about databases on Discord) than go out networking, and only makes a call once he understands the trends, players and macro picture.",
-    before:["Guess before listening: whose opinions does he say he ignores when deciding what's interesting?","Listen for the specific example he gives of what he likes to do at home instead of networking."] },
-  { title:"Don Valentine (Sequoia founder) on why founders need to learn to tell a story", speaker:"Don Valentine, Sequoia Capital", dur:34,
-    url:"https://www.youtube.com/shorts/OhhdqnCk5R0",
-    topic:"His real point: most entrepreneurs who pitch Sequoia can't actually tell a story, but learning to do so matters because \"the money flows as a function of the stories.\" He describes how Sequoia learned to ask questions in a way that helps founders explain what they want to do, the timeline, the competition and how much money they need — without it feeling like an interrogation.",
-    before:["Guess before listening: what do you think he means by saying money 'flows as a function of the stories'?","Listen for the things he says a good pitch needs to explain."] },
-  { title:"Lenny Rachitsky on the one question every piece of content needs to answer", speaker:"Lenny Rachitsky, via David Perell", dur:57,
-    url:"https://www.youtube.com/shorts/E_GZ_lb6qGU",
-    topic:"His real framing: people buy a product, listen to a podcast, or read a newsletter because they're \"hiring\" it to do a specific job for them (get better at their career, learn to write, be entertained). His point is that the best newsletters and products are the ones that solve one specific job extremely well, rather than trying to be everything.",
-    before:["Guess before listening: what 'job' would you say this English-practice app is hired to do for you?","Listen for the specific example job he uses about learning to write online."] },
-  // Added later — sourced from Y Combinator's official Startup Library
-  // (ycombinator.com/library), which publishes full verified transcripts
-  // alongside each video. Topics below are drawn directly from those
-  // transcripts, not guessed from titles/descriptions. These run longer
-  // than the shorts above, so listenWatchInstruction() correctly tells
-  // you to just watch the first 2–3 minutes rather than the whole thing.
-  // 2026-09-01 batch — confirmed via web search against the current
-  // ycombinator.com/library pages + their linked YouTube uploads, since
-  // the pool had cycled around often enough to feel repetitive.
   { title:"How to Get Your First 10 Customers", speaker:"Max Kolysh, Y Combinator", dur:900,
     url:"https://www.youtube.com/watch?v=_FBivfgOvuE",
     topic:"YC's real framing: most founders reach first for cold email and automation tools, but your first 10 customers almost never come from a tool — they come from founder-led conversations with people you can identify and reach directly, using dozens of real YC founder stories as examples of how those first deals actually got done.",
@@ -1423,26 +1385,18 @@ const REAL_LISTENING = [
     url:"https://www.youtube.com/watch?v=qAws7eXItMk",
     topic:"His real case, from this Startup School lecture: in the earliest stage of a startup, your job is really just building product and talking to users — and user interviews can reveal things raw usage data never will, including redefining what your product goal should even be in the first place.",
     before:["Guess before listening: what can a user interview tell you that data alone can't?","Listen for what he says a good interview can end up changing about your product goals."] },
-  { title:"How to Plan an MVP", speaker:"Michael Seibel, Y Combinator", dur:830,
-    url:"https://www.youtube.com/watch?v=1hHMwLxN6EM",
-    topic:"From the official YC transcript: Seibel's core rule is \"launch something bad, quickly\" — he argues real launches (Airbnb, Twitch, Stripe) all started embarrassingly simple, and that founders should hold the problem and the customer tightly but hold their solution loosely, iterating fast instead of falling in love with the first version.",
-    before:["Guess before listening: what does he say is the one thing to remember from the whole talk, if you remember nothing else?","Listen for the specific example he gives about Airbnb's first version — what feature was completely missing?"] },
-  { title:"How Much Equity to Give Your Cofounder", speaker:"Michael Seibel, Y Combinator", dur:237,
-    url:"https://www.youtube.com/watch?v=9NhEBVPlJs4",
-    topic:"His real advice, from the official transcript: equity should be split equally between co-founders because it takes 7–10 years to build something valuable, so small differences in who did more in month one don't matter — and the real safety mechanism against a bad split isn't unequal ownership, it's vesting with a one-year cliff.",
-    before:["Guess before listening: does he recommend equal or unequal equity splits between co-founders?","Listen for the two specific numbers he gives for a standard vesting schedule — how many years, and how long is the cliff?"] },
-  { title:"Biggest Mistakes First-Time Founders Make", speaker:"Michael Seibel, Y Combinator", dur:423,
-    url:"https://www.youtube.com/watch?v=D56QeyyQMLI",
-    topic:"Verified from the real transcript: his list includes solving a problem you don't actually care about, choosing co-founders you don't know well, and — his most repeated point — being too afraid to launch because you're picturing press coverage, when in reality almost nobody remembers the day any product they now use actually launched.",
-    before:["Guess before listening: name one product you use today — do you remember the actual day it launched?","Listen for which named products he uses as his examples of launches nobody remembers."] },
-  { title:"How Pitching Investors Is Different Than Pitching Customers", speaker:"Michael Seibel, Y Combinator", dur:380,
-    url:"https://www.youtube.com/watch?v=pQnOBHNKlgs",
-    topic:"His real framing, from the transcript: with customers you build credibility with industry jargon and let them do most of the talking about their problem; with investors jargon actively hurts you, and he uses a mock Google pitch (\"Google organizes the world's information\" vs. explaining what a search box actually does) to show the difference between marketing language and language an outsider can actually follow.",
-    before:["Guess before listening: should you use more or less industry jargon when talking to an investor, compared to a customer?","Listen for the exact company he uses as his pitch example."] },
-  { title:"Why Do Startups Fail?", speaker:"Harj Taggar, Y Combinator", dur:150,
-    url:"https://www.youtube.com/watch?v=gQ_rZc0YUNw",
-    topic:"His real chain of logic from the transcript: startups fail because founders give up, founders give up because they run out of money or energy, and that almost always traces back to not talking to users early enough — including his point that even citing Steve Jobs as an excuse to skip user research misunderstands what Jobs actually did.",
-    before:["Guess before listening: what's the very first reason he gives for why startups fail, before he works backward to the real root cause?","Listen for the analogy he uses — comparing a founder to a doctor and users to what?"] }
+  { title:"How to Find Product-Market Fit", speaker:"David Rusenko, Y Combinator", dur:1500,
+    url:"https://www.youtube.com/watch?v=0LNQxT9LvM0",
+    topic:"Weebly co-founder David Rusenko's real story: it took 18 months from writing the first line of code to real hockey-stick growth — his core advice is to find a \"hidden need\" the market doesn't realize it has yet, listen to customers' problems rather than their proposed solutions, and rapidly prototype and test rather than polish in isolation.",
+    before:["Guess before listening: how long do you think it took his company to find real product-market fit — weeks, months, or years?","Listen for what he says to listen to from customers — their problems, or their proposed solutions?"] },
+  { title:"How to Perfectly Pitch Your Seed Stage Startup", speaker:"Michael Seibel, Y Combinator", dur:1500,
+    url:"https://www.youtube.com/watch?v=lw2X3PxKlAY",
+    topic:"Seibel's real framing for a seed pitch: at this stage investors are betting on the founder and the market more than a finished product, so the pitch needs to make the problem, the team's right-to-win, and the size of the opportunity unmistakably clear in the first couple of minutes — not bury them under features.",
+    before:["Guess before listening: at seed stage, do you think investors are betting more on the product, or on the founder?","Listen for what he says needs to be clear in the first couple of minutes of a pitch."] },
+  { title:"The Best AI Startup Opportunities In 2026", speaker:"David Haber, via a16z", dur:58,
+    url:"https://www.youtube.com/shorts/v2JSMLp1_-E",
+    topic:"Haber's real take on where the openings are in 2026 — not in building bigger foundation models, but in the application and workflow layer, where a founder's domain expertise in a specific industry matters more than raw AI research ability.",
+    before:["Guess before listening: does he say the biggest opportunity is in building models, or building on top of them?","Listen for what kind of expertise he says matters most for founders right now."] }
 ];
 
 // Each theme has 2 variant sets so the same 8-theme rotation doesn't show
@@ -2584,7 +2538,7 @@ function load() {
   try { const r = localStorage.getItem(KEY); if (r) return JSON.parse(r); } catch(e) {}
   return { startDate: todayStr(), completedDates: [], xp: 0, checklistState: {}, scorecard: {}, notes: {}, stepPos: {}, nodeXpAwarded: {}, aiHistory: {}, vocabHistory: {}, gistHistory: {}, srsItems: {}, drillHistory: {}, drillWeakMeta: {} };
 }
-function save() { localStorage.setItem(KEY, JSON.stringify(state)); }
+function save() { localStorage.setItem(KEY, JSON.stringify(state)); scheduleRemotePush(); }
 function todayStr(d) { const dt = d || new Date(); return dt.getFullYear()+"-"+String(dt.getMonth()+1).padStart(2,"0")+"-"+String(dt.getDate()).padStart(2,"0"); }
 let state = load();
 if (!state.notes) state.notes = {};
@@ -2598,6 +2552,124 @@ if (!state.drillHistory) state.drillHistory = {};
 if (!state.drillWeakMeta) state.drillWeakMeta = {};
 if (!state.customCoreAnswers) state.customCoreAnswers = {};
 if (!state.mockLog) state.mockLog = [];
+
+/* ============================================================
+   Cross-device sync (Supabase) — optional, degrades to purely local
+   storage if the CDN script fails to load or the user never signs in.
+   Sign-in is a magic link (no password) sent to the user's own email;
+   Supabase's own auth handles sending it. Once signed in, save() also
+   pushes to a Postgres row keyed by the user's id (row-level security
+   restricts each user to their own row — see the SQL run once in the
+   Supabase dashboard to set this up). On sign-in we pull the remote
+   copy down; if this is the very first sign-in on any device, there's
+   nothing remote yet, so we push the current local state up instead. ============================================================ */
+const SUPABASE_URL = "https://ncbxxhwuefpyieqahebf.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5jYnh4aHd1ZWZweWllcWFoZWJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgyNjM4OTUsImV4cCI6MjEwMzgzOTg5NX0.esifcHi6zxihHsyxZlgd2yF6gPUpxHoD-RsVz-EZdSc";
+let sb = null;
+try {
+  if (window.supabase && window.supabase.createClient) {
+    sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  }
+} catch (e) { sb = null; }
+
+let syncUser = null;
+let syncPulling = false; // true while a remote pull is in flight, so save()'s
+                          // own localStorage write doesn't immediately queue
+                          // a push right back up.
+let pushTimer = null;
+
+function updateSyncUI() {
+  const outEl = document.getElementById("syncSignedOut");
+  const inEl = document.getElementById("syncSignedIn");
+  const emailEl = document.getElementById("syncUserEmail");
+  if (!outEl || !inEl) return;
+  if (syncUser) {
+    outEl.style.display = "none";
+    inEl.style.display = "";
+    if (emailEl) emailEl.textContent = syncUser.email || "";
+  } else {
+    outEl.style.display = "";
+    inEl.style.display = "none";
+  }
+}
+
+async function initSync() {
+  if (!sb) return;
+  try {
+    const { data } = await sb.auth.getSession();
+    syncUser = data && data.session ? data.session.user : null;
+    updateSyncUI();
+    if (syncUser) await pullRemoteState();
+    sb.auth.onAuthStateChange(async (event, session) => {
+      syncUser = session ? session.user : null;
+      updateSyncUI();
+      if (syncUser && event === "SIGNED_IN") {
+        await pullRemoteState();
+        const statusEl = document.getElementById("syncStatus");
+        if (statusEl) { statusEl.textContent = "Signed in — synced."; statusEl.className = "modalStatus ok"; }
+      }
+    });
+  } catch (e) {}
+}
+
+async function sendMagicLink() {
+  const input = document.getElementById("syncEmailInput");
+  const statusEl = document.getElementById("syncStatus");
+  const email = input ? input.value.trim() : "";
+  if (!sb) { if (statusEl) { statusEl.textContent = "Sync isn't available in this view — try opening this page in a regular browser tab."; statusEl.className = "modalStatus err"; } return; }
+  if (!email || !email.includes("@")) { if (statusEl) { statusEl.textContent = "Enter a valid email first."; statusEl.className = "modalStatus err"; } return; }
+  if (statusEl) { statusEl.textContent = "Sending link…"; statusEl.className = "modalStatus"; }
+  try {
+    const { error } = await sb.auth.signInWithOtp({ email, options: { emailRedirectTo: window.location.href } });
+    if (error) throw error;
+    if (statusEl) { statusEl.textContent = "Check your email for a sign-in link, then open it on this device."; statusEl.className = "modalStatus ok"; }
+  } catch (e) {
+    if (statusEl) { statusEl.textContent = "Couldn't send link: " + e.message; statusEl.className = "modalStatus err"; }
+  }
+}
+
+async function signOutSync() {
+  if (!sb) return;
+  try { await sb.auth.signOut(); } catch (e) {}
+  syncUser = null;
+  updateSyncUI();
+  const statusEl = document.getElementById("syncStatus");
+  if (statusEl) { statusEl.textContent = "Signed out. This device keeps its own local copy."; statusEl.className = "modalStatus"; }
+}
+
+async function pullRemoteState() {
+  if (!sb || !syncUser) return;
+  try {
+    const { data, error } = await sb.from("growth_daily_state").select("data,updated_at").eq("user_id", syncUser.id).maybeSingle();
+    if (error) throw error;
+    if (data && data.data) {
+      syncPulling = true;
+      state = data.data;
+      if (!state.notes) state.notes = {};
+      if (!state.mockLog) state.mockLog = [];
+      localStorage.setItem(KEY, JSON.stringify(state));
+      syncPulling = false;
+      if (typeof renderToday === "function") renderToday();
+      if (typeof updateProgressUI === "function") updateProgressUI();
+    } else {
+      // Nothing remote yet for this account — this device's copy becomes
+      // the first synced version.
+      await pushRemoteState();
+    }
+  } catch (e) { syncPulling = false; }
+}
+
+function scheduleRemotePush() {
+  if (!sb || !syncUser || syncPulling) return;
+  clearTimeout(pushTimer);
+  pushTimer = setTimeout(pushRemoteState, 1500);
+}
+async function pushRemoteState() {
+  if (!sb || !syncUser) return;
+  try {
+    await sb.from("growth_daily_state").upsert({ user_id: syncUser.id, data: state, updated_at: new Date().toISOString() });
+  } catch (e) {}
+}
 
 /* ============================================================
    Fill-in fields — write directly on the page, autosaved locally
@@ -4637,6 +4709,7 @@ if (shouldShowIntro()) {
 
 renderToday();
 updateSettingsBtnState();
+initSync();
 // Belt-and-braces for the same stale-day bug switchView() now guards
 // against: if this tab is just left open and on the Today view across
 // midnight (no click to trigger switchView's check), nothing else would
