@@ -252,6 +252,36 @@
   .bottomNav button.active { color: var(--accent2-fg); }
   .bottomNav button.active svg { color: var(--accent2-fg); }
 
+  /* ---- desktop/laptop: nav moves to a fixed left sidebar instead of a
+     bottom tab bar. Mobile (<900px) keeps the bottom bar untouched — this
+     only kicks in once there's enough width for a sidebar to make sense.
+     .app-body pushes the header/main content over so it isn't hidden
+     underneath the sidebar. ---- */
+  @media (min-width: 900px) {
+    body { padding-left: var(--sidebar-w, 200px); }
+    .bottomNav {
+      top: 0; bottom: 0; left: 0; right: auto; width: var(--sidebar-w, 200px);
+      flex-direction: column; justify-content: flex-start; align-items: stretch;
+      border-top: none; border-right: 1px solid var(--line);
+      padding: 28px 0;
+    }
+    .bottomNav-inner { flex-direction: column; max-width: none; gap: 2px; }
+    .bottomNav button {
+      flex-direction: row; justify-content: flex-start; align-items: center; gap: 12px;
+      padding: 11px 26px; font-size: var(--text-2xs);
+    }
+    /* Content columns were still capped at their old (pre-sidebar) widths
+       — 720px / 1080px — which made sense when they were the only thing on
+       a full-width screen, but once the sidebar eats 200px on the left,
+       centering those same narrow caps in the remaining space leaves a
+       large empty gap on the right on any reasonably wide laptop/desktop
+       screen. Scale both up with the viewport (capped so paragraph text
+       inside .body-text, which has its own 62ch limit, never gets
+       uncomfortably wide) so cards actually use the freed-up width. */
+    .wrap { max-width: clamp(720px, 74vw, 1040px); }
+    .topbar-inner { max-width: clamp(1080px, 86vw, 1360px); }
+  }
+
   /* ---- cards ----
      Flat per the reference ("purposefully flat... rejects shadows"):
      a filled block with no border reads as "distinct" here, rather than
@@ -938,11 +968,19 @@
   .introOverlay {
     position: fixed; inset: 0; z-index: 100; background: var(--bg);
     display: flex; flex-direction: column; align-items: center; justify-content: space-between;
-    padding: 40px 28px; cursor: pointer;
+    padding: 0 0 40px; cursor: pointer;
   }
   .introOverlay[hidden] { display: none; }
+  /* Sized and positioned to exactly match .topbar-inner (same max-width,
+     same horizontal padding, same border-bottom) so this reads as the same
+     header the real app uses — not a smaller, separate mobile-ish screen
+     bolted onto the front. This is what was actually different between the
+     two screenshots: the real header spans the full page width; the intro
+     meta row was a narrow floating pill regardless of screen size. */
   .introMeta {
-    display: flex; justify-content: space-between; width: 100%; max-width: 320px;
+    display: flex; justify-content: space-between; width: 100%; max-width: 1080px;
+    margin: 0 auto; padding: 20px 32px 16px; box-sizing: border-box;
+    border-bottom: 1px solid var(--line);
     font-family: var(--font-mono); font-size: var(--text-2xs); letter-spacing: .12em;
     color: var(--accent2); text-transform: uppercase; opacity: 0; transition: opacity .6s ease;
   }
@@ -958,7 +996,7 @@
   .introSeed.sway .seedLeafR { animation: introSwayR 3.6s ease-in-out infinite; }
   @keyframes introSwayL { 0%, 100% { transform: rotate(0deg); } 50% { transform: rotate(-2.5deg); } }
   @keyframes introSwayR { 0%, 100% { transform: rotate(0deg); } 50% { transform: rotate(2.5deg); } }
-  .introQuote { text-align: center; max-width: 320px; opacity: 0; transition: opacity 1s ease; }
+  .introQuote { text-align: center; max-width: clamp(320px, 34vw, 560px); opacity: 0; transition: opacity 1s ease; }
   .introQuote.show { opacity: 1; }
   .introQuote p.q {
     font-family: var(--font-display); font-style: italic; font-size: var(--text-xl);
@@ -973,6 +1011,35 @@
     color: var(--text3); opacity: 0; transition: opacity .8s ease;
   }
   .introTap.show { opacity: .7; }
+  /* Password gate — shown in place of "tap to begin" for anyone who hasn't
+     unlocked this browser yet. Keeps the same calm intro screen guests see
+     (streak/quote), just swaps the dismiss action for a password prompt
+     instead of revealing the real app underneath. */
+  .introLock { display: flex; flex-direction: column; align-items: center; gap: 10px; cursor: default; }
+  .introLock input {
+    width: 200px; text-align: center; background: var(--surface-2); border: 1px solid var(--line-strong);
+    border-radius: var(--radius-sm); padding: 9px 12px; color: var(--text); font-family: var(--font-mono);
+    font-size: var(--text-sm); letter-spacing: .08em;
+  }
+  .introLock input:focus { outline: none; border-color: var(--accent2); }
+  .introLockError { font-family: var(--font-mono); font-size: var(--text-2xs); letter-spacing: .06em; color: var(--bad, #c9686a); min-height: 1.2em; }
+  /* Main app stays out of the DOM (not just visually hidden) until unlocked
+     — body.unlocked is only added after a correct password, and that's also
+     the gate on when renderToday()/etc. are even called, so a guest poking
+     at DevTools before that doesn't find the rendered content either. */
+  body:not(.unlocked) main.wrap, body:not(.unlocked) .bottomNav { display: none !important; }
+  /* On wide (desktop/laptop) viewports the intro screen was reading as a
+     tiny mobile-width island floating in a sea of black — everything below
+     was capped at 320px regardless of screen size. Scale the seedling icon
+     and quote type up on larger screens so the intro feels proportioned to
+     the same desktop width the rest of the app uses (.hero maxes at 1080px),
+     instead of looking like an unstyled mobile view. */
+  @media (min-width: 900px) {
+    .introSeed { width: 96px; height: 96px; }
+    .introQuote p.q { font-size: var(--text-2xl); }
+    .introQuote p.a { font-size: var(--text-sm); }
+    .introMid { gap: 34px; }
+  }
   @media (prefers-reduced-motion: reduce) {
     .introOverlay * { transition: none !important; animation: none !important; }
     .introMeta, .introSeed, .introQuote, .introTap { opacity: 1 !important; }
@@ -997,6 +1064,12 @@
     </div>
   </div>
   <div class="introTap" id="introTap">TAP TO BEGIN</div>
+  <div class="introLock" id="introLock" hidden onclick="event.stopPropagation()">
+    <input type="password" id="lockPasswordInput" placeholder="Password" autocomplete="off" spellcheck="false"
+      onkeydown="if(event.key==='Enter'){event.preventDefault();submitLockForm();}">
+    <button class="btnPrimary" style="padding:8px 20px;" onclick="submitLockForm()">Unlock</button>
+    <div class="introLockError" id="introLockError"></div>
+  </div>
 </div>
 
 <header class="topbar">
@@ -1193,16 +1266,9 @@
         </div>
         <div class="heatmapStreak" id="heatmapStreak"></div>
       </div>
-      <div class="card" style="box-shadow: inset 3px 0 0 var(--accent2);">
-        <div class="card-head"><h3>Share with Claude</h3></div>
-        <div class="meta" style="margin:-8px 0 12px;">Everything you've written stays only on this device — I can't read it directly. Copy it here, then paste into the chat if you want it reviewed.</div>
-        <button class="btnPrimary solo" onclick="exportAnswersToClipboard()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" style="vertical-align:-2px; margin-right:6px;"><rect x="8" y="2" width="8" height="4" rx="1" stroke="currentColor" stroke-width="1.6"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>Copy all my answers</button>
-        <div class="modalStatus" id="exportStatus" style="margin-top:10px;" role="status" aria-live="polite"></div>
-      </div>
     </div>
   </div>
 
-  <footer class="page">Progress is saved on this device. <span class="resetLink" id="resetLink">Reset all progress</span></footer>
 </main>
 
 <nav class="bottomNav nav" aria-label="Main">
@@ -4615,11 +4681,17 @@ function renderProgress() {
   }
 }
 
-document.getElementById("resetLink").addEventListener("click", () => {
-  if (confirm("Reset all progress? This cannot be undone.")) {
-    localStorage.removeItem(KEY); state = load(); renderToday();
-  }
-});
+// The "Reset all progress" link used to live in a page footer that's been
+// removed; guarded with a null-check rather than deleted outright since the
+// underlying reset behavior may get a new home (e.g. Settings) later.
+const resetLinkEl = document.getElementById("resetLink");
+if (resetLinkEl) {
+  resetLinkEl.addEventListener("click", () => {
+    if (confirm("Reset all progress? This cannot be undone.")) {
+      localStorage.removeItem(KEY); state = load(); renderToday();
+    }
+  });
+}
 
 /* ============================================================
    Backup / restore — everything lives in this browser's
@@ -4708,7 +4780,66 @@ function pickDailyQuote() {
 }
 // Shows on every open now (was once-per-day) — always true.
 function shouldShowIntro() { return true; }
-function dismissIntro() {
+/* ---- password gate ----
+   This app has real personal content baked into its source (real salary
+   numbers, real reasons for leaving a job, etc. — see CORE_ANSWERS_BANK)
+   because it was built as a private practice tool, then later shared as a
+   public link. A guest who opens the link should only ever see the calm
+   intro screen (streak/quote — no personal data there) and a password
+   prompt; the real app is never rendered into the page at all until the
+   password is verified — see the gated boot sequence below. Only the
+   SHA-256 hash lives in this file, not the plain password.
+   Caveat, stated plainly: this is a static site with no server, so this
+   only stops someone from clicking around the UI. It can't stop someone
+   who deliberately reads the page's JS source (Ctrl+U / DevTools) from
+   finding the same hash — hashing keeps the plain password out of the
+   file, it doesn't hide the personal content, which still ships in the
+   file either way. Real secrecy for that content would mean moving it
+   out of this file entirely (fetched from Supabase after login instead
+   of hardcoded) — a bigger change, worth doing separately if it matters. */
+const SITE_UNLOCK_KEY = "growthDaily_unlocked";
+const SITE_PASSWORD_HASH = "6f190caa34b2991b962c24387283bf6b1355d3ec3f83667052900f8a13f99d0a";
+async function sha256Hex(str) {
+  const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(str));
+  return [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, "0")).join("");
+}
+function isUnlocked() { try { return localStorage.getItem(SITE_UNLOCK_KEY) === "1"; } catch (e) { return false; } }
+async function tryUnlock(pw) {
+  try {
+    const h = await sha256Hex(pw.trim());
+    if (h === SITE_PASSWORD_HASH) { try { localStorage.setItem(SITE_UNLOCK_KEY, "1"); } catch (e) {} return true; }
+  } catch (e) { /* e.g. crypto.subtle unavailable outside a secure/https origin */ }
+  return false;
+}
+function revealApp() {
+  document.body.classList.add("unlocked");
+  renderToday();
+  updateSettingsBtnState();
+  initSync();
+}
+function showLockForm() {
+  const tap = document.getElementById("introTap");
+  const lock = document.getElementById("introLock");
+  if (tap) tap.style.display = "none";
+  if (lock) { lock.hidden = false; setTimeout(() => document.getElementById("lockPasswordInput")?.focus(), 50); }
+}
+async function submitLockForm() {
+  const input = document.getElementById("lockPasswordInput");
+  const err = document.getElementById("introLockError");
+  const pw = input ? input.value : "";
+  if (!pw.trim()) return;
+  const ok = await tryUnlock(pw);
+  if (ok) {
+    if (err) err.textContent = "";
+    revealApp();
+    dismissIntro(true);
+  } else {
+    if (err) err.textContent = "Wrong password.";
+    if (input) { input.value = ""; input.focus(); }
+  }
+}
+function dismissIntro(forceUnlocked) {
+  if (!forceUnlocked && !isUnlocked()) { showLockForm(); return; }
   const el = document.getElementById("introOverlay");
   if (!el || el.hidden) return;
   el.style.transition = "opacity .5s ease";
@@ -4741,15 +4872,20 @@ if (shouldShowIntro()) {
   playIntro();
 }
 
-renderToday();
-updateSettingsBtnState();
-initSync();
+// Gated: the real app (renderToday, sync, everything) only ever runs once
+// this browser has already been unlocked in a past visit — see the
+// password-gate block above. A first-time guest just gets the intro
+// screen + password prompt; nothing else gets rendered into the page.
+if (isUnlocked()) { revealApp(); }
 // Belt-and-braces for the same stale-day bug switchView() now guards
 // against: if this tab is just left open and on the Today view across
 // midnight (no click to trigger switchView's check), nothing else would
 // ever notice the date changed. A once-a-minute check is cheap and makes
 // sure a truly idle, always-open tab still flips over on its own.
+// Guarded on isUnlocked() too — otherwise this would quietly render the
+// real app's content into a locked page in the background every minute.
 setInterval(() => {
+  if (!isUnlocked()) return;
   const activeBtn = document.querySelector(".nav button.active");
   if (activeBtn && activeBtn.dataset.view === "today" && todayStr() !== lastRenderedDay) renderToday();
 }, 60000);
