@@ -1027,8 +1027,8 @@
     <input type="password" id="apiKeyInput" class="modalInput" placeholder="sk-ant-…" autocomplete="off" spellcheck="false">
     <label class="modalLabel">Model</label>
     <select id="apiModelInput" class="modalInput">
-      <option value="claude-3-5-sonnet-20241022">Claude 3.5 Sonnet (recommended)</option>
-      <option value="claude-3-5-haiku-20241022">Claude 3.5 Haiku (faster, cheaper)</option>
+      <option value="claude-sonnet-5">Claude Sonnet 5 (recommended)</option>
+      <option value="claude-haiku-4-5-20251001">Claude Haiku 4.5 (faster, cheaper)</option>
     </select>
     <div class="modalActions">
       <button class="btnGhost" onclick="clearApiKey()">Clear</button>
@@ -3696,7 +3696,7 @@ async function exportAnswersToClipboard() {
 const AI_KEY_STORAGE = "growthDaily_apiKey";
 const AI_MODEL_STORAGE = "growthDaily_apiModel";
 function getApiKey() { try { return localStorage.getItem(AI_KEY_STORAGE) || ""; } catch (e) { return ""; } }
-function getApiModel() { try { return localStorage.getItem(AI_MODEL_STORAGE) || "claude-3-5-sonnet-20241022"; } catch (e) { return "claude-3-5-sonnet-20241022"; } }
+function getApiModel() { try { return localStorage.getItem(AI_MODEL_STORAGE) || "claude-sonnet-5"; } catch (e) { return "claude-sonnet-5"; } }
 function updateSettingsBtnState() {
   const btn = document.getElementById("settingsBtn");
   if (btn) btn.classList.toggle("configured", !!getApiKey());
@@ -3728,7 +3728,7 @@ function saveApiKey() {
   const modelInput = document.getElementById("apiModelInput");
   const status = document.getElementById("apiKeyStatus");
   const key = keyInput ? keyInput.value.trim() : "";
-  const model = modelInput ? modelInput.value : "claude-3-5-sonnet-20241022";
+  const model = modelInput ? modelInput.value : "claude-sonnet-5";
   try {
     if (key) localStorage.setItem(AI_KEY_STORAGE, key); else localStorage.removeItem(AI_KEY_STORAGE);
     localStorage.setItem(AI_MODEL_STORAGE, model);
