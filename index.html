@@ -3974,11 +3974,18 @@ function escapeHtmlText(s) {
 // the well-formed case exactly the same as before.
 function parseAiFeedback(text) {
   const str = String(text);
-  const labelRe = /\b(ITEM|BEFORE|AFTER|WHY)\s*:\s*/gi;
+  // EXPLANATION is accepted as an alias for WHY — some external correction
+  // agents (or a model asked slightly differently) label their reasoning
+  // that way instead. Without this, "EXPLANATION:" isn't recognized as a
+  // label at all and its text just gets stuck onto the end of whatever
+  // field came before it (usually AFTER) instead of its own Why column.
+  const labelRe = /\b(ITEM|BEFORE|AFTER|WHY|EXPLANATION)\s*:\s*/gi;
   const marks = [];
   let mm;
   while ((mm = labelRe.exec(str))) {
-    marks.push({ label: mm[1].toUpperCase(), contentStart: mm.index + mm[0].length, start: mm.index });
+    const raw = mm[1].toUpperCase();
+    const label = raw === "EXPLANATION" ? "WHY" : raw;
+    marks.push({ label, contentStart: mm.index + mm[0].length, start: mm.index });
   }
   if (!marks.length) return [];
   const items = [];
