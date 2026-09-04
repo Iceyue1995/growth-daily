@@ -307,6 +307,36 @@
     border-radius: var(--radius-md); font-weight: 500; border: 1px solid transparent; transition: border-color .15s, background .15s;
   }
   .chunk-pill:hover { border-color: var(--accent2-line); background: var(--accent2-line); }
+  /* Sentence Network's chunk-pills carry a meaning + example, collapsed by
+     default and revealed on tap of the text (not the whole pill, so the
+     play button's own click isn't swallowed by the toggle). Column layout
+     here overrides the plain row layout other chunk-pills use, since this
+     variant stacks a row (chunkMain) on top of a detail block. */
+  .chunk-pill.snPill { display: block; padding: 0; }
+  .snPill .chunkMain { display: flex; align-items: center; gap: 8px; padding: 9px 13px; cursor: pointer; }
+  /* .snPillLabel only — NOT a bare "span" selector, since .snPillToggle
+     below is also a <span>. A generic "span { flex: 1 }" here previously
+     matched both, so the toggle badge inherited flex:1 and stretched into
+     a full-width oval instead of staying a small fixed circle. */
+  .snPill .chunkMain .snPillLabel { flex: 1; min-width: 0; }
+  /* ".snPill .snPillToggle" (not just ".snPillToggle") so this beats the
+     older, more specific ".chunk-pill span { flex: 1 }" rule further down
+     — without the extra ".snPill" ancestor class, that rule's higher
+     specificity (class+type vs. a single class here) was winning and
+     stretching this into a full-width oval instead of a small circle. */
+  .snPill .snPillToggle {
+    font-family: var(--font-mono); font-size: var(--text-2xs); color: var(--accent2-fg); opacity: .6;
+    border: 1px solid currentColor; border-radius: 50%; width: 16px; height: 16px;
+    flex: none; display: flex; align-items: center; justify-content: center; line-height: 1;
+  }
+  .snPillDetail {
+    max-height: 0; overflow: hidden; transition: max-height .2s ease;
+    font-size: var(--text-sm); color: var(--accent2-fg); line-height: 1.55;
+  }
+  .snPillDetail > div { padding: 0 13px 10px; }
+  .snPillDetail b { font-family: var(--font-mono); font-size: var(--text-2xs); text-transform: uppercase; letter-spacing: .06em; opacity: .75; margin-right: 6px; }
+  .snPill.open .snPillDetail { max-height: 200px; }
+  .snPill.open .snPillToggle { opacity: 1; background: var(--accent2-fg); color: var(--accent2-weak); }
   .subhead { font-family: var(--font-mono); font-size: var(--text-xs); font-weight: 700; color: var(--text2); text-transform: uppercase; letter-spacing: .05em; margin: 18px 0 8px; padding-top: 10px; border-top: 1px solid var(--line); }
   .subhead:first-child { margin-top: 0; padding-top: 0; border-top: none; }
   .qlist { list-style: none; padding: 0; margin: 0; font-size: var(--text-base); color: var(--text2); }
@@ -1537,46 +1567,194 @@ const REAL_LISTENING = [
 // the exact same 5 sentences every time it comes back around — the theme
 // label repeats every 8 days, but which specific sentences you see
 // alternates, stretching the true no-repeat window to 16 days.
+// Each pattern is {p: the starter itself, m: a short "what it's for" gloss,
+// e: one full example sentence in a work/interview-prep context} — the
+// meaning/example pair is what shows up when you tap a chunk to ask "what
+// does this mean, show me a sample" instead of just hearing it read aloud.
 const SENTENCE_NETWORK = {
   "Observation": [
-    ["What stood out to me was…","I started to notice that…","The first thing I realised was…","There seems to be a gap between… and…","What looks simple on the surface is actually…"],
-    ["One thing I couldn't help noticing was…","It became clear to me that…","The pattern I kept seeing was…","At first glance it looks like…, but…","A detail that's easy to miss is…"],
-    ["Something I picked up on was…","I began to realize that…","What jumped out at me was…","There's a noticeable difference between… and…","On the surface it seems…, but underneath…"]
+    [
+      { p:"What stood out to me was…", m:"Highlight the single most noticeable detail.", e:"What stood out to me was how quickly users abandoned the signup form." },
+      { p:"I started to notice that…", m:"Introduce a pattern you gradually noticed.", e:"I started to notice that most support tickets came from the same three screens." },
+      { p:"The first thing I realised was…", m:"Name your first, most immediate insight.", e:"The first thing I realised was that onboarding assumed too much prior knowledge." },
+      { p:"There seems to be a gap between… and…", m:"Point out a mismatch between two things.", e:"There seems to be a gap between what the metrics show and what users actually say." },
+      { p:"What looks simple on the surface is actually…", m:"Reveal hidden complexity behind something simple-looking.", e:"What looks simple on the surface is actually a three-step approval process." }
+    ],
+    [
+      { p:"One thing I couldn't help noticing was…", m:"Flag something that caught your attention.", e:"One thing I couldn't help noticing was how often 'confusing' came up in feedback." },
+      { p:"It became clear to me that…", m:"State a conclusion you arrived at.", e:"It became clear to me that the team was optimizing for speed over quality." },
+      { p:"The pattern I kept seeing was…", m:"Describe a recurring trend across cases.", e:"The pattern I kept seeing was new users dropping off right after the first screen." },
+      { p:"At first glance it looks like…, but…", m:"Contrast an initial impression with the real picture.", e:"At first glance it looks like a design problem, but it's really a data problem." },
+      { p:"A detail that's easy to miss is…", m:"Call out something subtle but important.", e:"A detail that's easy to miss is that the error never explains what to do next." }
+    ],
+    [
+      { p:"Something I picked up on was…", m:"Casually introduce an observation.", e:"Something I picked up on was that senior engineers rarely used search at all." },
+      { p:"I began to realize that…", m:"Describe a slowly-formed realisation.", e:"I began to realize that our roadmap was driven by requests, not strategy." },
+      { p:"What jumped out at me was…", m:"Emphasise a striking, immediate observation.", e:"What jumped out at me was how much time was spent in status meetings." },
+      { p:"There's a noticeable difference between… and…", m:"Compare two things and flag a clear gap.", e:"There's a noticeable difference between how power users and new users navigate the app." },
+      { p:"On the surface it seems…, but underneath…", m:"Contrast surface impression with a deeper truth.", e:"On the surface it seems like a UI issue, but underneath it's a trust problem." }
+    ]
   ],
   "Opinion": [
-    ["My view is that…","The way I see it,…","I don't think the real issue is…","I can see why people think…, but…","I'm still forming my view, but at the moment…"],
-    ["If you ask me,…","My honest take is that…","I'd argue that…","Some people assume…, but I'd push back on that.","I lean toward thinking that…"],
-    ["Personally, I feel that…","From where I stand,…","I'd say the bigger issue is…","I understand the appeal of…, but…","I haven't fully made up my mind, but right now…"]
+    [
+      { p:"My view is that…", m:"State your opinion plainly.", e:"My view is that we should ship the smaller feature first and learn from real usage." },
+      { p:"The way I see it,…", m:"Frame a personal perspective, softly.", e:"The way I see it, speed matters more than polish at this stage." },
+      { p:"I don't think the real issue is…", m:"Redirect focus away from a misdiagnosed cause.", e:"I don't think the real issue is the design — it's the onboarding copy." },
+      { p:"I can see why people think…, but…", m:"Acknowledge another view before disagreeing.", e:"I can see why people think we need more features, but I'd fix the core flow first." },
+      { p:"I'm still forming my view, but at the moment…", m:"Signal an opinion is provisional, not final.", e:"I'm still forming my view, but at the moment I lean toward a simpler pricing model." }
+    ],
+    [
+      { p:"If you ask me,…", m:"Give a direct, informal opinion.", e:"If you ask me, the biggest risk is scaling support before scaling the product." },
+      { p:"My honest take is that…", m:"Signal candour before an opinion.", e:"My honest take is that the deadline was unrealistic from the start." },
+      { p:"I'd argue that…", m:"State an opinion you're prepared to defend.", e:"I'd argue that user trust matters more than feature count in this market." },
+      { p:"Some people assume…, but I'd push back on that.", m:"Challenge a common assumption directly.", e:"Some people assume more automation always saves time, but I'd push back on that." },
+      { p:"I lean toward thinking that…", m:"Express a tentative but real leaning.", e:"I lean toward thinking that we underestimated how hard onboarding would be." }
+    ],
+    [
+      { p:"Personally, I feel that…", m:"Mark an opinion as your own, not the team's.", e:"Personally, I feel that we moved too fast without validating the core assumption." },
+      { p:"From where I stand,…", m:"Frame an opinion from your specific vantage point.", e:"From where I stand, the data doesn't fully support that decision yet." },
+      { p:"I'd say the bigger issue is…", m:"Reframe what the real priority should be.", e:"I'd say the bigger issue is retention, not acquisition." },
+      { p:"I understand the appeal of…, but…", m:"Concede appeal before raising a concern.", e:"I understand the appeal of a full redesign, but I'd worry about the timeline." },
+      { p:"I haven't fully made up my mind, but right now…", m:"Signal openness while still sharing a leaning.", e:"I haven't fully made up my mind, but right now I'd prioritise reliability." }
+    ]
   ],
   "Cause & effect": [
-    ["One reason for this is that…","This often leads to…","The problem becomes more visible when…","Because of that, people tend to…","The result is not only…, but also…"],
-    ["What's driving this is…","As a result,…","This tends to show up most when…","That's what causes people to…","The knock-on effect is…"],
-    ["A big factor behind this is…","Consequently,…","This becomes obvious when…","It's common for people to…, as a result.","One ripple effect is…"]
+    [
+      { p:"One reason for this is that…", m:"Give a single, clear cause.", e:"One reason for this is that the error messages don't explain what went wrong." },
+      { p:"This often leads to…", m:"Describe a typical downstream effect.", e:"Skipping user testing often leads to expensive redesigns later." },
+      { p:"The problem becomes more visible when…", m:"Say when an issue becomes obvious.", e:"The problem becomes more visible when usage spikes during peak hours." },
+      { p:"Because of that, people tend to…", m:"Describe the resulting behaviour.", e:"Because of that, people tend to abandon the form halfway through." },
+      { p:"The result is not only…, but also…", m:"List a primary and a secondary effect.", e:"The result is not only lower conversion, but also more support tickets." }
+    ],
+    [
+      { p:"What's driving this is…", m:"Name the underlying cause directly.", e:"What's driving this is a lack of clarity in the initial requirements." },
+      { p:"As a result,…", m:"Introduce a consequence concisely.", e:"The API changed without notice; as a result, three integrations broke." },
+      { p:"This tends to show up most when…", m:"Describe the condition where an effect appears.", e:"This tends to show up most when teams work across different time zones." },
+      { p:"That's what causes people to…", m:"Link a cause to a specific behaviour.", e:"That's what causes people to give up before finishing checkout." },
+      { p:"The knock-on effect is…", m:"Describe a secondary, indirect consequence.", e:"The knock-on effect is that support tickets doubled the following week." }
+    ],
+    [
+      { p:"A big factor behind this is…", m:"Point to a major contributing cause.", e:"A big factor behind this is that the team never agreed on success metrics." },
+      { p:"Consequently,…", m:"Introduce a formal, direct consequence.", e:"The launch was delayed twice; consequently, the marketing plan had to change." },
+      { p:"This becomes obvious when…", m:"Describe the moment a pattern becomes clear.", e:"This becomes obvious when you look at the drop-off rate on mobile." },
+      { p:"It's common for people to…, as a result.", m:"Describe a common reaction, then flag it as a result.", e:"It's common for people to skip the tutorial, as a result." },
+      { p:"One ripple effect is…", m:"Name a further, less obvious consequence.", e:"One ripple effect is that other teams started copying the same workaround." }
+    ]
   ],
   "Contrast & nuance": [
-    ["On the one hand…, but on the other…","It is useful, but only when…","The difference is not…, but…","That may be true in some cases; however,…","I agree with the direction, although…"],
-    ["It's not that simple, because…","This works well, except when…","What sets them apart isn't…, it's…","There's some truth to that, but…","I'm on board overall, though…"],
-    ["It looks straightforward, but…","This holds true, just not always when…","What really separates them is…, not…","There's something to that, but…","Broadly speaking I support it, even though…"]
+    [
+      { p:"On the one hand…, but on the other…", m:"Weigh two opposing sides of an issue.", e:"On the one hand, moving fast lets us learn quickly, but on the other, it risks debt." },
+      { p:"It is useful, but only when…", m:"Add a condition that limits a claim.", e:"It is useful, but only when the team already agrees on the goal." },
+      { p:"The difference is not…, but…", m:"Correct a common misreading of what matters.", e:"The difference is not the tool we use, but how consistently we use it." },
+      { p:"That may be true in some cases; however,…", m:"Concede partial truth, then qualify it.", e:"That may be true in some cases; however, it doesn't hold for enterprise users." },
+      { p:"I agree with the direction, although…", m:"Support an idea overall while flagging a concern.", e:"I agree with the direction, although I'd want more data before committing resources." }
+    ],
+    [
+      { p:"It's not that simple, because…", m:"Push back on an oversimplified view.", e:"It's not that simple, because the two teams use different definitions of 'done'." },
+      { p:"This works well, except when…", m:"State an exception to an otherwise solid approach.", e:"This works well, except when users are offline for long periods." },
+      { p:"What sets them apart isn't…, it's…", m:"Correct a misconception about a key difference.", e:"What sets them apart isn't the price, it's the onboarding experience." },
+      { p:"There's some truth to that, but…", m:"Partly agree before adding a caveat.", e:"There's some truth to that, but the timeline still feels too aggressive." },
+      { p:"I'm on board overall, though…", m:"Give overall support with one reservation.", e:"I'm on board overall, though I'd want a fallback plan if adoption is slow." }
+    ],
+    [
+      { p:"It looks straightforward, but…", m:"Warn that something simple-looking has complications.", e:"It looks straightforward, but the edge cases around refunds get messy fast." },
+      { p:"This holds true, just not always when…", m:"Limit a general claim with an exception.", e:"This holds true, just not always when the user is on a slow connection." },
+      { p:"What really separates them is…, not…", m:"Correct assumptions about the true differentiator.", e:"What really separates them is response time, not feature count." },
+      { p:"There's something to that, but…", m:"Give partial credit before disagreeing further.", e:"There's something to that, but I don't think it explains the whole drop-off." },
+      { p:"Broadly speaking I support it, even though…", m:"Support an idea overall, with one honest doubt.", e:"Broadly speaking I support it, even though I'm still unsure about the rollout timing." }
+    ]
   ],
   "Storytelling": [
-    ["At the time, I didn't realise that…","What happened next was…","Looking back, the turning point was…","I used to think…, but over time…","The experience taught me that…"],
-    ["It all started when…","From there, things moved quickly:…","In hindsight, the real shift happened when…","My thinking changed once…","What I took away from it was…"],
-    ["It began the moment…","Things unfolded quickly after that:…","Looking back, everything changed when…","My perspective shifted once…","The lesson I walked away with was…"]
+    [
+      { p:"At the time, I didn't realise that…", m:"Reveal hindsight about a past moment.", e:"At the time, I didn't realise that skipping research would cost us a month later." },
+      { p:"What happened next was…", m:"Move a story forward to the next event.", e:"What happened next was the whole team had to rebuild the flow from scratch." },
+      { p:"Looking back, the turning point was…", m:"Identify the key moment that changed things.", e:"Looking back, the turning point was when we finally talked to real users." },
+      { p:"I used to think…, but over time…", m:"Contrast an old belief with a new one.", e:"I used to think more features meant more value, but over time I changed my mind." },
+      { p:"The experience taught me that…", m:"State a lesson learned from an event.", e:"The experience taught me that shipping fast only helps if you're also listening fast." }
+    ],
+    [
+      { p:"It all started when…", m:"Open a story with its trigger event.", e:"It all started when a single complaint revealed a much bigger problem." },
+      { p:"From there, things moved quickly:…", m:"Signal a fast sequence of events follows.", e:"From there, things moved quickly: we redesigned the flow within a week." },
+      { p:"In hindsight, the real shift happened when…", m:"Pinpoint the true turning point, with hindsight.", e:"In hindsight, the real shift happened when leadership finally saw the churn data." },
+      { p:"My thinking changed once…", m:"Mark the moment your view shifted.", e:"My thinking changed once I sat through a full support call." },
+      { p:"What I took away from it was…", m:"Summarise the key takeaway from an experience.", e:"What I took away from it was that trust is harder to rebuild than to build." }
+    ],
+    [
+      { p:"It began the moment…", m:"Pinpoint the exact starting moment of a story.", e:"It began the moment we noticed churn spike right after the redesign." },
+      { p:"Things unfolded quickly after that:…", m:"Signal a fast chain of events follows.", e:"Things unfolded quickly after that: two engineers, one weekend, a working prototype." },
+      { p:"Looking back, everything changed when…", m:"Frame a single event as the pivotal one.", e:"Looking back, everything changed when we started shipping weekly instead of monthly." },
+      { p:"My perspective shifted once…", m:"Describe how a moment changed your view.", e:"My perspective shifted once I saw how non-technical users actually used the tool." },
+      { p:"The lesson I walked away with was…", m:"Close a story with its core lesson.", e:"The lesson I walked away with was that clarity beats cleverness every time." }
+    ]
   ],
   "Emotion & reflection": [
-    ["What made it difficult was…","Part of me felt…, while another part…","I was disappointed, but I also understood that…","It took me some time to accept that…","I care about this because…"],
-    ["The hardest part for me was…","There was a mix of… and…","It stung at first, but I came to see that…","I needed a while to make peace with…","This matters to me because…"],
-    ["What made it tough was…","There was a bit of… and a bit of…","It hurt at first, but I eventually saw that…","It took a while to come to terms with…","This matters to me because…"]
+    [
+      { p:"What made it difficult was…", m:"Name the specific source of difficulty.", e:"What made it difficult was not knowing whether the team agreed with the decision." },
+      { p:"Part of me felt…, while another part…", m:"Express two conflicting feelings honestly.", e:"Part of me felt relieved, while another part worried we'd moved too fast." },
+      { p:"I was disappointed, but I also understood that…", m:"Balance disappointment with understanding.", e:"I was disappointed, but I also understood that the delay protected quality." },
+      { p:"It took me some time to accept that…", m:"Admit a slow, honest acceptance.", e:"It took me some time to accept that the feature just wasn't working." },
+      { p:"I care about this because…", m:"Explain personal motivation behind an issue.", e:"I care about this because I've seen how much frustration bad onboarding causes." }
+    ],
+    [
+      { p:"The hardest part for me was…", m:"Name your personal biggest challenge.", e:"The hardest part for me was saying no to a feature I liked." },
+      { p:"There was a mix of… and…", m:"Describe two coexisting emotions.", e:"There was a mix of excitement and nerves before the launch." },
+      { p:"It stung at first, but I came to see that…", m:"Show emotional honesty followed by reframing.", e:"It stung at first, but I came to see that the feedback made the product better." },
+      { p:"I needed a while to make peace with…", m:"Admit a slow emotional adjustment.", e:"I needed a while to make peace with cutting a feature I'd designed." },
+      { p:"This matters to me because…", m:"Ground an opinion in personal motivation.", e:"This matters to me because I've been the user struggling with a confusing product before." }
+    ],
+    [
+      { p:"What made it tough was…", m:"Casually name the difficulty.", e:"What made it tough was juggling the deadline with limited engineering resources." },
+      { p:"There was a bit of… and a bit of…", m:"Casually describe mixed feelings.", e:"There was a bit of pride and a bit of relief once it finally shipped." },
+      { p:"It hurt at first, but I eventually saw that…", m:"Show initial pain, then a reframe.", e:"It hurt at first, but I eventually saw that the pushback made the plan stronger." },
+      { p:"It took a while to come to terms with…", m:"Casually admit slow acceptance.", e:"It took a while to come to terms with dropping the feature entirely." },
+      { p:"This matters to me because…", m:"Ground a view in personal reasons.", e:"This matters to me because good products should feel effortless, not clever." }
+    ]
   ],
   "Uncertainty & repair": [
-    ["I may be missing something, but…","I haven't thought about it in that way before.","Let me rephrase that.","What I'm trying to say is…","A more accurate way to put it would be…"],
-    ["I'm not fully certain, but…","That's an angle I hadn't considered.","Let me put that differently.","What I mean is…","To be more precise,…"],
-    ["I could be wrong, but…","That's not something I'd considered before.","Let me try saying that another way.","What I actually mean is…","To put it more precisely,…"]
+    [
+      { p:"I may be missing something, but…", m:"Signal humility before raising a doubt.", e:"I may be missing something, but this metric doesn't match what I expected." },
+      { p:"I haven't thought about it in that way before.", m:"Admit a fresh perspective just landed.", e:"I haven't thought about it in that way before — that's a fair point." },
+      { p:"Let me rephrase that.", m:"Signal you're about to restate more clearly.", e:"Let me rephrase that: I mean the checkout flow, not the whole app." },
+      { p:"What I'm trying to say is…", m:"Clarify your real point after a messy start.", e:"What I'm trying to say is that speed matters, but not at the cost of trust." },
+      { p:"A more accurate way to put it would be…", m:"Offer a more precise restatement.", e:"A more accurate way to put it would be that we deprioritised it, not cancelled it." }
+    ],
+    [
+      { p:"I'm not fully certain, but…", m:"Flag uncertainty before an opinion.", e:"I'm not fully certain, but I think the drop-off is happening at step two." },
+      { p:"That's an angle I hadn't considered.", m:"Acknowledge a new, useful perspective.", e:"That's an angle I hadn't considered — it changes how I'd prioritise this." },
+      { p:"Let me put that differently.", m:"Signal a clearer restatement is coming.", e:"Let me put that differently: the issue isn't the design, it's the copy." },
+      { p:"What I mean is…", m:"Clarify intended meaning directly.", e:"What I mean is we should test with real users, not just internally." },
+      { p:"To be more precise,…", m:"Sharpen a vague statement.", e:"To be more precise, retention dropped specifically among first-time users." }
+    ],
+    [
+      { p:"I could be wrong, but…", m:"Soften an opinion with honest doubt.", e:"I could be wrong, but I don't think pricing is the real blocker." },
+      { p:"That's not something I'd considered before.", m:"Admit a genuinely new idea.", e:"That's not something I'd considered before — let me think about it." },
+      { p:"Let me try saying that another way.", m:"Signal another attempt at clarity.", e:"Let me try saying that another way: the core issue is trust, not speed." },
+      { p:"What I actually mean is…", m:"Correct a misunderstanding of your point.", e:"What I actually mean is that we need better data, not more opinions." },
+      { p:"To put it more precisely,…", m:"Tighten a loose statement.", e:"To put it more precisely, the churn is concentrated in the first week." }
+    ]
   ],
   "Conversation": [
-    ["That's an interesting point. What makes you say that?","Do you mean that…?","I had a similar experience, although…","I hadn't considered that side of it.","How do you usually approach it?"],
-    ["That's a fair point — can you say more?","So what you're saying is…?","Something similar happened to me, though…","That's a side of it I hadn't thought about.","What's your usual approach to that?"],
-    ["Good point — what makes you think that?","Are you saying that…?","Something like that happened to me too, though…","I hadn't looked at it from that angle.","How would you normally handle that?"]
+    [
+      { p:"That's an interesting point. What makes you say that?", m:"Show interest and invite more detail.", e:"That's an interesting point. What makes you say that?" },
+      { p:"Do you mean that…?", m:"Check your understanding of what was said.", e:"Do you mean that we should delay the whole launch, not just one feature?" },
+      { p:"I had a similar experience, although…", m:"Relate, then add a point of difference.", e:"I had a similar experience, although in my case the fix was much simpler." },
+      { p:"I hadn't considered that side of it.", m:"Acknowledge a new angle in conversation.", e:"I hadn't considered that side of it — that's a fair concern." },
+      { p:"How do you usually approach it?", m:"Invite someone to share their method.", e:"How do you usually approach it when requirements keep changing?" }
+    ],
+    [
+      { p:"That's a fair point — can you say more?", m:"Validate and ask for elaboration.", e:"That's a fair point — can you say more about the timeline risk?" },
+      { p:"So what you're saying is…?", m:"Paraphrase to confirm understanding.", e:"So what you're saying is we should fix onboarding before adding features?" },
+      { p:"Something similar happened to me, though…", m:"Relate an experience with a twist.", e:"Something similar happened to me, though it took us longer to notice." },
+      { p:"That's a side of it I hadn't thought about.", m:"Admit a blind spot in the conversation.", e:"That's a side of it I hadn't thought about — good catch." },
+      { p:"What's your usual approach to that?", m:"Ask how someone typically handles something.", e:"What's your usual approach to that when stakeholders disagree?" }
+    ],
+    [
+      { p:"Good point — what makes you think that?", m:"Affirm, then probe for reasoning.", e:"Good point — what makes you think that's the main cause?" },
+      { p:"Are you saying that…?", m:"Confirm your interpretation of a claim.", e:"Are you saying that the whole roadmap needs to change?" },
+      { p:"Something like that happened to me too, though…", m:"Relate loosely, then note a difference.", e:"Something like that happened to me too, though the outcome was different." },
+      { p:"I hadn't looked at it from that angle.", m:"Admit a perspective shift mid-conversation.", e:"I hadn't looked at it from that angle — that reframes the whole problem." },
+      { p:"How would you normally handle that?", m:"Ask about someone's default approach.", e:"How would you normally handle that kind of disagreement on the team?" }
+    ]
   ]
 };
 const SN_KEYS = Object.keys(SENTENCE_NETWORK);
@@ -1584,6 +1762,24 @@ function snChunksForToday(dIdx, snKey) {
   const variants = SENTENCE_NETWORK[snKey];
   const variantIdx = Math.floor(dIdx / SN_KEYS.length) % variants.length;
   return variants[variantIdx];
+}
+// Renders one Sentence Network pattern as a chunk-pill with a tap-to-reveal
+// meaning + example underneath (collapsed by default so the list stays
+// scannable) — separate from the plain speak-only chunk-pill used elsewhere
+// (Listening Lab chunks, scenario phrases) since those don't carry this
+// meaning/example data.
+function snPillHTML(item) {
+  const p = escapeHtmlText(item.p), m = escapeHtmlText(item.m), e = escapeHtmlText(item.e);
+  return `<div class="chunk-pill snPill">
+    <div class="chunkMain" onclick="this.closest('.snPill').classList.toggle('open')">
+      ${speakBtnHTML(item.p,'small')}<span class="snPillLabel">${p}</span>
+      <span class="snPillToggle" aria-hidden="true">?</span>
+    </div>
+    <div class="snPillDetail">
+      <div><b>Meaning</b> ${m}</div>
+      <div><b>Example</b> ${e}</div>
+    </div>
+  </div>`;
 }
 
 const GRAMMAR = [
@@ -3093,13 +3289,13 @@ function buildTodayCardsRaw(dIdx) {
     buildListeningCard(dIdx),
     { key:"sentence", title:"Sentence Network", primary:false, meta:snKey, steps: [
       { title: snKey, body:() => `
-        <p class="body-text">Tap ▶ to hear each chunk.</p>
-        <div class="chunks">${snChunksForToday(dIdx, snKey).map(c=>`<div class="chunk-pill">${speakBtnHTML(c,'small')}<span>${c}</span></div>`).join("")}</div>
+        <p class="body-text">Tap ▶ to hear each chunk, or tap the text for its meaning and an example.</p>
+        <div class="chunks">${snChunksForToday(dIdx, snKey).map(c=>snPillHTML(c)).join("")}</div>
       `},
       { title:"Your three sentences", body:() => `
         <p class="body-text">Make three personal sentences — swap the idea, keep the pattern.</p>
         <div class="noteBlock">${noteLinesHTML("sentence-", 3, "Sentence", true)}</div>
-        ${aiCheckHTML("sentence", "one of these sentence starters: " + snChunksForToday(dIdx, snKey).map(c=>'"'+c+'"').join("; "))}
+        ${aiCheckHTML("sentence", "one of these sentence starters: " + snChunksForToday(dIdx, snKey).map(c=>'"'+c.p+'"').join("; "))}
       `}
     ]},
     { key:"grammar", title:"Grammar Repair", primary:false, meta:"today's high-impact fix", steps: [
@@ -4646,7 +4842,7 @@ function renderLibrary(tab) {
       return `
       <div class="libItem">
         <button type="button" class="libItemHead" onclick="this.parentElement.classList.toggle('open')" aria-expanded="false"><h4>${k}</h4><div class="m">${allChunks.length} chunks</div></button>
-        <div class="full"><div class="chunks">${allChunks.map(c=>`<div class="chunk-pill">${speakBtnHTML(c,'small')}<span>${c}</span></div>`).join("")}</div></div>
+        <div class="full"><div class="chunks">${allChunks.map(c=>snPillHTML(c)).join("")}</div></div>
       </div>`;
     }).join("")}</div>`;
   } else if (tab === "grammar") {
