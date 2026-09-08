@@ -754,6 +754,9 @@
   .aiFeedback.show { display: block; }
   .aiLabel { font-family: var(--font-mono); font-size: var(--text-2xs); font-weight: 700; color: var(--accent2-fg); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 6px; }
   .aiMsg { font-size: var(--text-base); line-height: 1.65; color: var(--text); white-space: pre-wrap; }
+  /* ---- delivery feedback: how it sounded, separate from correctness ---- */
+  .aiDelivery { margin-top: 12px; padding-top: 12px; border-top: 1px dashed var(--accent2-line); font-size: var(--text-base); line-height: 1.6; color: var(--text); white-space: pre-wrap; }
+  .aiDelivery b { display: block; font-family: var(--font-mono); font-size: var(--text-2xs); font-weight: 700; color: var(--accent2-fg); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 6px; }
 
   /* ---- structured AI correction cards: clean before/after, not a wall of text ---- */
   .correctionCard { margin-bottom: 14px; }
@@ -1500,21 +1503,21 @@ const LISTENING_LABS = [
 // on YouTube; only the practice scaffolding lives here). No transcript is
 // given on purpose — that's the point, this is real unscripted speech at
 // real pace, not the synthetic voice above.
-// Every entry here is a real YouTube Short — genuinely under 90 seconds by
-// platform convention, not a long talk you're told to stop early. `dur` is
-// each one's exact length in seconds, read directly from
-// window.ytInitialPlayerResponse.videoDetails.lengthSeconds on 2026-08-07 —
-// the same channel-by-channel audit that caught the earlier problem (a
-// private/broken link, and two long talks whose titles implied "quick" but
-// ran 44 and 60+ minutes). Sourced from YC, a16z, Sequoia and Lenny's
-// Podcast's official Shorts channels — real named speakers (Zuckerberg,
-// Brian Chesky, ex-OpenAI/Instagram/X product leads), not generic clips.
-// Fully replaced 2026-09-02 — every item below is new (nothing carried
-// over from the previous pool) and confirmed via web search against the
-// current ycombinator.com/library pages / a16z's own YouTube uploads, not
-// guessed from titles. Smaller pool than before (8, vs. the previous 26)
-// because each entry was individually re-verified rather than bulk-reused;
-// more can be added the same way whenever the rotation starts feeling
+// `dur` is each entry's exact length in seconds, read directly from
+// window.ytInitialPlayerResponse.videoDetails.lengthSeconds — never guessed
+// from the title. Two lengths are mixed on purpose: the first 7 entries are
+// full YC Startup School talks (900-2700s, i.e. 15-45 min — you're meant to
+// listen to a chunk, not the whole thing) sourced from YC's own channel;
+// everything from entry 8 onward is a genuine YouTube Short, under 90
+// seconds by platform convention, sourced from a16z's and Lenny's Podcast's
+// official Shorts. Real named speakers only (Zuckerberg, Brian Chesky,
+// ex-OpenAI/Instagram/X product leads, current Anthropic/OpenAI/a16z
+// people), never generic or reposted clips — confirmed via web search
+// and/or ytInitialPlayerResponse.videoDetails.author, not guessed from
+// titles. Fully replaced 2026-09-02, then expanded 2026-09-08 with 5 more
+// verified Shorts (Anthropic's Dianne Penn x2, OpenAI's Tara Seshan x2,
+// a16z's Anish Acharya) pulled from Lenny's Podcast's official channel.
+// More can be added the same way whenever the rotation starts feeling
 // repetitive again.
 const REAL_LISTENING = [
   { title:"How to Get Your First 10 Customers", speaker:"Max Kolysh, Y Combinator", dur:900,
@@ -1548,7 +1551,27 @@ const REAL_LISTENING = [
   { title:"The Best AI Startup Opportunities In 2026", speaker:"David Haber, via a16z", dur:58,
     url:"https://www.youtube.com/shorts/v2JSMLp1_-E",
     topic:"Haber's real take on where the openings are in 2026 — not in building bigger foundation models, but in the application and workflow layer, where a founder's domain expertise in a specific industry matters more than raw AI research ability.",
-    before:["Guess before listening: does he say the biggest opportunity is in building models, or building on top of them?","Listen for what kind of expertise he says matters most for founders right now."] }
+    before:["Guess before listening: does he say the biggest opportunity is in building models, or building on top of them?","Listen for what kind of expertise he says matters most for founders right now."] },
+  { title:"The Permanent Underclass Is a Fantasy", speaker:"Anish Acharya, a16z", dur:57,
+    url:"https://www.youtube.com/shorts/SLDzLLQyBK8",
+    topic:"Acharya pushes back on the fear that AI creates a permanent economic underclass — his real point is that the most technically informed people inside the AI labs themselves don't believe progress works through one model recursively self-improving forever, which undercuts the doom scenario built on that assumption.",
+    before:["Guess before listening: what specific idea does he say the people inside the AI labs don't actually believe in?","Listen for the phrase he uses to describe how sophisticated the people making this argument are."] },
+  { title:"Don't Let Claude Think For You", speaker:"Dianne Penn, Anthropic", dur:32,
+    url:"https://www.youtube.com/shorts/LYUzCbsfkgU",
+    topic:"Dianne Penn, who leads Product for Research & Labs at Anthropic, on the discipline of using an AI model to sharpen your own thinking rather than letting it think for you — her real warning is against an assistant that simply agrees with everything you say.",
+    before:["Guess before listening: what does she say you don't want an AI assistant to do?","Listen for her job title at Anthropic."] },
+  { title:"There's a Second Curve in the Scaling Laws", speaker:"Dianne Penn, Anthropic", dur:45,
+    url:"https://www.youtube.com/shorts/96FKKbuQ7D0",
+    topic:"Her real observation: model capability doesn't improve smoothly — a model can be completely unable to do a task, then suddenly, almost overnight, reliably do it, and she frames this jump as a hidden second curve sitting inside the standard scaling-law story.",
+    before:["Guess before listening: does she describe AI progress as smooth and gradual, or sudden and jumpy?","Listen for the simple example task she uses — something a model 'can't do' one day and 'can do' the next."] },
+  { title:"OpenAI's North Star for ChatGPT", speaker:"Tara Seshan, OpenAI", dur:80,
+    url:"https://www.youtube.com/shorts/-6aJv925E_o",
+    topic:"OpenAI's Product Lead lays out the actual long-term vision guiding ChatGPT's roadmap — a real, named source explaining the north star behind product decisions rather than a guess from the outside.",
+    before:["Guess before listening: what do you think she names as ChatGPT's long-term 'north star'?","Listen for her exact job title at OpenAI."] },
+  { title:"The Three Memes of Product Development", speaker:"Tara Seshan, OpenAI", dur:50,
+    url:"https://www.youtube.com/shorts/xSGSAsTvh8o",
+    topic:"Her real framing of OpenAI's internal product culture: three recurring internal questions the team runs every decision through, rather than a fixed process or template.",
+    before:["Guess before listening: how many internal questions does she say OpenAI's product culture runs on?","Listen for whether she calls this a rigid process or something more like a shared habit of thinking."] }
 ];
 
 // Each theme has 2 variant sets so the same 8-theme rotation doesn't show
@@ -1787,6 +1810,51 @@ const GRAMMAR = [
   { old:"I arrived to the office late.", better:"I arrived at the office late.", task:"Practice fixed preposition pairs: arrive at/in, married to, good at, interested in, responsible for. Write five sentences, one per pair." }
 ];
 
+// Pull real grammar mistakes straight from your own AI-check history — the
+// same BEFORE/AFTER pairs Spaced Review already tracks — so today's fix is
+// something you actually got wrong recently, not a generic pattern picked
+// from a fixed list that runs out after two weeks. Falls back to the
+// curated GRAMMAR bank above when there isn't enough real history yet.
+function realGrammarPoolForToday() {
+  const hist = state.aiHistory || {};
+  const today = todayStr();
+  const out = [];
+  Object.keys(hist).sort().forEach(day => {
+    if (day === today) return; // don't serve back something from a check you haven't even read yet today
+    const dayHist = hist[day] || {};
+    Object.keys(dayHist).forEach(cardKey => {
+      const entry = dayHist[cardKey];
+      if (!entry || !entry.feedback) return;
+      parseAiFeedback(entry.feedback).forEach((it, idx) => {
+        const isGood = !it.AFTER || /^good$/i.test((it.BEFORE || "").trim());
+        if (isGood || !it.BEFORE || !it.AFTER) return;
+        out.push({
+          id: day + "__" + cardKey + "__" + idx,
+          old: it.BEFORE,
+          better: it.AFTER,
+          why: it.WHY || "",
+          task: it.WHY
+            ? `Write three sentences of your own that avoid the same issue: ${it.WHY}`
+            : "Write three sentences of your own that reuse the corrected pattern above."
+        });
+      });
+    });
+  });
+  out.reverse(); // most recent real mistake first
+  return out;
+}
+// Today's actual Grammar Repair pick: your own most relevant recent mistake
+// when you have one, rotating through the real pool by day so a larger
+// history doesn't just repeat the same fix; the static bank only fills in
+// while you're still building up real history.
+function grammarForToday(dIdx) {
+  const pool = realGrammarPoolForToday();
+  if (pool.length) {
+    return { item: pool[daysSinceStart() % pool.length], source: "real" };
+  }
+  return { item: GRAMMAR[dIdx % GRAMMAR.length], source: "bank" };
+}
+
 const SPEAKING_GYM = [
   { title:"The 60-second observation", task:"Describe one thing you noticed today. Use: What stood out → why it mattered → what it made you think." },
   { title:"The three-level explanation", task:"Pick one thing you're currently building or working on. Explain what it is and why it matters — first in 15 seconds (just the headline), then 60 seconds (add the how), then three minutes (add context, trade-offs, and what you learned)." },
@@ -1990,7 +2058,31 @@ const SCENARIO_BANK = [
   { key:"help", title:"Asking for help / escalating an issue", icon:"help",
     setup:"You're stuck on something and need to ask a teammate or manager for help.",
     phrases:["I'm stuck on… — do you have a minute?","I've tried…, but it's still not working.","Could you point me in the right direction?","I want to flag this before it becomes a bigger issue.","Who's the best person to ask about…?"],
-    dialogue:"You: I'm stuck on the deployment config — do you have a minute? I've tried restarting the service twice, but it's still failing.\nColleague: Sure, let's take a look together." }
+    dialogue:"You: I'm stuck on the deployment config — do you have a minute? I've tried restarting the service twice, but it's still failing.\nColleague: Sure, let's take a look together." },
+  { key:"onboarding", title:"Introducing yourself in your first week", icon:"compass",
+    setup:"It's your first week at a new company, and you're introducing yourself in a team meeting.",
+    phrases:["I just joined the team as…","Before this, I was at…, working on…","I'm really looking forward to…","Feel free to reach out if…","I'm still getting up to speed on…, so bear with me."],
+    dialogue:"Manager: Want to introduce yourself to the team?\nYou: Sure — I just joined as a Product Manager on the growth team. Before this, I was at a startup working on AI-driven consumer apps. I'm really looking forward to digging into the roadmap, and I'm still getting up to speed on the codebase, so bear with me for the first couple of weeks." },
+  { key:"asyncupdate", title:"Writing a clear async update (Slack/email)", icon:"chat",
+    setup:"You need to post a status update in a team channel or send a short status email — clear enough that no one has to ask a follow-up question.",
+    phrases:["Quick update on…:","Status: on track / at risk / blocked.","Next step is…, targeting…","Flagging this now so it's not a surprise later.","Let me know if you need more context on any of this."],
+    dialogue:"You (in #team-updates): Quick update on the onboarding redesign — status: on track. Wireframes are done and in review. Next step is usability testing, targeting results by Thursday. Flagging now: we may need one more day if legal review takes longer than expected." },
+  { key:"oneonone", title:"Raising a concern in a 1:1 with your manager", icon:"path",
+    setup:"You have a 1:1 with your manager and want to raise something that's been bothering you, without it sounding like a complaint.",
+    phrases:["Something I wanted to raise is…","I've noticed…, and I wanted to check in on it.","What I'd find helpful is…","I don't need it fixed today, just wanted it on your radar.","How do you see this playing out over the next few weeks?"],
+    dialogue:"You: Something I wanted to raise is that I've noticed scope keeps expanding mid-sprint. I don't need it fixed today, just wanted it on your radar. What I'd find helpful is a clearer cutoff for what counts as 'in scope' once a sprint starts.\nManager: That's fair, let's talk about how we lock scope going forward." },
+  { key:"mistake", title:"Owning a mistake without over-apologizing", icon:"shield",
+    setup:"You made a mistake that affected the team, and need to own it professionally without spiraling into excessive apology.",
+    phrases:["I made a mistake on… — here's what happened.","That's on me.","Here's what I'm doing to fix it.","Here's how I'll prevent this next time.","Thanks for flagging it — I'd rather know now."],
+    dialogue:"You: I made a mistake on the deployment config — that's on me. Here's what I'm doing to fix it: rolling back now, and I'll add a check to the release process so this can't happen again.\nManager: Thanks for owning it and moving fast on the fix." },
+  { key:"videocall", title:"Handling a video call hiccup", icon:"camera",
+    setup:"You're mid-presentation on a video call and something goes wrong — your screen share freezes, or you got cut off and missed a question.",
+    phrases:["Sorry, I think I froze there — could you repeat the last part?","My screen doesn't seem to be sharing, one second.","I lost audio for a moment, could you say that again?","Let me pull that back up.","Apologies for the delay, we're good to continue now."],
+    dialogue:"You: Sorry, I think I froze there — could you repeat the last question?\nStakeholder: No worries, I was asking about the rollout timeline.\nYou: Got it, thanks — so on the timeline…" },
+  { key:"sayno", title:"Saying no / pushing back diplomatically", icon:"mountain",
+    setup:"A colleague or stakeholder is asking you to take on something that isn't realistic given your current workload or priorities.",
+    phrases:["I want to be upfront that I can't take this on right now.","Given my current priorities, this would have to wait until…","I can help with part of this, but not all of it.","Is there flexibility on the deadline, or is this the actual priority?","Let's figure out what can move to make room for this."],
+    dialogue:"Colleague: Can you also take on the vendor review this week?\nYou: I want to be upfront that I can't take that on right now — I'm heads-down on the launch. I can help with part of it next week, or we can see if someone else has bandwidth sooner. Is there flexibility on the deadline?" }
 ];
 // Elective AI Industry Reports — a periodically-curated content bank (like
 // Listening Lab / Story Bank), not a "paste your own article" tool, since
@@ -2008,7 +2100,7 @@ const REPORT_BANK = [
     terms:[{w:"EBIT", m:"息税前利润 —— 衡量企业核心盈利能力的常用财务指标"},{w:"agentic AI", m:"智能体AI —— 能在极少人工干预下自主执行多步骤任务的系统"},{w:"binding constraint", m:"约束性瓶颈 —— 真正卡住进展的那个限制因素"}],
     retell:"In your own words, explain the gap between AI adoption and AI impact at the companies McKinsey surveyed." },
   { key:"bcg2026", title:"BCG: the AI \"joy paradox\"", icon:"network",
-    source:"BCG — AI adoption report, 2026", sourceUrl:"https://www.bcg.com/",
+    source:"BCG — AI adoption report, 2026", sourceUrl:"https://www.bcg.com/publications/2026/ai-at-work-why-strategy-matters-more-than-tools",
     en:"BCG's latest research on AI adoption finds that roughly three-quarters of CEOs now personally own AI strategy, displacing the historical default of delegating it to IT. Frontline usage has surged to 74 percent on a daily or weekly basis, a 23-point jump year over year, with regular users reporting time savings averaging eight hours a week. Yet most organizations still struggle to convert that reclaimed time into measurable business value — a gap BCG frames as 2026's central ROI challenge. The report also identifies what it calls a \"joy paradox\": 67 percent of frequent AI users report higher job satisfaction, even as 41 percent simultaneously report increased cognitive load.",
     zh:"BCG最新的AI应用研究发现，约四分之三的CEO如今亲自主导AI战略，取代了以往默认交由IT部门负责的做法。一线员工的日常/每周使用率已飙升至74%，同比增长23个百分点，经常使用者平均每周可节省约8小时。然而，大多数企业仍难以将这些节省下来的时间转化为可衡量的商业价值——BCG将这一差距称为2026年最核心的ROI挑战。报告还提出了一个所谓的“快乐悖论”：67%的AI高频用户表示工作满意度有所提升，与此同时，41%的用户也表示认知负荷有所增加。",
     terms:[{w:"frontline usage", m:"一线员工的实际使用情况，而非管理层的采用意愿"},{w:"ROI", m:"投资回报率 —— 投入是否换来了实际产出"},{w:"cognitive load", m:"认知负荷 —— 大脑处理信息时承受的负担"}],
@@ -2026,25 +2118,25 @@ const REPORT_BANK = [
     terms:[{w:"benchmark", m:"基准测试 —— 用来横向比较模型能力的标准化测试"},{w:"governance shortfall", m:"治理缺口 —— 监管/规则建设跟不上技术发展的差距"},{w:"transparency report", m:"透明度报告 —— 公开说明系统如何运作、存在哪些风险的报告"}],
     retell:"Explain the \"capability vs. governance gap\" in your own words, using one example from the report." },
   { key:"mckinsey2026playbook", title:"McKinsey: the new AI management playbook", icon:"path",
-    source:"McKinsey — The new management playbook for AI, August 2026", sourceUrl:"https://www.mckinsey.com/",
+    source:"McKinsey — The new management playbook for AI, August 2026", sourceUrl:"https://www.mckinsey.com/capabilities/tech-and-ai/our-insights/the-new-management-playbook-for-ai-how-to-move-faster-and-create-more-value",
     en:"McKinsey studied 20 large, established companies — not flashy startups — that have created real, lasting economic value from AI-driven transformation. On average, these companies improved EBITDA by 20 percent within three years, and for every $1 invested, they generated $3 of incremental EBITDA. Two-thirds focused on three business domains or fewer, targeting the specific points where AI could move the numbers that mattered most, and most became cash-positive within one to two years. This stands out against McKinsey's broader finding that 94 percent of businesses have not yet created meaningful value from AI. The report argues that lasting advantage comes not from the technology itself but from organizational capability — especially a C-suite that deeply understands AI and frontline leaders who combine domain expertise with technical fluency.",
     zh:"麦肯锡对20家大型成熟企业（并非炫酷的初创公司）进行了研究，这些企业通过AI驱动的转型创造了真实且持久的经济价值。平均而言，这些企业在三年内将EBITDA（息税折旧摊销前利润）提升了20%，每投入1美元就能带来3美元的增量EBITDA。三分之二的企业将精力集中在三个或更少的业务领域，专注于AI最能撬动关键数字的具体环节，大多数企业在一到两年内就实现了现金流转正。这与麦肯锡更广泛的调查形成鲜明对比——该调查发现94%的企业尚未从AI中创造出实质性价值。报告认为，持久的竞争优势并非来自技术本身，而是来自组织能力——尤其是真正理解AI的高管团队，以及既懂业务又懂技术的一线领导者。",
     terms:[{w:"EBITDA", m:"息税折旧摊销前利润 —— 衡量企业核心盈利能力的财务指标"},{w:"cash-positive", m:"现金流转正 —— 投资开始产生的现金回报超过持续投入"},{w:"frontline leaders", m:"一线领导者 —— 既懂业务又懂技术、能把AI真正落地到具体场景的管理者"}],
     retell:"Explain in your own words why McKinsey says AI's real, lasting advantage comes from organizational capability, not the technology itself." },
   { key:"bcg2026valuecreation", title:"BCG: AI talk is cheap, value creation is rare", icon:"seed",
-    source:"BCG — AI Talk Is Cheap. Value Creation Is Rare, July 2026", sourceUrl:"https://www.bcg.com/",
+    source:"BCG — AI Talk Is Cheap. Value Creation Is Rare, July 2026", sourceUrl:"https://www.bcg.com/publications/2026/how-ai-leaders-create-competitive-advantage",
     en:"BCG analyzed 4,800 earnings calls and over 600 US public companies to separate AI talk from AI results. Only 6 percent of firms qualify as real \"AI adoption leaders,\" but this group is seeing genuine payoff: their shareholder returns run about 9 percentage points above their industry median, driven by real revenue growth and margin expansion, not inflated valuations. Contrary to the popular narrative that AI mainly cuts jobs, these leaders are actually growing headcount faster than average — because their main path to value is using AI to scale what each employee can do, not to shrink teams. The clearest gap between leaders and everyone else isn't technology, which has become a commodity; it's talent. At leading companies, 13 percent of employees have AI-related skills, versus just 1 percent at laggards.",
     zh:"BCG分析了4800场财报电话会议和600多家美国上市公司，试图把“谈AI”和“真正做出AI成效”区分开来。结果显示，只有6%的企业称得上真正的“AI应用领先者”，但这一小群企业确实收获了实实在在的回报：其股东回报率比所在行业中位数高出约9个百分点，而且这一优势来自真实的营收增长和利润率提升，而非估值泡沫。与“AI主要用来裁员”的普遍印象相反，这些领先企业的员工人数增长速度反而快于平均水平——因为它们创造价值的主要路径是用AI放大每位员工能做的事，而不是缩减团队。领先企业与其他企业之间最明显的差距并非技术（技术早已成为“标配”），而是人才：领先企业中有13%的员工具备AI相关技能，而落后企业中这一比例仅为1%。",
     terms:[{w:"shareholder returns", m:"股东回报率 —— 衡量股东整体投资回报的指标"},{w:"margin expansion", m:"利润率提升 —— 企业盈利能力增强的体现"},{w:"commodity", m:"（已成为）标配 / 同质化 —— 人人都能买到，不再构成差异化优势"}],
     retell:"In your own words, explain why BCG says the real gap between AI leaders and everyone else is talent, not technology." },
   { key:"mckinsey2026roi", title:"McKinsey: the state of AI, on the road to ROI", icon:"blocks",
-    source:"McKinsey — The state of AI in 2026: On the road to ROI, August 2026", sourceUrl:"https://www.mckinsey.com/",
+    source:"McKinsey — The state of AI in 2026: On the road to ROI, August 2026", sourceUrl:"https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai",
     en:"McKinsey's latest global AI survey finds organizations deepening their use of AI, but enterprise-level financial impact hasn't kept pace with individual gains. Forty-four percent of organizations now report scaling AI across the enterprise, up from 38 percent last year, and large companies are pulling further ahead — 40 percent of them are now scaling AI agents, versus 27 percent a year ago. Yet the share of respondents attributing measurable EBIT impact to AI has stayed flat at 37 percent, and true \"AI high performers\" remain stuck at about 6 percent. Meanwhile, individual employees report real benefits: 80 percent say AI has improved their personal productivity. Rising costs are starting to bite too — about one in five organizations say AI operating costs are now constraining how much they use it.",
     zh:"麦肯锡最新的全球AI调查发现，企业对AI的使用正在不断加深，但企业层面的财务成效却没能跟上个人层面的收益。目前有44%的企业表示正在全企业范围内规模化使用AI，高于去年的38%，而大型企业的领先优势进一步扩大——目前有40%的大型企业正在规模化部署AI智能体，高于一年前的27%。然而，表示AI对EBIT（息税前利润）产生了可衡量影响的受访者比例仍停留在37%，真正的“AI高绩效企业”比例也仍徘徊在约6%。与此同时，员工个人确实感受到了实实在在的好处：80%的受访者表示AI提升了他们的个人生产力。不断上升的成本也开始显现压力——约五分之一的企业表示，AI的运营成本正在限制其使用规模。",
     terms:[{w:"scaling", m:"规模化部署 —— 从小范围试点扩展到全面、常态化使用"},{w:"EBIT", m:"息税前利润 —— 反映企业核心经营利润的财务指标"},{w:"operating costs", m:"运营成本 —— 日常运行产生的费用，这里指AI使用相关的持续支出"}],
     retell:"Explain the gap McKinsey found between individual AI productivity gains and enterprise-level financial impact." },
   { key:"anthropic2026cadences", title:"Anthropic Economic Index: cadences of AI use", icon:"time",
-    source:"Anthropic Economic Index report: Cadences, June 2026", sourceUrl:"https://www.anthropic.com/economic-index",
+    source:"Anthropic Economic Index report: Cadences, June 2026", sourceUrl:"https://www.anthropic.com/research/economic-index-june-2026-report",
     en:"Anthropic's Economic Index used hourly usage data to map how people actually use Claude throughout the day and week. Personal-use conversations jump from around 35 percent on weekdays to nearly 50 percent on weekends, as people shift from business writing and slide decks to emotional support and medical questions. Daily rhythms show up clearly too: news requests peak around 7 a.m., recipe requests are 2.3 times more common at 6 p.m. than average, and sleep-advice questions cluster in the early hours before dawn. Even calendar events leave a mark — tax-related questions surge right before the US filing deadline. Interestingly, when people do turn to Claude for work at night or on weekends, those tasks skew toward higher-wage occupations like marketing or programming, not lower-wage roles.",
     zh:"Anthropic经济指数报告利用小时级使用数据，描绘出人们在一天和一周中究竟是如何使用Claude的。个人用途的对话比例从工作日的约35%跃升至周末的近50%，人们的提问也从商务写作、幻灯片制作转向情感支持、健康咨询等话题。每日的使用节奏同样清晰可见：新闻类请求在早上7点左右达到高峰，食谱类请求在傍晚6点的出现频率是平时的2.3倍，而睡眠建议类问题则集中在凌晨时段。就连日历上的关键节点也会留下痕迹——报税相关的问题会在美国报税截止日前明显激增。有趣的是，当人们在夜间或周末使用Claude处理工作事务时，这些任务更多来自薪资较高的职业（如市场营销或程序开发），而非薪资较低的岗位。",
     terms:[{w:"hourly usage data", m:"小时级使用数据 —— 精细到每小时的行为数据，能捕捉更细微的使用规律"},{w:"personal-use conversations", m:"个人用途对话 —— 与工作无关、出于个人需求的对话"},{w:"wage quartile", m:"薪资分位数 —— 按薪资高低将职业分成四组进行比较的统计方法"}],
@@ -2515,12 +2607,14 @@ function micIsAvailable() {
     return hasApi && secure;
   } catch (e) { return false; }
 }
-function recorderHTML(label, cardKey) {
+function recorderHTML(label, cardKey, maxSeconds) {
   const id = "rec" + (recCounter++);
+  const secs = maxSeconds || REC_MAX_SECONDS;
   const saved = cardKey ? getNote(cardKey + "-transcript") : "";
+  const defaultLabel = secs === REC_MAX_SECONDS ? "Record (up to 5 min)" : `Record (up to ${secs < 60 ? secs + "s" : (secs/60) + " min"})`;
   if (!micIsAvailable()) {
-    return `<div class="recWidget" data-rec-id="${id}" ${cardKey?`data-card="${cardKey}"`:""}>
-        <button class="recBtn unavailable" disabled>${ICO_MIC}${label || "Record (up to 5 min)"}</button>
+    return `<div class="recWidget" data-rec-id="${id}" data-max-seconds="${secs}" ${cardKey?`data-card="${cardKey}"`:""}>
+        <button class="recBtn unavailable" disabled>${ICO_MIC}${label || defaultLabel}</button>
       </div>`;
   }
   // The transcript box is a real editable textarea now, not a read-only
@@ -2531,9 +2625,9 @@ function recorderHTML(label, cardKey) {
   const transcriptBox = cardKey
     ? `<textarea class="recTranscript noteInput" data-rec-id="${id}" data-note="${cardKey}-transcript" rows="3" placeholder="Type your answer, or record above and it'll fill in automatically…">${escapeHtmlText(saved)}</textarea>`
     : `<textarea class="recTranscript" data-rec-id="${id}" rows="3" placeholder="Type your answer, or record above and it'll fill in automatically…"></textarea>`;
-  return `<div class="recWidget" data-rec-id="${id}" ${cardKey?`data-card="${cardKey}"`:""}>
-      <button class="recBtn" data-rec-id="${id}">${ICO_MIC}${label || "Record (up to 5 min)"}</button>
-      <span class="recTimer" data-rec-id="${id}" style="display:none;">${fmtTime(REC_MAX_SECONDS * 1000)}</span>
+  return `<div class="recWidget" data-rec-id="${id}" data-max-seconds="${secs}" ${cardKey?`data-card="${cardKey}"`:""}>
+      <button class="recBtn" data-rec-id="${id}">${ICO_MIC}${label || defaultLabel}</button>
+      <span class="recTimer" data-rec-id="${id}" style="display:none;">${fmtTime(secs * 1000)}</span>
       <span class="recPlayer" data-rec-id="${id}"></span>
     </div>
     ${transcriptBox}`;
@@ -2613,10 +2707,17 @@ async function startRecording(id, btn) {
       }
     };
     mr.start();
-    RECORDERS[id] = { mr, timeLeft: REC_MAX_SECONDS };
+    // Read this widget's own max duration (15s / 60s / 3min / 5min, set via
+    // recorderHTML's maxSeconds param and stashed in data-max-seconds) rather
+    // than always using the global REC_MAX_SECONDS default — lets several
+    // recorders on the same card (e.g. Speaking Gym's 15s/60s/3min set) each
+    // cap themselves independently.
+    const widgetEl = btn.closest(".recWidget");
+    const maxSecs = (widgetEl && parseInt(widgetEl.dataset.maxSeconds, 10)) || REC_MAX_SECONDS;
+    RECORDERS[id] = { mr, timeLeft: maxSecs };
     btn.classList.add("active"); btn.textContent = "⏹ Stop";
     const timer = document.querySelector(`.recTimer[data-rec-id="${id}"]`);
-    if (timer) { timer.style.display = "inline"; timer.textContent = fmtTime(REC_MAX_SECONDS * 1000); }
+    if (timer) { timer.style.display = "inline"; timer.textContent = fmtTime(maxSecs * 1000); }
     RECORDERS[id].interval = setInterval(() => {
       RECORDERS[id].timeLeft--;
       if (timer) timer.textContent = fmtTime(RECORDERS[id].timeLeft * 1000);
@@ -3064,7 +3165,8 @@ function buildListeningCard(dIdx) {
 }
 function buildTodayCardsRaw(dIdx) {
   const snKey = SN_KEYS[dIdx % SN_KEYS.length];
-  const gr = GRAMMAR[dIdx % GRAMMAR.length];
+  const grPick = grammarForToday(dIdx);
+  const gr = grPick.item;
   const sg = SPEAKING_GYM[dIdx % SPEAKING_GYM.length];
   const scenario = SCENARIO_BANK[dIdx % SCENARIO_BANK.length];
   // Was floor(dIdx/2) — paired 2-day cadence with the old Interview Practice
@@ -3086,13 +3188,14 @@ function buildTodayCardsRaw(dIdx) {
         ${aiCheckHTML("sentence", "one of these sentence starters: " + snChunksForToday(dIdx, snKey).map(c=>'"'+c.p+'"').join("; "))}
       `}
     ]},
-    { key:"grammar", title:"Grammar Repair", primary:false, meta:"today's high-impact fix", steps: [
+    { key:"grammar", title:"Grammar Repair", primary:false, meta: grPick.source === "real" ? "from your own recent mistake" : "today's high-impact fix", steps: [
       { title:"Spot the fix", body:() => `
         <div class="oldbetter">
           <div class="ob-box ob-old"><b>Old pattern</b>${gr.old}</div>
           <div class="ob-box ob-new"><b>Better pattern</b>${gr.better}</div>
         </div>
         <div class="speakRow">${speakBtnHTML(gr.better,'small')}<span class="body-text" style="font-size:var(--text-sm);">Hear the correct pattern</span></div>
+        ${gr.why ? `<p class="body-text" style="color:var(--text2); margin-top:8px;">${escapeHtmlText(gr.why)}</p>` : ""}
       `},
       { title:"Practice", body:() => `
         <div class="taskline">Repair task: ${gr.task}</div>
@@ -3106,7 +3209,13 @@ function buildTodayCardsRaw(dIdx) {
         <div class="noteBlock"><div class="noteLabel">Notes before you speak (optional)</div>${noteAreaHTML("speaking-notes","A few keywords or a rough outline…",3)}</div>
       `},
       { title:"Record", body:() => `
-        ${recorderHTML("Record your answer", "speaking")}
+        <p class="body-text" style="margin-bottom:10px;">Give the same answer three times, getting longer each time — headline first, then add detail, then add full context. Recording longer each round is what actually builds fluency under pressure.</p>
+        <div class="speakRow" style="margin-bottom:4px;"><b style="font-size:var(--text-sm);">15 seconds — just the headline</b></div>
+        ${recorderHTML("Record 15s", "speaking-15", 15)}
+        <div class="speakRow" style="margin:16px 0 4px;"><b style="font-size:var(--text-sm);">60 seconds — add the how</b></div>
+        ${recorderHTML("Record 60s", "speaking-60", 60)}
+        <div class="speakRow" style="margin:16px 0 4px;"><b style="font-size:var(--text-sm);">3 minutes — add context & trade-offs</b></div>
+        ${recorderHTML("Record 3 min", "speaking-180", 180)}
         ${aiCheckHTML("speaking")}
       `}
     ]},
@@ -3173,6 +3282,7 @@ function buildTodayCardsRaw(dIdx) {
     ]},
     { key:"report", title:"AI Industry Report", optional:true, primary:false, meta:report.title, steps: [
       { title: report.title, body:() => `
+        <a class="videoLink" href="${report.sourceUrl}" target="_blank" rel="noopener"><span>📄 ${report.source}</span><span class="arrowChip">↗</span></a>
         <div class="subhead">Summary (English)</div>
         <div class="speakRow">${speakBtnHTML(report.en,'small')}<span class="m">hear it read aloud</span></div>
         <p class="body-text selectable">${escapeHtmlText(report.en)}</p>
@@ -3378,7 +3488,7 @@ const AUTO_RULES = {
   listening: (day) => hasAny(day, ["listening-retell", "listening-transcript"]) || hasRecording("listening"),
   sentence:  (day) => hasAny(day, ["sentence-1", "sentence-2", "sentence-3"]),
   grammar:   (day) => hasAny(day, ["grammar-1", "grammar-2", "grammar-3"]),
-  speaking:  (day) => hasAny(day, ["speaking-notes"]) || hasRecording("speaking"),
+  speaking:  (day) => hasAny(day, ["speaking-notes"]) || hasRecording("speaking-15") || hasRecording("speaking-60") || hasRecording("speaking-180"),
   // Reading counts as done here — no recording required. "_recorded_X" is set
   // the moment the card is opened (see renderFocus), reusing the same flag
   // hasRecording() checks, since it's just a generic "engaged with this" signal.
@@ -3468,7 +3578,9 @@ const ANSWER_LABELS = {
   "listening-vocab-1": "Listening Lab — new word/phrase 1", "listening-vocab-2": "Listening Lab — new word/phrase 2",
   "listening-vocab-3": "Listening Lab — new word/phrase 3", "listening-vocab-4": "Listening Lab — new word/phrase 4",
   "listening-transcript": "Listening Lab — what you said (transcribed)",
-  "speaking-transcript": "Speaking Gym — what you said (transcribed)",
+  "speaking-15-transcript": "Speaking Gym — 15s answer (transcribed)",
+  "speaking-60-transcript": "Speaking Gym — 60s answer (transcribed)",
+  "speaking-180-transcript": "Speaking Gym — 3-min answer (transcribed)",
   "interview-transcript": "Interview Practice — what you said (transcribed)"
 };
 function gatherAnswers() {
@@ -3790,7 +3902,7 @@ function aiCheckHTML(cardKey, patternRequirement) {
   // in-memory DOM (not state) held the feedback.
   const day = todayStr();
   const saved = state.aiHistory && state.aiHistory[day] && state.aiHistory[day][cardKey];
-  const savedBlock = saved ? `<div class="aiLabel">${ICO_SPARKLE}AI feedback</div>${renderAiFeedbackHTML(saved.feedback)}` : "";
+  const savedBlock = saved ? `<div class="aiLabel">${ICO_SPARKLE}AI feedback</div>${renderAiFeedbackHTML(saved.feedback)}${renderDeliveryHTML(saved.delivery)}` : "";
   const patternAttr = patternRequirement ? ` data-pattern="${escapeHtmlText(patternRequirement).replace(/"/g,"&quot;")}"` : "";
   return `<div class="aiCheckBlock">
       <button class="aiBtn" data-aicard="${cardKey}"${patternAttr}>${ICO_SPARKLE}Check my answers with AI</button>
@@ -3916,6 +4028,26 @@ function renderAiFeedbackHTML(text) {
       <tbody>${rows}</tbody>
     </table></div>`;
 }
+// Correctness (the table above) and delivery are different questions — a
+// sentence can be grammatically perfect and still sound hesitant, or a bit
+// translated-from-Chinese, and neither of those shows up as a BEFORE/AFTER
+// fix. So delivery feedback (fillers, hesitation, pacing, how native it
+// sounded) is requested as one extra free-text block, kept visually and
+// structurally separate from the correction table instead of forced into
+// its ITEM/BEFORE/AFTER/WHY shape.
+function renderDeliveryHTML(deliveryText) {
+  if (!deliveryText) return "";
+  return `<div class="aiDelivery"><b>${ICO_SPARKLE}How it sounded</b>${escapeHtmlText(deliveryText)}</div>`;
+}
+// Pulls the trailing "DELIVERY: ..." block (if the model included one) off
+// the end of the raw AI response, so it doesn't get swallowed into the last
+// item's WHY field by parseAiFeedback, which only recognizes
+// ITEM/BEFORE/AFTER/WHY as labels.
+function extractDeliveryBlock(text) {
+  const m = String(text).match(/\n?\s*DELIVERY\s*:\s*([\s\S]*)$/i);
+  if (!m) return { feedback: text, delivery: "" };
+  return { feedback: text.slice(0, m.index).trim(), delivery: m[1].trim() };
+}
 async function runAiCheck(cardKey, btn) {
   const day = todayStr();
   const notes = state.notes[day] || {};
@@ -3925,6 +4057,10 @@ async function runAiCheck(cardKey, btn) {
   // words, so keep them out of what gets sent to the AI for correction.
   const keys = cardNoteKeys(cardKey).filter(k => !k.endsWith("-redo") && !k.includes("-vocab-"));
   const parts = keys.filter(k => notes[k] && String(notes[k]).trim()).map(k => `${ANSWER_LABELS[k]}: ${notes[k]}`);
+  // Only ask for delivery feedback when at least one included item is a
+  // real speech transcript — typed-only cards (Sentence Network, Grammar
+  // Repair) have no "how it sounded" to comment on.
+  const hasTranscript = keys.some(k => k.endsWith("-transcript") && notes[k] && String(notes[k]).trim());
   const fbEl = document.querySelector(`.aiFeedback[data-aifeedback="${cardKey}"]`);
   if (!parts.length) {
     if (fbEl) { fbEl.classList.add("show"); fbEl.innerHTML = `<div class="aiMsg">Write something in this section first, then check it.</div>`; }
@@ -3937,7 +4073,18 @@ async function runAiCheck(cardKey, btn) {
     const patternClause = patternReq
       ? ` This exercise specifically asks the learner to reuse a given sentence pattern/starter and just swap in their own content — it is NOT a free rewrite. The pattern(s) they were asked to keep: ${patternReq}. Only mark something wrong if the pattern is missing, broken, or grammatically incorrect as used — do NOT rewrite AFTER into a different structure just because it sounds more natural; a correctly-used required pattern should be marked as 'Good' even if a native speaker might phrase it another way.`
       : "";
-    const prompt = "You are a direct, encouraging English coach for a B1-B2 Chinese ESL speaker preparing for a Singapore tech/product-manager job interview. Some items are typed writing; items labeled '(transcribed)' are auto speech-to-text from something they said out loud, so ignore small transcription glitches and focus on real grammar, word choice and phrasing issues." + patternClause + "\n\nReply with ONE block per item, in exactly this plain-text format, blocks separated by a blank line, nothing else before/after/between them — no markdown, no asterisks, no numbering, no extra commentary:\nITEM: <copy the item's label exactly>\nBEFORE: <the person's full original sentence, exactly as written/said, or the single word 'Good' if there's no real issue — never a short fragment>\nAFTER: <the FULL corrected sentence, complete and natural, not just the changed word(s) — leave blank if BEFORE is 'Good'>\nWHY: <one short reason, under 12 words>";
+    // Delivery is only meaningful for real speech (a transcribed item) — it
+    // asks the model to step back from line-by-line correctness and comment
+    // on how the whole thing actually sounded, the thing a grammar table
+    // can't capture: filler words, hesitation/self-correction, pacing, and
+    // whether phrasing read as natural English or noticeably translated
+    // from Chinese, even when every individual sentence is grammatically
+    // fine. Kept as one extra block, always last, so it's easy to split
+    // back out of the response (see extractDeliveryBlock).
+    const deliveryClause = hasTranscript
+      ? "\n\nAfter all the ITEM/BEFORE/AFTER/WHY blocks, add exactly one more block for the transcribed item(s) in this format:\nDELIVERY: <2-3 direct sentences on how it actually sounded when spoken — filler words like 'um'/'like'/'you know' if you notice any (quote them), hesitation or restarting mid-sentence, pacing, and whether the phrasing sounded natural/native or came across as translated from Chinese. If delivery was genuinely strong, say so plainly instead of inventing a problem.>"
+      : "";
+    const prompt = "You are a direct, encouraging English coach for a B1-B2 Chinese ESL speaker preparing for a Singapore tech/product-manager job interview. Some items are typed writing; items labeled '(transcribed)' are auto speech-to-text from something they said out loud, so ignore small transcription glitches and focus on real grammar, word choice and phrasing issues." + patternClause + "\n\nReply with ONE block per item, in exactly this plain-text format, blocks separated by a blank line, nothing else before/after/between them — no markdown, no asterisks, no numbering, no extra commentary:\nITEM: <copy the item's label exactly>\nBEFORE: <the person's full original sentence, exactly as written/said, or the single word 'Good' if there's no real issue — never a short fragment>\nAFTER: <the FULL corrected sentence, complete and natural, not just the changed word(s) — leave blank if BEFORE is 'Good'>\nWHY: <one short reason, under 12 words>" + deliveryClause;
     // Guard against a hung bridge call — without this, if window.cowork.askClaude
     // never resolves or rejects, the button sits on "Checking…" forever with
     // no error and no way to tell what went wrong.
@@ -3949,17 +4096,22 @@ async function runAiCheck(cardKey, btn) {
     const TIMEOUT_MS = 60000;
     const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(Object.assign(new Error("TIMEOUT"), { code: "TIMEOUT" })), TIMEOUT_MS));
     const result = await Promise.race([askAI(prompt, parts), timeoutPromise]);
-    const text = extractAiText(result);
+    const rawText = extractAiText(result);
+    // Split the trailing DELIVERY block off before anything else touches
+    // this text — both rendering and SRS ingestion (ingestAiHistoryIntoSRS)
+    // parse ITEM/BEFORE/AFTER/WHY, and would otherwise swallow the delivery
+    // text into the last item's WHY field.
+    const { feedback: text, delivery } = hasTranscript ? extractDeliveryBlock(rawText) : { feedback: rawText, delivery: "" };
     if (result && result.isError) {
       console.error("growth-daily: AI bridge returned isError", result);
     }
     if (fbEl) {
       fbEl.classList.add("show");
-      fbEl.innerHTML = `<div class="aiLabel">${ICO_SPARKLE}AI feedback</div>${renderAiFeedbackHTML(text)}`;
+      fbEl.innerHTML = `<div class="aiLabel">${ICO_SPARKLE}AI feedback</div>${renderAiFeedbackHTML(text)}${renderDeliveryHTML(delivery)}`;
     }
     if (!state.aiHistory) state.aiHistory = {};
     if (!state.aiHistory[day]) state.aiHistory[day] = {};
-    state.aiHistory[day][cardKey] = { feedback: text, savedAt: Date.now() };
+    state.aiHistory[day][cardKey] = { feedback: text, delivery: delivery, savedAt: Date.now() };
     ingestAiHistoryIntoSRS(day, cardKey, text);
     save();
   } catch (err) {
