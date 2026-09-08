@@ -607,18 +607,6 @@
   .termAddRow button:hover { background: var(--line); border-color: var(--line-strong); }
   .termAddRow button:active { transform: scale(0.96); }
 
-  /* ---- weak spot drill: targeted fill-in-the-blank ---- */
-  .drillItem { margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px dashed var(--line); }
-  .drillItem:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
-  .drillSentence { font-size: var(--text-base); line-height: 1.65; color: var(--text); margin-bottom: 10px; }
-  .drillBlank { display: inline-block; min-width: 56px; border-bottom: 2px dashed var(--accent2); color: var(--accent2-fg); font-weight: 700; text-align: center; margin: 0 2px; }
-  .drillInput { flex: 1; border: 1.5px solid var(--line); border-radius: var(--radius-sm); padding: 8px 10px; font-size: var(--text-base); font-family: inherit; transition: border-color .15s; }
-  .drillInput:focus { outline: none; border-color: var(--accent2); }
-  .drillInput.ok { border-color: var(--good); background: var(--good-weak); }
-  .drillInput.miss { border-color: var(--warn); background: var(--warn-weak); }
-  .drillWhy { margin-left: 0 !important; line-height: 1.5; }
-  .drillWhy b { color: var(--good); }
-
   /* ---- real listening: link out to the actual audio (video can't embed here) ----
      Was a single-line radius-full pill with title + speaker + duration all
      crammed into one inline string — fine when short, but titles here run
@@ -1920,7 +1908,6 @@ const ICONS = {
   speaking: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="9" y="3" width="6" height="11" rx="3" stroke="#fff" stroke-width="2"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg>`,
   interview: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="3" y="7" width="18" height="12" rx="2" stroke="#fff" stroke-width="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" stroke="#fff" stroke-width="2"/></svg>`,
   review: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M20 6 9 17l-5-5" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
-  drill: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8" stroke="#fff" stroke-width="2"/><circle cx="12" cy="12" r="4" stroke="#fff" stroke-width="2"/><circle cx="12" cy="12" r="1" fill="#fff"/></svg>`,
   scenario: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="8" cy="8" r="2.3" stroke="#fff" stroke-width="1.75"/><circle cx="16" cy="8" r="2.3" stroke="#fff" stroke-width="1.75"/><path d="M4 19c0-3 2-5 4-5s4 2 4 5M12 19c0-3 2-5 4-5s4 2 4 5" stroke="#fff" stroke-width="1.75" stroke-linecap="round"/></svg>`,
   report: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="9" r="4.2" stroke="#fff" stroke-width="1.75"/><path d="M12 13.2V17M8.5 20h7M9.5 6.2c.6-.9 1.6-1.4 2.5-1.4s1.9.5 2.5 1.4" stroke="#fff" stroke-width="1.75" stroke-linecap="round"/><circle cx="7" cy="9" r="1" fill="#fff"/><circle cx="17" cy="9" r="1" fill="#fff"/></svg>`
 };
@@ -1934,7 +1921,7 @@ const ICONS = {
 const ICON_BG = {
   listening:"var(--accent2)",
   interview:"var(--accent2-strong)",
-  sentence:"var(--surface-2)", grammar:"var(--surface-2)", speaking:"var(--surface-2)", review:"var(--surface-2)", drill:"var(--surface-2)",
+  sentence:"var(--surface-2)", grammar:"var(--surface-2)", speaking:"var(--surface-2)", review:"var(--surface-2)",
   scenario:"var(--surface-2)", report:"var(--surface-2)"
 };
 function iconEl(key) { return `<div class="icon" style="background:${ICON_BG[key]}">${ICONS[key]}</div>`; }
@@ -2037,7 +2024,31 @@ const REPORT_BANK = [
     en:"Stanford HAI's 2026 AI Index frames the year around a widening divergence between capability and governance. On one closely watched coding benchmark, model performance rose from roughly 60 percent to near-100 percent accuracy within a single year, while global corporate AI investment climbed to $581.7 billion in 2025 — a 130 percent year-over-year increase. Against that backdrop, the report flags a governance shortfall: most AI developers still do not publish detailed safety evaluations, bias audits, or transparency reports, leaving oversight mechanisms conspicuously behind the pace of capability gains.",
     zh:"斯坦福人本AI研究院（HAI）2026年《AI指数报告》将本年度定义为“能力”与“治理”之间差距不断扩大的一年。在一项备受关注的编程基准测试中，模型表现在短短一年内从约60%的正确率跃升至接近100%；与此同时，2025年全球企业AI投资达到5817亿美元，同比增长130%。在这一背景下，报告也指出了治理层面的不足：大多数AI开发企业仍未发布详尽的安全评估、偏见审计或透明度报告，使监督机制明显滞后于能力提升的速度。",
     terms:[{w:"benchmark", m:"基准测试 —— 用来横向比较模型能力的标准化测试"},{w:"governance shortfall", m:"治理缺口 —— 监管/规则建设跟不上技术发展的差距"},{w:"transparency report", m:"透明度报告 —— 公开说明系统如何运作、存在哪些风险的报告"}],
-    retell:"Explain the \"capability vs. governance gap\" in your own words, using one example from the report." }
+    retell:"Explain the \"capability vs. governance gap\" in your own words, using one example from the report." },
+  { key:"mckinsey2026playbook", title:"McKinsey: the new AI management playbook", icon:"path",
+    source:"McKinsey — The new management playbook for AI, August 2026", sourceUrl:"https://www.mckinsey.com/",
+    en:"McKinsey studied 20 large, established companies — not flashy startups — that have created real, lasting economic value from AI-driven transformation. On average, these companies improved EBITDA by 20 percent within three years, and for every $1 invested, they generated $3 of incremental EBITDA. Two-thirds focused on three business domains or fewer, targeting the specific points where AI could move the numbers that mattered most, and most became cash-positive within one to two years. This stands out against McKinsey's broader finding that 94 percent of businesses have not yet created meaningful value from AI. The report argues that lasting advantage comes not from the technology itself but from organizational capability — especially a C-suite that deeply understands AI and frontline leaders who combine domain expertise with technical fluency.",
+    zh:"麦肯锡对20家大型成熟企业（并非炫酷的初创公司）进行了研究，这些企业通过AI驱动的转型创造了真实且持久的经济价值。平均而言，这些企业在三年内将EBITDA（息税折旧摊销前利润）提升了20%，每投入1美元就能带来3美元的增量EBITDA。三分之二的企业将精力集中在三个或更少的业务领域，专注于AI最能撬动关键数字的具体环节，大多数企业在一到两年内就实现了现金流转正。这与麦肯锡更广泛的调查形成鲜明对比——该调查发现94%的企业尚未从AI中创造出实质性价值。报告认为，持久的竞争优势并非来自技术本身，而是来自组织能力——尤其是真正理解AI的高管团队，以及既懂业务又懂技术的一线领导者。",
+    terms:[{w:"EBITDA", m:"息税折旧摊销前利润 —— 衡量企业核心盈利能力的财务指标"},{w:"cash-positive", m:"现金流转正 —— 投资开始产生的现金回报超过持续投入"},{w:"frontline leaders", m:"一线领导者 —— 既懂业务又懂技术、能把AI真正落地到具体场景的管理者"}],
+    retell:"Explain in your own words why McKinsey says AI's real, lasting advantage comes from organizational capability, not the technology itself." },
+  { key:"bcg2026valuecreation", title:"BCG: AI talk is cheap, value creation is rare", icon:"seed",
+    source:"BCG — AI Talk Is Cheap. Value Creation Is Rare, July 2026", sourceUrl:"https://www.bcg.com/",
+    en:"BCG analyzed 4,800 earnings calls and over 600 US public companies to separate AI talk from AI results. Only 6 percent of firms qualify as real \"AI adoption leaders,\" but this group is seeing genuine payoff: their shareholder returns run about 9 percentage points above their industry median, driven by real revenue growth and margin expansion, not inflated valuations. Contrary to the popular narrative that AI mainly cuts jobs, these leaders are actually growing headcount faster than average — because their main path to value is using AI to scale what each employee can do, not to shrink teams. The clearest gap between leaders and everyone else isn't technology, which has become a commodity; it's talent. At leading companies, 13 percent of employees have AI-related skills, versus just 1 percent at laggards.",
+    zh:"BCG分析了4800场财报电话会议和600多家美国上市公司，试图把“谈AI”和“真正做出AI成效”区分开来。结果显示，只有6%的企业称得上真正的“AI应用领先者”，但这一小群企业确实收获了实实在在的回报：其股东回报率比所在行业中位数高出约9个百分点，而且这一优势来自真实的营收增长和利润率提升，而非估值泡沫。与“AI主要用来裁员”的普遍印象相反，这些领先企业的员工人数增长速度反而快于平均水平——因为它们创造价值的主要路径是用AI放大每位员工能做的事，而不是缩减团队。领先企业与其他企业之间最明显的差距并非技术（技术早已成为“标配”），而是人才：领先企业中有13%的员工具备AI相关技能，而落后企业中这一比例仅为1%。",
+    terms:[{w:"shareholder returns", m:"股东回报率 —— 衡量股东整体投资回报的指标"},{w:"margin expansion", m:"利润率提升 —— 企业盈利能力增强的体现"},{w:"commodity", m:"（已成为）标配 / 同质化 —— 人人都能买到，不再构成差异化优势"}],
+    retell:"In your own words, explain why BCG says the real gap between AI leaders and everyone else is talent, not technology." },
+  { key:"mckinsey2026roi", title:"McKinsey: the state of AI, on the road to ROI", icon:"blocks",
+    source:"McKinsey — The state of AI in 2026: On the road to ROI, August 2026", sourceUrl:"https://www.mckinsey.com/",
+    en:"McKinsey's latest global AI survey finds organizations deepening their use of AI, but enterprise-level financial impact hasn't kept pace with individual gains. Forty-four percent of organizations now report scaling AI across the enterprise, up from 38 percent last year, and large companies are pulling further ahead — 40 percent of them are now scaling AI agents, versus 27 percent a year ago. Yet the share of respondents attributing measurable EBIT impact to AI has stayed flat at 37 percent, and true \"AI high performers\" remain stuck at about 6 percent. Meanwhile, individual employees report real benefits: 80 percent say AI has improved their personal productivity. Rising costs are starting to bite too — about one in five organizations say AI operating costs are now constraining how much they use it.",
+    zh:"麦肯锡最新的全球AI调查发现，企业对AI的使用正在不断加深，但企业层面的财务成效却没能跟上个人层面的收益。目前有44%的企业表示正在全企业范围内规模化使用AI，高于去年的38%，而大型企业的领先优势进一步扩大——目前有40%的大型企业正在规模化部署AI智能体，高于一年前的27%。然而，表示AI对EBIT（息税前利润）产生了可衡量影响的受访者比例仍停留在37%，真正的“AI高绩效企业”比例也仍徘徊在约6%。与此同时，员工个人确实感受到了实实在在的好处：80%的受访者表示AI提升了他们的个人生产力。不断上升的成本也开始显现压力——约五分之一的企业表示，AI的运营成本正在限制其使用规模。",
+    terms:[{w:"scaling", m:"规模化部署 —— 从小范围试点扩展到全面、常态化使用"},{w:"EBIT", m:"息税前利润 —— 反映企业核心经营利润的财务指标"},{w:"operating costs", m:"运营成本 —— 日常运行产生的费用，这里指AI使用相关的持续支出"}],
+    retell:"Explain the gap McKinsey found between individual AI productivity gains and enterprise-level financial impact." },
+  { key:"anthropic2026cadences", title:"Anthropic Economic Index: cadences of AI use", icon:"time",
+    source:"Anthropic Economic Index report: Cadences, June 2026", sourceUrl:"https://www.anthropic.com/economic-index",
+    en:"Anthropic's Economic Index used hourly usage data to map how people actually use Claude throughout the day and week. Personal-use conversations jump from around 35 percent on weekdays to nearly 50 percent on weekends, as people shift from business writing and slide decks to emotional support and medical questions. Daily rhythms show up clearly too: news requests peak around 7 a.m., recipe requests are 2.3 times more common at 6 p.m. than average, and sleep-advice questions cluster in the early hours before dawn. Even calendar events leave a mark — tax-related questions surge right before the US filing deadline. Interestingly, when people do turn to Claude for work at night or on weekends, those tasks skew toward higher-wage occupations like marketing or programming, not lower-wage roles.",
+    zh:"Anthropic经济指数报告利用小时级使用数据，描绘出人们在一天和一周中究竟是如何使用Claude的。个人用途的对话比例从工作日的约35%跃升至周末的近50%，人们的提问也从商务写作、幻灯片制作转向情感支持、健康咨询等话题。每日的使用节奏同样清晰可见：新闻类请求在早上7点左右达到高峰，食谱类请求在傍晚6点的出现频率是平时的2.3倍，而睡眠建议类问题则集中在凌晨时段。就连日历上的关键节点也会留下痕迹——报税相关的问题会在美国报税截止日前明显激增。有趣的是，当人们在夜间或周末使用Claude处理工作事务时，这些任务更多来自薪资较高的职业（如市场营销或程序开发），而非薪资较低的岗位。",
+    terms:[{w:"hourly usage data", m:"小时级使用数据 —— 精细到每小时的行为数据，能捕捉更细微的使用规律"},{w:"personal-use conversations", m:"个人用途对话 —— 与工作无关、出于个人需求的对话"},{w:"wage quartile", m:"薪资分位数 —— 按薪资高低将职业分成四组进行比较的统计方法"}],
+    retell:"Describe, in your own words, how Claude usage patterns change between weekdays and weekends, according to Anthropic's report." }
 ];
 function topicBadgeHTML(key, title, subtitle) {
   const [c1] = TOPIC_GRADIENTS[key] || ["#63697a"];
@@ -2372,6 +2383,19 @@ document.addEventListener("click", (e) => {
 let ANS = [];
 function regAns(text) { ANS.push(text); return ANS.length - 1; }
 function normalize(s) { return s.toLowerCase().replace(/[…"'’.,!?—-]/g, "").replace(/\s+/g, " ").trim(); }
+// normalize() strips punctuation so a stray "the." still matches "the" —
+// but that breaks the Punctuation & capitalization drills, where the
+// correct answer IS a punctuation mark (",", "?", ":"). Stripped down,
+// every punctuation-only answer normalizes to the same empty string, so a
+// blank submission — or even the WRONG punctuation mark — was scoring as
+// correct. For a punctuation-only expected answer, compare it directly
+// (trimmed, case-insensitive) instead of running it through normalize().
+function isPunctuationOnly(s) { return /^[^\w\s]+$/.test(String(s).trim()); }
+function answerMatches(expected, typed) {
+  const exp = String(expected == null ? "" : expected);
+  if (isPunctuationOnly(exp)) return exp.trim() === String(typed == null ? "" : typed).trim();
+  return normalize(exp) === normalize(typed);
+}
 function dictationHTML(chunks) {
   const rows = chunks.map(c => {
     const si = regSpeak(c);
@@ -2392,7 +2416,7 @@ document.addEventListener("click", (e) => {
     const ai = check.dataset.targetAns;
     const row = check.closest(".dictRow");
     const input = row.querySelector("input");
-    const ok = normalize(input.value) === normalize(ANS[ai]);
+    const ok = answerMatches(ANS[ai], input.value);
     input.classList.remove("ok","miss");
     input.classList.add(ok ? "ok" : "miss");
     return;
@@ -2407,110 +2431,23 @@ document.addEventListener("click", (e) => {
 });
 
 /* ============================================================
-   Weak Spot Drill — targeted fill-in-the-blank practice built from
-   the recurring error patterns actually found in this user's own
-   answers (verb-form complementation, countable/uncountable nouns,
-   articles, irregular past tense / tense consistency). Rotates one
-   category per day so it stays quick, not a whole grammar course.
+   Mistake-category labels — used only to group/label real corrections
+   in the Spaced Review "browse your history" view (aiHistoryReviewHTML).
+   The old Weak Spot Drill feature that used to also live here (a daily
+   fill-in-the-blank exercise) was removed; this label map and the
+   diffBlank()/classifyMistake() helpers below are the reusable part
+   that's still in use.
    ============================================================ */
-const WEAK_SPOT_DRILLS = {
-  verbForm: {
-    label: "Verb + verb form (decide to do / consider doing / let sb do)",
-    hint: "Type only the missing word(s) — include “to” or the -ing ending if the pattern needs it.",
-    items: [
-      { before: "After testing it, I noticed the results were unstable, so I decided ", after: " the feature before the MVP launch.", answers: ["to remove"], why: "“decide” is always followed by to + verb — never the bare past form (“decided removed” is wrong)." },
-      { before: "It made me ", after: " that Chinese consumers have strong purchasing power.", answers: ["notice"], why: "After “make/let + object”, use the base form of the verb, not the past tense." },
-      { before: "Before your interview, consider ", after: " your opening line out loud a few times.", answers: ["rehearsing"], why: "“consider” takes the -ing form (consider doing)." },
-      { before: "We should avoid ", after: " the same mistake in the next sprint.", answers: ["repeating"], why: "“avoid” is always followed by -ing." },
-      { before: "I'm planning ", after: " a small growth system for my Xiaohongshu account next month.", answers: ["to build"], why: "“plan” takes to + verb (plan to do)." },
-      { before: "The engineers said the UX frame was too complex and had ", after: " it before launch.", answers: ["to simplify"], why: "“had to + verb” expresses necessity — needed the to-infinitive here." }
-    ]
-  },
-  countable: {
-    label: "Countable vs. uncountable nouns",
-    hint: "Type just the missing word — singular or plural, whichever is correct.",
-    items: [
-      { before: "One of the ", after: " we cut was the tone-switch button.", answers: ["features"], why: "“feature” is countable — after “one of the”, it needs the plural." },
-      { before: "There are two ", after: " of users, and each has different technical skills.", answers: ["types"], why: "After a number, countable nouns take the plural form." },
-      { before: "I think hands-on practice on a real project is more useful than pure ", after: ".", answers: ["knowledge"], why: "“knowledge” is uncountable — never “a new knowledge” or “knowledges”, just “knowledge”." },
-      { before: "It's a perfect ", after: " for that case, but for ours, it's not as strong.", answers: ["example"], why: "“evidence” is uncountable and can't take “a” — for one supporting case, use “example” instead." },
-      { before: "The AI answers always had ", after: ", which made users lose trust.", answers: ["mistakes"], why: "“mistake” is countable — “had mistake” needs the plural." }
-    ]
-  },
-  articles: {
-    label: "Articles (a / an / the / none)",
-    hint: "Type a, an, or the — or leave it blank and click Check if no article is needed.",
-    items: [
-      { before: "Let's discuss the problems first, then make ", after: " decision.", answers: ["a"], why: "“make a decision” — the indefinite article is required." },
-      { before: "I arrived in ", after: " USA after a 24-hour flight.", answers: ["the"], why: "Country names like “the USA” / “the UK” always take “the”." },
-      { before: "I'm married to ", after: " Singaporean man who was born in China.", answers: ["a"], why: "First mention of a person — needs the indefinite article “a”." },
-      { before: "I'm interested in ", after: " AI applications.", answers: [""], why: "Plural nouns used in a general sense take no article at all — not “an AI applications”." },
-      { before: "Could you send me ", after: " invitation link?", answers: ["the", "an"], why: "“the” if there's one specific link you both know about; “an” if it's just any invitation link." }
-    ]
-  },
-  irregular: {
-    label: "Irregular past tense & tense consistency",
-    hint: "Type the correct past-tense or past-participle form.",
-    items: [
-      { before: "I ", after: " to use Ant Design's basic components instead of building a new frame.", answers: ["chose"], why: "“choose” → “chose” in the past tense, not “chosed”." },
-      { before: "I'm married to a Singaporean man who was ", after: " in China.", answers: ["born"], why: "“be born” — the past participle is “born”, not “borned”." },
-      { before: "When I ", after: " the Xiaohongshu content system, one feature was a tone-switch button.", answers: ["built"], why: "Telling a past project needs consistent past tense — “built”, not “build”." },
-      { before: "The AI feature ", after: " the problem that users lacked ideas for their posts.", answers: ["solved"], why: "Keep one tense through the whole story — the rest is past tense, so use “solved”." },
-      { before: "After the user research, engineers said the UX frame was too complex, so I ", after: " to switch to a simpler design system.", answers: ["decided"], why: "Past-tense narrative — use “decided” to match the rest of the story." }
-    ]
-  },
-  prepositions: {
-    label: "Prepositions",
-    hint: "Type just the missing preposition.",
-    items: [
-      { before: "After the wedding, I married ", after: " a large, traditional family that runs a business.", answers: ["into"], why: "“marry into” a family/group; “marry” a person directly needs no preposition." },
-      { before: "I arrived ", after: " Science Park two hours before the interview.", answers: ["at"], why: "“arrive at” a specific building or venue; “arrive in” a city or country." },
-      { before: "We need to apply this feedback ", after: " the next design sprint.", answers: ["to"], why: "“apply something to” a process — not “apply into”." },
-      { before: "The team is responsible ", after: " the onboarding flow.", answers: ["for"], why: "“responsible for” + noun or task is the fixed pairing." },
-      { before: "I'm really interested ", after: " how AI changes product workflows.", answers: ["in"], why: "“interested in” is a fixed pairing — not “interested on/at”." },
-      { before: "Compared ", after: " the old version, this design converts much better.", answers: ["to", "with"], why: "“compared to” and “compared with” both work when comparing two things." }
-    ]
-  },
-  subjectVerb: {
-    label: "Subject-verb agreement",
-    hint: "Type just the missing verb, in the correct form.",
-    items: [
-      { before: "Every member of the team ", after: " a clear role in the sprint.", answers: ["has"], why: "“every member” is singular — use “has”, not “have”." },
-      { before: "The data ", after: " clear: users prefer the shorter flow.", answers: ["is"], why: "“data” is treated as singular in everyday usage — “is”, not “are”." },
-      { before: "Neither the designer nor the engineers ", after: " happy with the current handoff process.", answers: ["are"], why: "With “neither...nor”, the verb agrees with the noun closest to it — “engineers” is plural, so “are”." },
-      { before: "He usually ", after: " to the office by 9am.", answers: ["goes"], why: "Third-person singular “he” needs the -s form — “goes”, not “go”." },
-      { before: "There ", after: " three things I'd improve about this feature.", answers: ["are"], why: "“there + be” agrees with the noun after it — “three things” is plural, so “are”." },
-      { before: "Each of the candidates ", after: " a different approach to the same problem.", answers: ["has"], why: "“each of” is followed by a singular verb — “has”, not “have”." }
-    ]
-  },
-  wordChoice: {
-    label: "Word choice & natural phrasing",
-    hint: "Type the more natural word or phrase.",
-    items: [
-      { before: "The current workplace ", after: " isn't as warm as it used to be.", answers: ["atmosphere", "culture"], why: "“sociality” isn't a real word here — “atmosphere” or “culture” is the natural choice." },
-      { before: "We need to change the ", after: " of this module, not just the mode.", answers: ["workflow"], why: "“working flow” isn't natural English — the fixed term is “workflow”." },
-      { before: "I ", after: " motivation to exercise most days.", answers: ["lack"], why: "“I am lazy” is too informal and self-critical for professional writing — “I lack motivation” is more neutral and precise." },
-      { before: "As more ", after: " appear, this pattern becomes clearer.", answers: ["case studies"], why: "Describe similar cases “appearing” or being “observed” — not “happening near” you, which is vague." },
-      { before: "I removed some ", after: " features to keep the MVP focused.", answers: ["non-essential"], why: "“non-essential and compulsory” contradicts itself — pick one description, not both." }
-    ]
-  },
-  punctCap: {
-    label: "Punctuation & capitalization",
-    hint: "Type exactly what's missing, including capital letters or punctuation marks.",
-    items: [
-      { before: "I arrived at ", after: " at 5 p.m. for the interview.", answers: ["Science Park"], why: "Proper nouns like place names are always capitalized — “science park” → “Science Park”." },
-      { before: "Could you explain in more detail", after: "", answers: ["?"], why: "A direct question needs a question mark, not a period or a trailing comma." },
-      { before: "Could you pass it to your manager for review before sharing", after: " with us.", answers: ["it"], why: "Don't drop the object pronoun — “sharing with us” alone is incomplete here; it needs “it”." },
-      { before: "", after: " the current workplace culture is not as warm anymore.", answers: ["The"], why: "Always capitalize the first word of a sentence." },
-      { before: "So the first step is", after: " set the research goal, then recruit participants.", answers: [",", ":"], why: "A comma or colon is needed here to separate the intro from the list of steps — running them together reads as one long unclear sentence." }
-    ]
-  }
+const MISTAKE_CATEGORY_LABELS = {
+  verbForm: "Verb + verb form (decide to do / consider doing / let sb do)",
+  countable: "Countable vs. uncountable nouns",
+  articles: "Articles (a / an / the / none)",
+  irregular: "Irregular past tense & tense consistency",
+  prepositions: "Prepositions",
+  subjectVerb: "Subject-verb agreement",
+  wordChoice: "Word choice & natural phrasing",
+  punctCap: "Punctuation & capitalization"
 };
-function drillCategoryForToday() {
-  const keys = Object.keys(WEAK_SPOT_DRILLS);
-  return keys[daysSinceStart() % keys.length];
-}
-
 // Find the smallest word-span that changed between a BEFORE/AFTER pair, so a
 // real correction can become a fair fill-in-the-blank drill instead of a
 // full-sentence rewrite. Returns null when the diff isn't "blank"-shaped —
@@ -2531,7 +2468,7 @@ function diffBlank(beforeText, afterText) {
 }
 
 // Keyword signals pulled from the AI's own WHY explanation, mapped onto the
-// 8 WEAK_SPOT_DRILLS categories. A single mistake can match more than one —
+// 8 mistake categories. A single mistake can match more than one —
 // e.g. "subject-verb agreement and gerund construction" hits both.
 const DRILL_CATEGORY_KEYWORDS = {
   verbForm: /\b(infinitive|gerund|verb form|to \+ verb|-ing form|base form)\b/i,
@@ -2559,159 +2496,12 @@ function classifyMistake(whyText, blankWord) {
   if (bw && PREPOSITION_WORDS.indexOf(bw) !== -1 && cats.indexOf("prepositions") === -1) cats.push("prepositions");
   return cats;
 }
-// Tally which of the 8 categories your real mistakes actually fall into,
-// looking back 14 days — a recent window so a category you've since fixed
-// naturally drops out instead of haunting you forever.
-function tallyWeakCategories() {
-  const tally = {};
-  Object.keys(WEAK_SPOT_DRILLS).forEach(k => tally[k] = 0);
-  const hist = state.aiHistory || {};
-  const cutoff = addDaysStr(todayStr(), -14);
-  Object.keys(hist).forEach(day => {
-    if (day < cutoff) return;
-    const dayHist = hist[day] || {};
-    Object.keys(dayHist).forEach(cardKey => {
-      const entry = dayHist[cardKey];
-      if (!entry || !entry.feedback) return;
-      parseAiFeedback(entry.feedback).forEach(it => {
-        const isGood = !it.AFTER || /^good$/i.test((it.BEFORE || "").trim());
-        if (isGood || !it.BEFORE || !it.AFTER) return;
-        const d = diffBlank(it.BEFORE, it.AFTER);
-        const cats = classifyMistake(it.WHY, d ? d.blank : "");
-        cats.forEach(c => { if (tally[c] !== undefined) tally[c]++; });
-      });
-    });
-  });
-  return tally;
-}
-// Diagnose today's actual weak spot from real data; fall back to the old
-// day-based rotation across all 8 categories when there isn't enough
-// history yet to diagnose anything.
-function weakCategoryForToday() {
-  const tally = tallyWeakCategories();
-  const keys = Object.keys(WEAK_SPOT_DRILLS);
-  let best = null, bestCount = 0;
-  keys.forEach(k => { if (tally[k] > bestCount) { best = k; bestCount = tally[k]; } });
-  if (best) return { key: best, count: bestCount };
-  return { key: keys[daysSinceStart() % keys.length], count: 0 };
-}
-
-// Pick today's actual drill set: whichever category you're currently
-// weakest in (diagnosed from real mistakes), served from the curated,
-// full-context item bank — never your own raw sentence fragments, which
-// read as confusing, context-free blanks. The choice (and which items
-// within the category) is locked in for the day so re-rendering the card
-// doesn't reshuffle answers you've already started typing.
-function buildDrillSetForToday() {
-  const day = todayStr();
-  if (!state.drillHistory) state.drillHistory = {};
-  const cached = state.drillHistory[day];
-  // Cached picks from the old per-mistake-fragment engine carried a "tag" or
-  // "id" field; new picks never do. Detect and discard stale legacy picks
-  // instead of honoring the daily lock-in, so today's card updates right
-  // away instead of only from tomorrow.
-  const isLegacy = cached && cached.length && cached.some(p => p && (p.tag !== undefined || p.id !== undefined));
-  if (cached && cached.length && !isLegacy) return cached;
-
-  const weak = weakCategoryForToday();
-  const cat = WEAK_SPOT_DRILLS[weak.key];
-  const N = Math.min(5, cat.items.length);
-  // rotate the starting point by day index so the same weak category shows
-  // a different slice of its item bank each time it comes up
-  const offset = daysSinceStart() % cat.items.length;
-  const picks = [];
-  for (let i = 0; i < N; i++) {
-    const it = cat.items[(offset + i) % cat.items.length];
-    picks.push({ before: it.before, after: it.after, answers: it.answers, why: it.why });
-  }
-
-  state.drillHistory[day] = picks;
-  if (!state.drillWeakMeta) state.drillWeakMeta = {};
-  state.drillWeakMeta[day] = weak;
-  save();
-  return picks;
-}
-function drillSetLabelForToday() {
-  buildDrillSetForToday(); // locks in today's pick + weak-category meta together
-  const day = todayStr();
-  const weak = (state.drillWeakMeta && state.drillWeakMeta[day]) || weakCategoryForToday();
-  const cat = WEAK_SPOT_DRILLS[weak.key];
-  if (weak.count > 0) return `${cat.label} — your weak spot (${weak.count}x in the last 2 weeks)`;
-  return cat.label;
-}
-
-let DRILL_ANS = [];
-function regDrillAns(answers, why) { DRILL_ANS.push({ answers, why }); return DRILL_ANS.length - 1; }
-function drillItemHTML(item, i) {
-  const idx = regDrillAns(item.answers, item.why);
-  const noteKey = "drill-" + i;
-  const saved = getNote(noteKey);
-  const day = todayStr();
-  const savedOk = state.notes[day] && state.notes[day][noteKey + "-ok"];
-  const okClass = savedOk === true ? "ok" : (savedOk === false ? "miss" : "");
-  return `<div class="drillItem">
-      <div class="drillSentence">${item.before}<span class="drillBlank">_____</span>${item.after}</div>
-      <div class="dictRow">
-        <input type="text" class="drillInput ${okClass}" placeholder="Type the missing word(s)…" value="${esc(saved)}" data-drill-note="${noteKey}">
-        <button class="checkDrill" data-drill-target="${idx}" data-drill-note="${noteKey}">Check</button>
-        <button class="revealDrill" data-drill-target="${idx}">Reveal</button>
-      </div>
-      <div class="dictAnswer drillWhy" data-drill-slot="${idx}"></div>
-    </div>`;
-}
-function drillSectionHTML() {
-  const picks = buildDrillSetForToday();
-  const label = drillSetLabelForToday();
-  const hint = "Type the missing word(s) exactly as they'd appear in the corrected sentence. Leave it blank and click Check if no word is needed there.";
-  const rows = picks.map((it, i) => drillItemHTML(it, i)).join("");
-  return `<div class="subhead">🎯 ${label}</div>
-    <p class="body-text" style="margin-bottom:12px;">${hint}</p>
-    ${rows}`;
-}
-function drillAllChecked(day) {
-  const picks = buildDrillSetForToday();
-  const n = state.notes[day] || {};
-  return picks.every((_, i) => n["drill-" + i + "-ok"] !== undefined);
-}
-document.addEventListener("click", (e) => {
-  const check = e.target.closest(".checkDrill");
-  if (check) {
-    const idx = check.dataset.drillTarget;
-    const noteKey = check.dataset.drillNote;
-    const row = check.closest(".drillItem");
-    const input = row.querySelector(".drillInput");
-    const entry = DRILL_ANS[idx];
-    const ok = entry.answers.some(a => normalize(a) === normalize(input.value));
-    input.classList.remove("ok", "miss");
-    input.classList.add(ok ? "ok" : "miss");
-    const day = todayStr();
-    if (!state.notes[day]) state.notes[day] = {};
-    state.notes[day][noteKey] = input.value;
-    state.notes[day][noteKey + "-ok"] = ok;
-    save();
-    refreshAutoComplete("drill");
-    return;
-  }
-  const reveal = e.target.closest(".revealDrill");
-  if (reveal) {
-    const idx = reveal.dataset.drillTarget;
-    const entry = DRILL_ANS[idx];
-    const row = reveal.closest(".drillItem");
-    const slot = row && row.querySelector(".drillWhy");
-    if (slot && entry) {
-      const shown = entry.answers[0] === "" ? "(no article needed)" : entry.answers.join(" / ");
-      slot.innerHTML = `<b>Answer:</b> ${escapeHtmlText(shown)}<br>${escapeHtmlText(entry.why)}`;
-      slot.classList.add("show");
-    }
-    return;
-  }
-});
-
 /* ============================================================
    Voice recorder (record yourself, play it back — local only)
    ============================================================ */
 let recCounter = 0;
 const RECORDERS = {};
+const REC_MAX_SECONDS = 300; // 5 minutes — was 60s, expanded per user request
 // getUserMedia is only callable from a "secure context" — https, localhost,
 // or a local file:// page. Cowork's own preview runs on a custom
 // cowork-artifact: scheme, which isn't on that list, so the browser refuses
@@ -2730,7 +2520,7 @@ function recorderHTML(label, cardKey) {
   const saved = cardKey ? getNote(cardKey + "-transcript") : "";
   if (!micIsAvailable()) {
     return `<div class="recWidget" data-rec-id="${id}" ${cardKey?`data-card="${cardKey}"`:""}>
-        <button class="recBtn unavailable" disabled>${ICO_MIC}${label || "Record 60s"}</button>
+        <button class="recBtn unavailable" disabled>${ICO_MIC}${label || "Record (up to 5 min)"}</button>
       </div>`;
   }
   // The transcript box is a real editable textarea now, not a read-only
@@ -2742,8 +2532,8 @@ function recorderHTML(label, cardKey) {
     ? `<textarea class="recTranscript noteInput" data-rec-id="${id}" data-note="${cardKey}-transcript" rows="3" placeholder="Type your answer, or record above and it'll fill in automatically…">${escapeHtmlText(saved)}</textarea>`
     : `<textarea class="recTranscript" data-rec-id="${id}" rows="3" placeholder="Type your answer, or record above and it'll fill in automatically…"></textarea>`;
   return `<div class="recWidget" data-rec-id="${id}" ${cardKey?`data-card="${cardKey}"`:""}>
-      <button class="recBtn" data-rec-id="${id}">${ICO_MIC}${label || "Record 60s"}</button>
-      <span class="recTimer" data-rec-id="${id}" style="display:none;">60</span>
+      <button class="recBtn" data-rec-id="${id}">${ICO_MIC}${label || "Record (up to 5 min)"}</button>
+      <span class="recTimer" data-rec-id="${id}" style="display:none;">${fmtTime(REC_MAX_SECONDS * 1000)}</span>
       <span class="recPlayer" data-rec-id="${id}"></span>
     </div>
     ${transcriptBox}`;
@@ -2823,13 +2613,13 @@ async function startRecording(id, btn) {
       }
     };
     mr.start();
-    RECORDERS[id] = { mr, timeLeft: 60 };
+    RECORDERS[id] = { mr, timeLeft: REC_MAX_SECONDS };
     btn.classList.add("active"); btn.textContent = "⏹ Stop";
     const timer = document.querySelector(`.recTimer[data-rec-id="${id}"]`);
-    if (timer) { timer.style.display = "inline"; timer.textContent = 60; }
+    if (timer) { timer.style.display = "inline"; timer.textContent = fmtTime(REC_MAX_SECONDS * 1000); }
     RECORDERS[id].interval = setInterval(() => {
       RECORDERS[id].timeLeft--;
-      if (timer) timer.textContent = RECORDERS[id].timeLeft;
+      if (timer) timer.textContent = fmtTime(RECORDERS[id].timeLeft * 1000);
       if (RECORDERS[id].timeLeft <= 0) { mr.stop(); }
     }, 1000);
   } catch (err) {
@@ -2866,7 +2656,7 @@ document.addEventListener("click", (e) => {
 const KEY = "growthDaily_v1";
 function load() {
   try { const r = localStorage.getItem(KEY); if (r) return JSON.parse(r); } catch(e) {}
-  return { startDate: todayStr(), completedDates: [], xp: 0, checklistState: {}, scorecard: {}, notes: {}, stepPos: {}, nodeXpAwarded: {}, aiHistory: {}, vocabHistory: {}, gistHistory: {}, srsItems: {}, drillHistory: {}, drillWeakMeta: {} };
+  return { startDate: todayStr(), completedDates: [], xp: 0, checklistState: {}, scorecard: {}, notes: {}, stepPos: {}, nodeXpAwarded: {}, aiHistory: {}, vocabHistory: {}, gistHistory: {}, srsItems: {} };
 }
 function save() { localStorage.setItem(KEY, JSON.stringify(state)); scheduleRemotePush(); }
 function todayStr(d) { const dt = d || new Date(); return dt.getFullYear()+"-"+String(dt.getMonth()+1).padStart(2,"0")+"-"+String(dt.getDate()).padStart(2,"0"); }
@@ -2878,8 +2668,6 @@ if (!state.aiHistory) state.aiHistory = {};
 if (!state.vocabHistory) state.vocabHistory = {};
 if (!state.gistHistory) state.gistHistory = {};
 if (!state.srsItems) state.srsItems = {};
-if (!state.drillHistory) state.drillHistory = {};
-if (!state.drillWeakMeta) state.drillWeakMeta = {};
 if (!state.customCoreAnswers) state.customCoreAnswers = {};
 if (!state.mockLog) state.mockLog = [];
 
@@ -3278,11 +3066,11 @@ function buildTodayCardsRaw(dIdx) {
   const snKey = SN_KEYS[dIdx % SN_KEYS.length];
   const gr = GRAMMAR[dIdx % GRAMMAR.length];
   const sg = SPEAKING_GYM[dIdx % SPEAKING_GYM.length];
-  const interviewIsQ = dIdx % 2 === 0;
-  const q = QUESTION_BANK[Math.floor(dIdx/2) % QUESTION_BANK.length];
-  const story = STORY_BANK[Math.floor(dIdx/2) % STORY_BANK.length];
   const scenario = SCENARIO_BANK[dIdx % SCENARIO_BANK.length];
-  const report = REPORT_BANK[Math.floor(dIdx/2) % REPORT_BANK.length];
+  // Was floor(dIdx/2) — paired 2-day cadence with the old Interview Practice
+  // card (removed), which meant the same report showed on back-to-back days.
+  // Now a plain daily rotation, so it's a different report every day.
+  const report = REPORT_BANK[dIdx % REPORT_BANK.length];
   const core = CORE_ANSWERS_BANK[dIdx % CORE_ANSWERS_BANK.length];
 
   return [
@@ -3312,12 +3100,6 @@ function buildTodayCardsRaw(dIdx) {
         ${aiCheckHTML("grammar", `the pattern "${gr.better}"`)}
       `}
     ]},
-    { key:"drill", title:"Weak Spot Drill", primary:true, meta:drillSetLabelForToday(), steps: [
-      { title:"Fill in the blank", body:() => `
-        <p class="body-text" style="margin-bottom:4px;">Patterns pulled from your own past answers — your personal drill list.</p>
-        ${drillSectionHTML()}
-      `}
-    ]},
     { key:"speaking", title:"Speaking Gym", primary:false, meta:sg.title, steps: [
       { title:"Prompt", body:() => `
         <div class="speakRow">${speakBtnHTML(sg.task,'small')}<p class="body-text" style="margin:0;">${sg.task}</p></div>
@@ -3326,42 +3108,6 @@ function buildTodayCardsRaw(dIdx) {
       { title:"Record", body:() => `
         ${recorderHTML("Record your answer", "speaking")}
         ${aiCheckHTML("speaking")}
-      `}
-    ]},
-    { key:"interview", title:"Interview Practice", primary:true, meta: interviewIsQ ? "Question Decoder" : "Story Bank", steps: interviewIsQ ? [
-      { title:"The question", body:() => `
-        <div class="speakRow">${speakBtnHTML(q.q,'small')}<p class="body-text" style="margin:0;"><b>${q.q}</b></p></div>
-        <div class="subhead">What they want</div><p class="body-text">${q.want}</p>
-        <div class="subhead">Answer shape</div>
-        ${mermaidFlowHTML(q.shape)}
-        <div class="taskline">Start with: "${q.start}"</div>
-        ${interviewCopyButtonsHTML("today's question")}
-      `},
-      { title:"Plan your answer", body:() => `
-        <div class="noteBlock">${noteAreaHTML("interview-plan","Which story (Shopee / Genesis / AI Mascot / SeedFlow / Alti)? Your main point, the evidence/number you'll use, and the final learning…",6)}</div>
-      `},
-      { title:"Record your answer", body:() => `
-        ${recorderHTML("Record your 60–90s answer", "interview")}
-        ${aiCheckHTML("interview")}
-      `}
-    ] : [
-      { title:"The story", body:() => `
-        ${topicBadgeHTML(story.icon, story.title, story.use)}
-        <div class="subhead">30-second version</div>
-        ${playerHTML(story.short)}
-        <p class="body-text">${story.short}</p>
-        ${interviewCopyButtonsHTML("this project")}
-      `},
-      { title:"Full version", body:() => `
-        <div class="subhead">90-second version</div>
-        ${playerHTML(story.long)}
-        <p class="body-text">${story.long}</p>
-        <div class="taskline">Likely follow-ups: ${story.follow}</div>
-      `},
-      { title:"Adapt & record", body:() => `
-        <div class="noteBlock"><div class="noteLabel">Your notes / adapted version</div>${noteAreaHTML("interview-storynotes","Adapt this story to a slightly different question…",3)}</div>
-        ${recorderHTML("Record yourself telling this story", "interview")}
-        ${aiCheckHTML("interview")}
       `}
     ]},
     { key:"coreanswers", title:"Core Answers Drill", primary:true, meta:core.title, steps: [
@@ -3632,9 +3378,7 @@ const AUTO_RULES = {
   listening: (day) => hasAny(day, ["listening-retell", "listening-transcript"]) || hasRecording("listening"),
   sentence:  (day) => hasAny(day, ["sentence-1", "sentence-2", "sentence-3"]),
   grammar:   (day) => hasAny(day, ["grammar-1", "grammar-2", "grammar-3"]),
-  drill:     (day) => drillAllChecked(day),
   speaking:  (day) => hasAny(day, ["speaking-notes"]) || hasRecording("speaking"),
-  interview: (day) => hasAny(day, ["interview-plan","interview-storynotes"]) || hasRecording("interview"),
   // Reading counts as done here — no recording required. "_recorded_X" is set
   // the moment the card is opened (see renderFocus), reusing the same flag
   // hasRecording() checks, since it's just a generic "engaged with this" signal.
@@ -3648,7 +3392,7 @@ const AUTO_RULES = {
   report:    (day) => hasRecording("report")
 };
 function noteKeyToCard(dataNote) {
-  for (const k of ["listening","sentence","grammar","speaking","mockinterview","interview","coreanswers","review","scenario","report"]) {
+  for (const k of ["listening","sentence","grammar","speaking","mockinterview","coreanswers","review","scenario","report"]) {
     if (dataNote.indexOf(k) === 0) return k;
   }
   return null;
@@ -3767,80 +3511,6 @@ function showToast(msg) {
   t.classList.add("show");
   clearTimeout(window._toastTimer);
   window._toastTimer = setTimeout(() => t.classList.remove("show"), 3200);
-}
-// A different, ready-to-paste system prompt every day — built from today's
-// actual rotating interview question/story (same one shown in the card
-// above), so a real-time voice AI can run a genuine live back-and-forth
-// interview: it asks a real follow-up based on what you actually say,
-// something no static in-app recording can do.
-function interviewRoleplayPromptText() {
-  const dIdx = daysSinceStart();
-  const interviewIsQ = dIdx % 2 === 0;
-  const q = QUESTION_BANK[Math.floor(dIdx / 2) % QUESTION_BANK.length];
-  const story = STORY_BANK[Math.floor(dIdx / 2) % STORY_BANK.length];
-  const opener = interviewIsQ
-    ? `Open the interview with exactly this question: "${q.q}"`
-    : `Open the interview by asking me to walk you through the "${story.title}" project — just ask me to tell you about it, don't give away any of the details below.`;
-  const context = interviewIsQ
-    ? `What a strong answer covers: ${q.want}\nA good shape for my answer: ${q.shape}`
-    : `Background on this project, for your own reference so you can ask smart follow-ups — don't read this to me, wait for me to tell it: ${story.long}`;
-  return `You are a real interviewer conducting a live behavioral interview for a Product Manager / AI Product role at a tech company in Singapore. Stay fully in character as the interviewer for the entire conversation — do not break character to explain things, and do not correct my English mid-conversation. This needs to feel like a real interview, not a language lesson.
-
-About the candidate (me): I'm a product designer transitioning into AI/PM work, preparing for interviews in Singapore. English is my second language (B1–B2 level) — speak at a natural but clear pace, don't simplify your questions for me.
-
-${opener}
-
-${context}
-
-How to run the session:
-1. After I answer, ask at least one genuine, specific follow-up based on what I actually said — probe a number I mentioned, a trade-off, a decision, or ask "why" on something specific. React to my actual answer, don't use a generic pre-written follow-up.
-2. Keep your own turns short — 1-3 sentences, like a real interviewer.
-3. After 2-3 exchanges, end the interview portion and switch to feedback mode.
-
-Feedback mode (after the interview portion ends):
-Switch out of interviewer character and give me direct, concrete feedback as an English-speaking interview coach:
-1. Content: did I actually answer the question, was there a clear structure (context → decision → result), did I give evidence/numbers when I could have?
-2. Language: 3-5 specific things I said that a native speaker would phrase differently — quote what I said, then the better version, then a one-line reason.
-3. One thing to specifically work on next time.
-
-Start now by introducing yourself briefly, then ask your opening question.`;
-}
-// Shared markup for both interview paths (Question Decoder + Story Bank) —
-// used to live in each call site separately, which is how the Story Bank
-// path ended up missing its #interviewPromptFallback div (a real bug: if
-// clipboard writeText failed there, the "select manually" toast pointed at
-// nothing). One shared function now, so both paths always stay in sync.
-function interviewCopyButtonsHTML(subject) {
-  return `<div class="aiCheckBlock" style="margin-top:14px;">
-      <button class="btnPrimary solo" onclick="copyInterviewRoleplayPrompt()">${ICO_CLIPBOARD}Copy today's live interview prompt</button>
-      <p class="body-text" style="color:var(--text2); margin-top:8px;">Paste into a real-time voice AI app for a live back-and-forth on ${subject} — new prompt daily.</p>
-      <div id="interviewPromptFallback"></div>
-    </div>`;
-}
-async function copyInterviewRoleplayPrompt() {
-  const text = interviewRoleplayPromptText();
-  const fallback = document.getElementById("interviewPromptFallback");
-  try {
-    if (!navigator.clipboard || !navigator.clipboard.writeText) throw new Error("no clipboard API");
-    await navigator.clipboard.writeText(text);
-    showToast("Copied! Paste it into a real-time voice AI app for a live back-and-forth interview.");
-    if (fallback) fallback.innerHTML = "";
-  } catch (err) {
-    // The clipboard API is frequently blocked inside sandboxed iframes (like
-    // this artifact can run in) — when writeText silently rejects, fall back
-    // to a selectable textarea so the prompt is still actually reachable,
-    // instead of a toast pointing at text that was never shown anywhere.
-    showToast("Couldn't copy automatically — select the text below and copy manually.");
-    if (fallback) {
-      fallback.innerHTML = "";
-      const ta = document.createElement("textarea");
-      ta.value = text;
-      ta.readOnly = true;
-      ta.style.cssText = "width:100%; height:180px; margin-top:10px; font-size:var(--text-xs); font-family:monospace; border:1.5px solid var(--line); border-radius:var(--radius-sm); padding:8px;";
-      fallback.appendChild(ta);
-      ta.focus(); ta.select();
-    }
-  }
 }
 
 /* ============================================================
@@ -4662,9 +4332,8 @@ function fmtReviewDay(dayStr) {
   return d.toLocaleDateString(undefined, { month: "short", day: "numeric" });
 }
 // Every individual real mistake (not grouped by check-batch) from every past
-// day, tagged with the same weak-spot category used to pick Weak Spot Drill
-// content — so browsing your history and drilling your weak spot use one
-// consistent diagnosis instead of two different ideas of "what's wrong".
+// day, tagged with its mistake category via classifyMistake() so the browse
+// view below can group by "what's wrong" instead of just listing raw items.
 function flattenAiHistoryItems() {
   const today = todayStr();
   const hist = state.aiHistory || {};
@@ -4697,8 +4366,7 @@ function aiHistoryReviewHTML() {
   }
   const groups = {};
   all.forEach(it => { const k = it.category || "other"; (groups[k] = groups[k] || []).push(it); });
-  // most frequent weak spot first, "other" (uncategorized) last — same
-  // priority order as which category Weak Spot Drill would pick for you
+  // most frequent weak spot first, "other" (uncategorized) last
   const order = Object.keys(groups).sort((a, b) => {
     if (a === "other") return 1;
     if (b === "other") return -1;
@@ -4723,7 +4391,7 @@ function aiHistoryReviewHTML() {
     for (let i = 0; i < take; i++) picks.push(items[(offset + i) % items.length]);
     shown += picks.length;
 
-    const label = key === "other" ? "Other" : (WEAK_SPOT_DRILLS[key] ? WEAK_SPOT_DRILLS[key].label : key);
+    const label = key === "other" ? "Other" : (MISTAKE_CATEGORY_LABELS[key] || key);
     // The answer text is rendered for real from the start (so the table
     // never reflows on reveal) — it's just visually blurred via CSS and
     // un-blurred with one click on the row, no content swap involved.
