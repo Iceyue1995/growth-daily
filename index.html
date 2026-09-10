@@ -1327,6 +1327,7 @@
       <button data-lib="questions" onclick="switchLib('questions')">Question Decoder</button>
       <button data-lib="scenarios" onclick="switchLib('scenarios')">Workplace Scenarios</button>
       <button data-lib="reports" onclick="switchLib('reports')">AI Industry Reports</button>
+      <button data-lib="perspectives" onclick="switchLib('perspectives')">Perspective Reads</button>
       <button data-lib="mocklog" onclick="switchLib('mocklog')">Mock Interview Log</button>
     </div>
     <div id="libContent"></div>
@@ -1977,7 +1978,8 @@ const ICONS = {
   interview: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="3" y="7" width="18" height="12" rx="2" stroke="#fff" stroke-width="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" stroke="#fff" stroke-width="2"/></svg>`,
   review: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M20 6 9 17l-5-5" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
   scenario: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="8" cy="8" r="2.3" stroke="#fff" stroke-width="1.75"/><circle cx="16" cy="8" r="2.3" stroke="#fff" stroke-width="1.75"/><path d="M4 19c0-3 2-5 4-5s4 2 4 5M12 19c0-3 2-5 4-5s4 2 4 5" stroke="#fff" stroke-width="1.75" stroke-linecap="round"/></svg>`,
-  report: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="9" r="4.2" stroke="#fff" stroke-width="1.75"/><path d="M12 13.2V17M8.5 20h7M9.5 6.2c.6-.9 1.6-1.4 2.5-1.4s1.9.5 2.5 1.4" stroke="#fff" stroke-width="1.75" stroke-linecap="round"/><circle cx="7" cy="9" r="1" fill="#fff"/><circle cx="17" cy="9" r="1" fill="#fff"/></svg>`
+  report: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="9" r="4.2" stroke="#fff" stroke-width="1.75"/><path d="M12 13.2V17M8.5 20h7M9.5 6.2c.6-.9 1.6-1.4 2.5-1.4s1.9.5 2.5 1.4" stroke="#fff" stroke-width="1.75" stroke-linecap="round"/><circle cx="7" cy="9" r="1" fill="#fff"/><circle cx="17" cy="9" r="1" fill="#fff"/></svg>`,
+  perspective: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M6 8c-2 1-3 3-3 5.5S5 18 7 18v-4.5c-1 0-1.5-.5-1.5-1.5S6 10.5 8 10V8c-.7 0-1.4.3-2 .5V8z" fill="#fff"/><path d="M15 8c-2 1-3 3-3 5.5s2 4.5 4 4.5v-4.5c-1 0-1.5-.5-1.5-1.5S15 10.5 17 10V8c-.7 0-1.4.3-2 .5V8z" fill="#fff"/></svg>`
 };
 // Leftover from the old indigo/gradient system (2026-08-31: #6c93f0/
 // #4a6fd1 never got migrated to Obsidian Journal's tokens, and #262a33
@@ -1990,7 +1992,7 @@ const ICON_BG = {
   listening:"var(--accent2)",
   interview:"var(--accent2-strong)",
   sentence:"var(--surface-2)", grammar:"var(--surface-2)", speaking:"var(--surface-2)", review:"var(--surface-2)",
-  scenario:"var(--surface-2)", report:"var(--surface-2)"
+  scenario:"var(--surface-2)", report:"var(--surface-2)", perspective:"var(--surface-2)"
 };
 function iconEl(key) { return `<div class="icon" style="background:${ICON_BG[key]}">${ICONS[key]}</div>`; }
 
@@ -2141,6 +2143,49 @@ const REPORT_BANK = [
     zh:"Anthropic经济指数报告利用小时级使用数据，描绘出人们在一天和一周中究竟是如何使用Claude的。个人用途的对话比例从工作日的约35%跃升至周末的近50%，人们的提问也从商务写作、幻灯片制作转向情感支持、健康咨询等话题。每日的使用节奏同样清晰可见：新闻类请求在早上7点左右达到高峰，食谱类请求在傍晚6点的出现频率是平时的2.3倍，而睡眠建议类问题则集中在凌晨时段。就连日历上的关键节点也会留下痕迹——报税相关的问题会在美国报税截止日前明显激增。有趣的是，当人们在夜间或周末使用Claude处理工作事务时，这些任务更多来自薪资较高的职业（如市场营销或程序开发），而非薪资较低的岗位。",
     terms:[{w:"hourly usage data", m:"小时级使用数据 —— 精细到每小时的行为数据，能捕捉更细微的使用规律"},{w:"personal-use conversations", m:"个人用途对话 —— 与工作无关、出于个人需求的对话"},{w:"wage quartile", m:"薪资分位数 —— 按薪资高低将职业分成四组进行比较的统计方法"}],
     retell:"Describe, in your own words, how Claude usage patterns change between weekdays and weekends, according to Anthropic's report." }
+];
+// Perspective Reads — rebuilt 2026-09-09 from a text+TTS format into a real-
+// video format, same idea as Listening Lab/REAL_LISTENING: she said she
+// dislikes synthetic TTS reading a paraphrase, and prefers watching a real
+// video to reading text — and TTS can only be replaced with a real human
+// voice for content that already exists as a recording, which text-you-
+// generate never does. So instead of me writing an original paraphrase of a
+// copyrighted essay (the previous approach, kept for copyright reasons but
+// still text+TTS under the hood), every entry here is a real, verified TED
+// or TEDx talk — the literal "TED articles" she originally described —
+// matching her stated interest in boundaries/hostility/honesty/self-respect.
+// Same verification bar as REAL_LISTENING: `dur` read directly from
+// window.ytInitialPlayerResponse.videoDetails.lengthSeconds, channel
+// confirmed via videoDetails.author / microformat.ownerChannelName (all are
+// the official "TED" or "TEDx Talks" channel, not reposts). `topic` and
+// `before` are my own original framing to prep her before watching — never
+// copied from the talk's actual transcript.
+const PERSPECTIVE_BANK = [
+  { key:"johnsondifficult", title:"How to Deal with Difficult People", speaker:"Jay Johnson, TEDxLivoniaCCLibrary", dur:907,
+    url:"https://www.youtube.com/watch?v=kARkOdRHaj8",
+    topic:"A behavioral-intelligence framework for defusing conflict with a hostile or difficult person — his real starting point is that the first thing to manage is your own reaction, not the other person, and that accusatory \"you\" language usually makes people more defensive, not less.",
+    before:["Guess before watching: what word does he say to avoid using when you're in conflict with someone?","Listen for whether he says the first thing to manage is the other person, or yourself."],
+    terms:[{w:"behavioral intelligence", m:"行为智力 —— 理解、预测并影响他人行为的能力"},{w:"defensive", m:"有防御心理的 —— 觉得被指责后本能地自我保护"}] },
+  { key:"treasurespeak", title:"How to Speak So That People Want to Listen", speaker:"Julian Treasure, TED", dur:598,
+    url:"https://www.youtube.com/watch?v=eIho2S0ZahI",
+    topic:"A sound expert's real framework for speech people actually want to listen to — four cornerstones he calls HAIL (honesty, authenticity, integrity, love) — plus the vocal habits, like turning statements into questions, that quietly undercut a speaker's credibility.",
+    before:["Guess before watching: what four words make up his \"HAIL\" framework?","Listen for the vocal habit he says weakens a sentence by turning it into a question."],
+    terms:[{w:"HAIL (honesty, authenticity, integrity, love)", m:"诚实、真实、正直、关爱 —— 他提出的有效沟通四要素"},{w:"register (of voice)", m:"音域 —— 说话时声音的高低层次"}] },
+  { key:"tawwabboundaries", title:"Your 3-Step Guide to Setting Better Boundaries at Work", speaker:"Nedra Glover Tawwab, TED", dur:371,
+    url:"https://www.youtube.com/watch?v=4SCrXqbhmCY",
+    topic:"A therapist's real 3-step method for setting a workplace boundary without it turning into a confrontation — identifying exactly what you need, choosing when and how to say it, and actually holding the line afterward.",
+    before:["Guess before watching: what are the three steps in her framework?","Listen for which of the three steps she says is hardest to actually follow through on."],
+    terms:[{w:"hold the line", m:"坚持底线 —— 设定边界后真正做到、不轻易妥协"},{w:"empowered", m:"感到有掌控力的、被赋能的"}] },
+  { key:"headleeconversation", title:"10 Ways to Have a Better Conversation", speaker:"Celeste Headlee, TED", dur:704,
+    url:"https://www.youtube.com/watch?v=R1vskiVDwl4",
+    topic:"A radio host's real rules for honest conversation — built on honesty, brevity, clarity, and genuinely listening — including her warning against the common habit of only half-listening while planning what you'll say next.",
+    before:["Guess before watching: what does she say most people are doing while the other person is still talking?","Listen for the specific advice she gives about being \"prepared to be amazed.\""],
+    terms:[{w:"brevity", m:"简洁 —— 说话简短、不啰嗦"},{w:"half-listening", m:"半听半想 —— 表面在听，脑子其实在想别的（比如接下来要说什么）"}] },
+  { key:"nguyensayingno", title:"The Art of Saying No", speaker:"Kenny Nguyen, TEDxLSU", dur:656,
+    url:"https://www.youtube.com/watch?v=FtPRrn5nwAo",
+    topic:"An entrepreneur's real story about learning that \"no\" isn't rejection — it's self-protection, the same instinct that made his caretakers say no to him as a kid, which he had to learn to apply to himself as an adult.",
+    before:["Guess before watching: what does he compare an adult's \"no\" to, from earlier in life?","Listen for the story he tells about starting his company, Big Fish Presentations."],
+    terms:[{w:"self-protection", m:"自我保护"},{w:"harm's way", m:"危险的处境 —— 常见短语 out of harm's way 表示脱离危险"}] }
 ];
 function topicBadgeHTML(key, title, subtitle) {
   const [c1] = TOPIC_GRADIENTS[key] || ["#63697a"];
@@ -3173,6 +3218,7 @@ function buildTodayCardsRaw(dIdx) {
   // card (removed), which meant the same report showed on back-to-back days.
   // Now a plain daily rotation, so it's a different report every day.
   const report = REPORT_BANK[dIdx % REPORT_BANK.length];
+  const perspective = PERSPECTIVE_BANK[dIdx % PERSPECTIVE_BANK.length];
   const core = CORE_ANSWERS_BANK[dIdx % CORE_ANSWERS_BANK.length];
 
   return [
@@ -3292,6 +3338,36 @@ function buildTodayCardsRaw(dIdx) {
         ${reportTermsBlockHTML(report.key, "card")}
         <div class="taskline">Optional — ${report.retell} Skipping it doesn't affect today's completion.</div>
         ${recorderHTML("Record your retelling", "report")}
+      `}
+    ]},
+    // Perspective Reads — same "optional, appended last" treatment as
+    // Workplace Scenario/AI Industry Report above: real value if you have a
+    // few extra minutes, never blocks the required day. Rebuilt 2026-09-09
+    // into a real-video format (see PERSPECTIVE_BANK comment) — she dislikes
+    // synthetic TTS and prefers video to text, and real TED/TEDx talks solve
+    // both at once: a real human voice, and something to watch rather than
+    // read. Mirrors Listening Lab's real-video flow (link out, blind
+    // retell, key terms, record) rather than the read-and-translate layout
+    // AI Industry Report uses, since there's no fixed script to translate.
+    { key:"perspective", title:"Perspective Reads", optional:true, primary:false, meta:perspective.speaker, steps: [
+      { title: perspective.title, body:() => `
+        <a href="${perspective.url}" target="_blank" rel="noopener noreferrer" class="realListenLink">
+          <span class="rllIcon">▶</span>
+          <span class="rllText"><span class="rllTitle">${perspective.title}</span><span class="rllMeta">${perspective.speaker} · ${formatDur(perspective.dur)} video</span></span>
+        </a>
+        <p class="body-text" style="margin-top:10px; color:var(--text2);">${escapeHtmlText(perspective.topic)}</p>
+        <ul class="qlist" style="margin-top:8px;">${perspective.before.map(b=>`<li>${escapeHtmlText(b)}</li>`).join("")}</ul>
+      `},
+      { title:"Your takeaway — before replaying anything", body:() => `
+        <p class="body-text">Without rewatching: 2-3 sentences on the main idea, plus one specific thing they said or a story they told.</p>
+        <div class="noteBlock">${noteAreaHTML("perspective-retell","What was the main idea? What's one specific detail or story?…",4)}</div>
+      `},
+      { title:"Key terms", body:() => `
+        ${perspectiveTermsBlockHTML(perspective.key, "card")}
+      `},
+      { title:"Record + retell", body:() => `
+        <div class="taskline">Optional — retell the main idea out loud, under 2 minutes, like explaining it to a colleague. Skipping it doesn't affect today's completion.</div>
+        ${recorderHTML("Record your retelling", "perspective")}
       `}
     ]}
   ];
@@ -3494,15 +3570,23 @@ const AUTO_RULES = {
   // hasRecording() checks, since it's just a generic "engaged with this" signal.
   mockinterview: (day) => hasRecording("mockinterview"),
   coreanswers: (day) => hasRecording("coreanswers"),
-  review:    (day) => allChecked(day, ["review-check-0","review-check-1","review-check-2","review-check-3"]),
+  // Done either by finishing the generic daily self-check, OR by actually
+  // clearing today's real recall queue (grading every item currently due) —
+  // previously ONLY the self-check counted, so grading every due item and
+  // moving on (without also ticking 4 unrelated checkboxes) left the card
+  // "not done," and it would resurface as the current task the moment
+  // currentFocusIndex() recalculated later that same day. See
+  // srsQueueClearedToday().
+  review:    (day) => allChecked(day, ["review-check-0","review-check-1","review-check-2","review-check-3"]) || srsQueueClearedToday(day),
   // Optional cards — these have a real "done" signal too (so their dot
   // still checks off if you do them), but currentFocusIndex()/updateProgressUI
   // skip them entirely when deciding whether today counts as complete.
   scenario:  (day) => hasRecording("scenario"),
-  report:    (day) => hasRecording("report")
+  report:    (day) => hasRecording("report"),
+  perspective: (day) => hasRecording("perspective")
 };
 function noteKeyToCard(dataNote) {
-  for (const k of ["listening","sentence","grammar","speaking","mockinterview","coreanswers","review","scenario","report"]) {
+  for (const k of ["listening","sentence","grammar","speaking","mockinterview","coreanswers","review","scenario","report","perspective"]) {
     if (dataNote.indexOf(k) === 0) return k;
   }
   return null;
@@ -4409,6 +4493,78 @@ function addSelectedReportTermsToSRS(reportKey, idPrefix) {
   save();
   showToast(`Added ${checked.length} term${checked.length > 1 ? "s" : ""} to Spaced Review.`);
 }
+// ---- Perspective Reads terms — identical pattern to the Report terms block
+// just above, duplicated rather than parameterized so the already-verified
+// report term flow can't regress; state.customPerspectiveTerms is the
+// perspective-bank equivalent of state.customReportTerms.
+function getCustomPerspectiveTerms(perspectiveKey) {
+  return (state.customPerspectiveTerms && state.customPerspectiveTerms[perspectiveKey]) || [];
+}
+function allPerspectiveTerms(perspectiveKey) {
+  const p = PERSPECTIVE_BANK.find(x => x.key === perspectiveKey);
+  return (p ? p.terms : []).concat(getCustomPerspectiveTerms(perspectiveKey));
+}
+function perspectiveTermsInnerHTML(perspectiveKey, idPrefix) {
+  const terms = allPerspectiveTerms(perspectiveKey);
+  const base = idPrefix + "-pterms-" + perspectiveKey;
+  const pills = terms.length
+    ? `<div class="chunks">${terms.map(t => `
+        <div class="chunk-pill termPill">
+          <input type="checkbox" class="termCheck" checked data-w="${escapeHtmlText(t.w).replace(/"/g,"&quot;")}" data-m="${escapeHtmlText(t.m).replace(/"/g,"&quot;")}">
+          ${speakBtnHTML(t.w,'small')}<span>${t.w} — ${t.m}</span>
+        </div>`).join("")}</div>`
+    : `<p class="body-text" style="margin:4px 0;">No terms yet — add one below.</p>`;
+  return `${pills}
+    <div class="termAddRow">
+      <input type="text" id="${base}-w" placeholder="New term">
+      <input type="text" id="${base}-m" placeholder="Meaning">
+      <button onclick="addCustomPerspectiveTerm('${perspectiveKey}','${idPrefix}')">+ Add term</button>
+    </div>
+    <button class="btnGhost solo" style="margin:6px 0;" onclick="addSelectedPerspectiveTermsToSRS('${perspectiveKey}','${idPrefix}')">+ Add selected words to Spaced Review</button>`;
+}
+function perspectiveTermsBlockHTML(perspectiveKey, idPrefix) {
+  return `<div id="${idPrefix}-ptermsWrap-${perspectiveKey}">${perspectiveTermsInnerHTML(perspectiveKey, idPrefix)}</div>`;
+}
+function refreshPerspectiveTerms(perspectiveKey, idPrefix) {
+  const wrap = document.getElementById(idPrefix + "-ptermsWrap-" + perspectiveKey);
+  if (wrap) wrap.innerHTML = perspectiveTermsInnerHTML(perspectiveKey, idPrefix);
+}
+function addCustomPerspectiveTerm(perspectiveKey, idPrefix) {
+  const base = idPrefix + "-pterms-" + perspectiveKey;
+  const wEl = document.getElementById(base + "-w");
+  const mEl = document.getElementById(base + "-m");
+  const w = (wEl && wEl.value || "").trim();
+  const m = (mEl && mEl.value || "").trim();
+  if (!w) { if (wEl) wEl.focus(); return; }
+  if (!state.customPerspectiveTerms) state.customPerspectiveTerms = {};
+  if (!state.customPerspectiveTerms[perspectiveKey]) state.customPerspectiveTerms[perspectiveKey] = [];
+  state.customPerspectiveTerms[perspectiveKey].push({ w: w, m: m || "(no meaning added)" });
+  save();
+  refreshPerspectiveTerms(perspectiveKey, idPrefix);
+}
+function addSelectedPerspectiveTermsToSRS(perspectiveKey, idPrefix) {
+  const p = PERSPECTIVE_BANK.find(x => x.key === perspectiveKey);
+  const wrap = document.getElementById(idPrefix + "-ptermsWrap-" + perspectiveKey);
+  if (!wrap) return;
+  const checked = Array.from(wrap.querySelectorAll(".termCheck:checked"));
+  if (!checked.length) { showToast("Select at least one term first."); return; }
+  if (!state.srsItems) state.srsItems = {};
+  const day = todayStr();
+  checked.forEach(cb => {
+    const w = cb.dataset.w, m = cb.dataset.m;
+    const id = "perspective__" + perspectiveKey + "__" + normalize(w).replace(/\s+/g,"_");
+    const existing = state.srsItems[id];
+    state.srsItems[id] = {
+      item: `Term from "${p ? p.title : perspectiveKey}"`,
+      before: `What does "${w}" mean?`, after: m, why: "",
+      cardKey: "perspectives", box: existing ? existing.box : 1,
+      dueDate: existing ? existing.dueDate : addDaysStr(day, 1),
+      createdDay: existing ? existing.createdDay : day
+    };
+  });
+  save();
+  showToast(`Added ${checked.length} term${checked.length > 1 ? "s" : ""} to Spaced Review.`);
+}
 function dueSrsItems(limit) {
   limit = limit || 6;
   const today = todayStr();
@@ -4445,18 +4601,38 @@ function revealSrsItem(id) {
   const el = document.querySelector(`.srsAnswer[data-srsanswer="${id}"]`);
   if (el) el.style.display = "block";
 }
+// Tracks which SRS items you've actually graded today (separate from
+// it.box/it.dueDate, which get overwritten every time you regrade an item on
+// a *later* day too) — this is what lets "cleared today's recall queue"
+// count as finishing Spaced Review, see srsQueueClearedToday() below.
 function gradeSrsItem(id, gotItRight) {
   const it = state.srsItems && state.srsItems[id];
   if (!it) return;
   it.box = gotItRight ? Math.min(it.box + 1, SRS_BOX_INTERVALS.length) : 1;
   it.dueDate = addDaysStr(todayStr(), SRS_BOX_INTERVALS[it.box - 1]);
   it.lastReviewedAt = Date.now();
+  const day = todayStr();
+  if (!state.srsGradedToday) state.srsGradedToday = {};
+  if (!state.srsGradedToday[day]) state.srsGradedToday[day] = {};
+  state.srsGradedToday[day][id] = true;
   save();
   const itemEl = document.querySelector(`.srsItem[data-srsid="${id}"]`);
   if (itemEl) {
     const nextIn = SRS_BOX_INTERVALS[it.box - 1];
     itemEl.innerHTML = `<div class="body-text" style="color:var(--good);">${gotItRight ? "✓ Nice — " : "Noted — "}next review in ${nextIn} day${nextIn===1?"":"s"}.</div>`;
   }
+  // Grading the last due item can complete the card on its own (see
+  // srsQueueClearedToday) — refresh so the rail dot/toast/XP react right
+  // away, same as checking a self-check box does.
+  refreshAutoComplete("review");
+}
+// True once you've graded at least one item today AND nothing is left due —
+// i.e. you actually cleared today's recall queue, not just opened it.
+function srsQueueClearedToday(day) {
+  const gradedToday = state.srsGradedToday && state.srsGradedToday[day] ? Object.keys(state.srsGradedToday[day]).length : 0;
+  if (!gradedToday) return false;
+  const stillDue = Object.keys(state.srsItems || {}).filter(id => state.srsItems[id].dueDate <= day).length;
+  return stillDue === 0;
 }
 document.addEventListener("click", (e) => {
   const revealBtn = e.target.closest("[data-srsreveal]");
@@ -4473,7 +4649,7 @@ document.addEventListener("click", (e) => {
 const CARD_TITLES = {
   listening: "Listening Lab", sentence: "Sentence Network", grammar: "Grammar Repair",
   speaking: "Speaking Gym", interview: "Interview Practice",
-  scenario: "Workplace Scenario", report: "AI Industry Report"
+  scenario: "Workplace Scenario", report: "AI Industry Report", perspective: "Perspective Reads"
 };
 function fmtReviewDay(dayStr) {
   const d = new Date(dayStr + "T00:00:00");
@@ -4714,6 +4890,22 @@ function renderLibrary(tab) {
           <div class="taskline">${r.retell}</div>
           ${recorderHTML("Record your retelling", "report-"+r.key)}
           <a class="videoLink" href="${r.sourceUrl}" target="_blank" rel="noopener"><span>📄 ${r.source}</span><span class="arrowChip">↗</span></a>
+        </div>
+      </div>`).join("")}</div>`;
+  } else if (tab === "perspectives") {
+    el.innerHTML = `<div class="libList">${PERSPECTIVE_BANK.map(p => `
+      <div class="libItem">
+        <button type="button" class="libItemHead" onclick="this.parentElement.classList.toggle('open')" aria-expanded="false"><h4>${p.title}</h4><div class="m">${p.speaker} · ${formatDur(p.dur)}</div></button>
+        <div class="full">
+          <a href="${p.url}" target="_blank" rel="noopener noreferrer" class="realListenLink">
+            <span class="rllIcon">▶</span>
+            <span class="rllText"><span class="rllTitle">${p.title}</span><span class="rllMeta">${p.speaker} · ${formatDur(p.dur)} video</span></span>
+          </a>
+          <p class="body-text" style="margin-top:10px; color:var(--text2);">${escapeHtmlText(p.topic)}</p>
+          <ul class="qlist" style="margin-top:8px;">${p.before.map(b=>`<li>${escapeHtmlText(b)}</li>`).join("")}</ul>
+          <div class="subhead">Key terms</div>
+          ${perspectiveTermsBlockHTML(p.key, "lib")}
+          ${recorderHTML("Record your retelling", "perspective-"+p.key)}
         </div>
       </div>`).join("")}</div>`;
   } else if (tab === "mocklog") {
