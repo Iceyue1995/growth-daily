@@ -1169,7 +1169,11 @@
     </div>
     <p class="modalHint">Inside Cowork, AI check works automatically — nothing to set up. Opening this page in a plain browser tab needs your own Anthropic API key so it can reach Claude directly from your browser.</p>
     <label class="modalLabel">Anthropic API key</label>
-    <input type="password" id="apiKeyInput" class="modalInput" placeholder="sk-ant-…" autocomplete="off" spellcheck="false">
+    <div style="display:flex; gap:6px; align-items:center;">
+      <input type="password" id="apiKeyInput" class="modalInput" placeholder="sk-ant-…" autocomplete="off" spellcheck="false" style="flex:1;">
+      <button type="button" class="btnGhost" onclick="toggleApiKeyVisibility()" id="apiKeyToggleBtn" title="Show/hide key" aria-label="Show or hide key" style="padding:0 10px; white-space:nowrap;">Show</button>
+      <button type="button" class="btnGhost" onclick="copyApiKey()" id="apiKeyCopyBtn" title="Copy key" aria-label="Copy key" style="padding:0 10px; white-space:nowrap;">Copy</button>
+    </div>
     <label class="modalLabel">Model</label>
     <select id="apiModelInput" class="modalInput">
       <option value="claude-sonnet-5">Claude Sonnet 5 (recommended)</option>
@@ -3900,6 +3904,41 @@ function openAiSettings() {
 function closeAiSettings() {
   const overlay = document.getElementById("aiSettingsOverlay");
   if (overlay) overlay.classList.remove("show");
+}
+function toggleApiKeyVisibility() {
+  const keyInput = document.getElementById("apiKeyInput");
+  const btn = document.getElementById("apiKeyToggleBtn");
+  if (!keyInput || !btn) return;
+  const showing = keyInput.type === "text";
+  keyInput.type = showing ? "password" : "text";
+  btn.textContent = showing ? "Show" : "Hide";
+}
+async function copyApiKey() {
+  const keyInput = document.getElementById("apiKeyInput");
+  const status = document.getElementById("apiKeyStatus");
+  const btn = document.getElementById("apiKeyCopyBtn");
+  const value = keyInput ? keyInput.value : "";
+  if (!value) {
+    if (status) { status.textContent = "Nothing to copy yet."; status.className = "modalStatus err"; }
+    return;
+  }
+  try {
+    await navigator.clipboard.writeText(value);
+    if (btn) { const old = btn.textContent; btn.textContent = "Copied!"; setTimeout(() => { btn.textContent = old; }, 1500); }
+    if (status) { status.textContent = "Key copied to clipboard."; status.className = "modalStatus ok"; }
+  } catch (e) {
+    // Fallback for browsers/contexts that block navigator.clipboard (e.g. some in-app browsers)
+    try {
+      keyInput.type = "text";
+      keyInput.focus();
+      keyInput.select();
+      keyInput.setSelectionRange(0, value.length);
+      const ok = document.execCommand("copy");
+      if (status) { status.textContent = ok ? "Key copied to clipboard." : "Couldn't copy automatically — key is now visible above, select and copy it manually."; status.className = ok ? "modalStatus ok" : "modalStatus err"; }
+    } catch (e2) {
+      if (status) { status.textContent = "Couldn't copy automatically — key is now visible above, select and copy it manually."; status.className = "modalStatus err"; }
+    }
+  }
 }
 function openStyleGuide() {
   const overlay = document.getElementById("styleGuideOverlay");
