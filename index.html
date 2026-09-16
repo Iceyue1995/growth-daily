@@ -1576,7 +1576,44 @@ const REAL_LISTENING = [
   { title:"The Three Memes of Product Development", speaker:"Tara Seshan, OpenAI", dur:50,
     url:"https://www.youtube.com/shorts/xSGSAsTvh8o",
     topic:"Her real framing of OpenAI's internal product culture: three recurring internal questions the team runs every decision through, rather than a fixed process or template.",
-    before:["Guess before listening: how many internal questions does she say OpenAI's product culture runs on?","Listen for whether she calls this a rigid process or something more like a shared habit of thinking."] }
+    before:["Guess before listening: how many internal questions does she say OpenAI's product culture runs on?","Listen for whether she calls this a rigid process or something more like a shared habit of thinking."] },
+  // Added 2026-09-16 — the 13-video rotation was cycling back within ~2
+  // weeks (dIdx % length), so she was seeing repeats. These 8 are real,
+  // verified (title/channel/length read directly from each video's
+  // ytInitialPlayerResponse) and picked to match her actual AI-PM
+  // interview prep, stretching the no-repeat window to 21 days.
+  { title:"How I Use AI as a Product Manager", speaker:"Aced (formerly Exponent)", dur:1714,
+    url:"https://www.youtube.com/watch?v=kHe4X7TZGtM",
+    topic:"A real working PM's account of how she actually uses AI tools day-to-day — the concrete tasks she hands to AI versus keeps for herself, useful for anyone who needs to speak concretely about real AI workflows in an interview rather than just buzzwords.",
+    before:["Guess before watching: name one PM task you'd expect AI to genuinely help with, and one where you'd expect it to fall short.","Listen for the specific task she says she does NOT hand off to AI."] },
+  { title:"How to Manage AI Risks | Product Manager Mock Interview", speaker:"Aced (formerly Exponent)", dur:2272,
+    url:"https://www.youtube.com/watch?v=2DoAXRBKbUI",
+    topic:"A real mock interview: Casey, a PM at eBay, is asked to define AI safety and walk through strategies for managing risk in a consumer product using generative AI — exactly the kind of responsible-AI question that shows up in real AI-PM interview loops.",
+    before:["Guess before watching: how would you define \"AI safety\" in one sentence, for a consumer product?","Listen for the specific generative-AI risk example he gives involving a platform like Amazon."] },
+  { title:"Principal AI Product Manager (Mock Interview) — \"How innovative are you?\"", speaker:"Aced (formerly Exponent)", dur:3723,
+    url:"https://www.youtube.com/watch?v=udB8AUO4dvM",
+    topic:"A senior-level mock interview: the candidate is pushed on how she runs evals with design teams, uses meta-prompting to correct model output, and handles the tough \"would you ship despite a safety risk?\" question — a realistic look at what's expected at the principal/senior AI-PM level.",
+    before:["Guess before watching: if you were asked \"would you ship despite a safety risk?\", what would your instinct be?","Listen for what she says meta-prompting is used for."] },
+  { title:"Mock Product Manager Interview: Improve WhatsApp (Google PM)", speaker:"Aced (formerly Exponent)", dur:2653,
+    url:"https://www.youtube.com/watch?v=e0Nj_eYDj2s",
+    topic:"A classic \"improve a product\" PM interview question worked through live: Sushanth, a Google PM, is asked how he'd improve WhatsApp, and walks through defining the mission, identifying user types, and prioritizing — the structure most PM interviews expect for this question type.",
+    before:["Guess before watching: what's the first question you'd ask back if someone said \"improve WhatsApp\"?","Listen for the order he covers things in: mission first, or users first?"] },
+  { title:"Product Manager Interview: Design an Audio Product for Meta", speaker:"Aced (formerly Exponent)", dur:1858,
+    url:"https://www.youtube.com/watch?v=35mpatocpYI",
+    topic:"A \"design a product\" interview question worked through in real time: Bala, a Meta PM, is asked to design an audio product for Meta, and walks through clarifying questions, mission, and user types before proposing anything — modeling the structure interviewers expect before you jump to solutions.",
+    before:["Guess before watching: what's one clarifying question you'd ask before designing 'an audio product for Meta'?","Listen for how long he spends on clarifying questions before giving an actual answer."] },
+  { title:"Google Product Manager Mock Interview: Improve Headspace", speaker:"Aced (formerly Exponent)", dur:1523,
+    url:"https://www.youtube.com/watch?v=BNuRsv_42jc",
+    topic:"Another real \"improve a product\" mock interview: Or, a Google/Coinbase PM, is asked to improve Headspace, and works through mission, goals, and user types under real interview conditions and time pressure.",
+    before:["Guess before watching: what user problem do you think Headspace itself struggles with?","Listen for how he defines the product's \"mission\" before proposing any changes."] },
+  { title:"Answer Product Sense Interview Questions Like A Pro", speaker:"Stephen Cognetta, Aced (formerly Exponent)", dur:507,
+    url:"https://www.youtube.com/watch?v=WE0KeryvpXE",
+    topic:"A former Google PM and Exponent co-founder breaks down a repeatable structure for \"product sense\" interview questions — starting with the user, then pain points, then brainstorming — rather than jumping straight to a clever-sounding idea.",
+    before:["Guess before watching: what do you think \"product sense\" actually means to an interviewer?","Listen for the order he recommends: idea first, or user first?"] },
+  { title:"Startup Advice: AI GTM, Pivoting & How To Hire", speaker:"Y Combinator", dur:2313,
+    url:"https://www.youtube.com/watch?v=nGLmpKi-jRU",
+    topic:"YC partners Pete, Brad, Nico, and Gustaf answer real founder questions on Office Hours — including how to go to market with an AI product in a legacy industry, and when a slow-growing idea is worth defending versus pivoting away from.",
+    before:["Guess before watching: in a legacy industry, should an AI startup sell to the incumbents, or try to replace them?","Listen for the specific trade-off they describe between growing fast now and building long-term defensibility."] }
 ];
 
 // Each theme has 2 variant sets so the same 8-theme rotation doesn't show
